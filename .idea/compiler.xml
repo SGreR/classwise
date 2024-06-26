@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="classwise-grades-service" />
+        <module name="classwise-teachers-service" />
+        <module name="classwise-gateway-service" />
+        <module name="classwise-students-service" />
+        <module name="classwise-course-services" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="classwise-classes-service" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="classwise-classes-service" options="-parameters" />
+      <module name="classwise-course-services" options="-parameters" />
+      <module name="classwise-gateway-service" options="-parameters" />
+      <module name="classwise-grades-service" options="-parameters" />
+      <module name="classwise-students-service" options="-parameters" />
+      <module name="classwise-teachers-service" options="-parameters" />
+    </option>
+  </component>
+</project>
