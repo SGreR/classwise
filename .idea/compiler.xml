@@ -2,6 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -11,6 +12,7 @@
         <module name="classwise-gateway-service" />
         <module name="classwise-students-service" />
         <module name="classwise-course-services" />
+        <module name="classwise-semester-services" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -23,6 +25,7 @@
       <module name="classwise-course-services" options="-parameters" />
       <module name="classwise-gateway-service" options="-parameters" />
       <module name="classwise-grades-service" options="-parameters" />
+      <module name="classwise-semester-services" options="-parameters" />
       <module name="classwise-students-service" options="-parameters" />
       <module name="classwise-teachers-service" options="-parameters" />
     </option>

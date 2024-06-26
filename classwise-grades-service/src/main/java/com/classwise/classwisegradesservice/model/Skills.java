@@ -1,25 +1,33 @@
 package com.classwise.classwisegradesservice.model;
 
 import com.classwise.classwisegradesservice.enums.SkillName;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
+@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class Skills {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long skillId;
+    @Enumerated(EnumType.STRING)
     private SkillName skillName;
+    @OneToOne
+    @JoinColumn(name = "grades_id", referencedColumnName = "gradesId")
+    private Grades grades;
     private double teacherGrade = 0.0;
     private double testGrade = 0.0;
-    private double averageGrade = calculateAverage();
+    private double averageGrade;
 
-    private double calculateAverage(){
-        return Arrays.stream(new double[] {teacherGrade, testGrade}).average().orElse(0);
+    @PrePersist
+    @PreUpdate
+    private void calculateAverageGrade(){
+        this.averageGrade = Arrays.stream(new double[] {teacherGrade, testGrade}).average().orElse(0);
     }
 }

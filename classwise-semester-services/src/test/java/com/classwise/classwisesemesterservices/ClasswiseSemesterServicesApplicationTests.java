@@ -1,10 +1,10 @@
-package com.classwise.classwisegatewayservice;
+package com.classwise.classwisesemesterservices;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ClasswiseGatewayServiceApplicationTests {
+class ClasswiseSemesterServicesApplicationTests {
 
     @Test
     void contextLoads() {

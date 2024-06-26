@@ -1,27 +1,34 @@
 package com.classwise.classwisegradesservice.model;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
+@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class ClassPerformance {
-    public Long classPerformanceId;
-    private Long gradesId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long classPerformanceId;
+
+    @OneToOne
+    @JoinColumn(name = "grades_id", referencedColumnName = "gradesId")
+    private Grades grades;
     private int presenceGrade;
     private int homeworkGrade;
     private int participationGrade;
     private int behaviorGrade;
-    public double averageGrade = calculateAverage();
+    public double averageGrade;
 
-    private double calculateAverage(){
+    @PrePersist
+    @PreUpdate
+    private void calculateAverageGrade(){
         int[] grades = {presenceGrade, homeworkGrade, participationGrade, behaviorGrade};
-        return (double) Arrays.stream(grades).sum() / 2;
+        this.averageGrade = (double) Arrays.stream(grades).sum() / 2;
     }
 
 }
