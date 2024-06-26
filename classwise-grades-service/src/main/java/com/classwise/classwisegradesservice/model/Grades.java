@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class Grades {
-    public Long gradeId;
+    public Long gradesId;
     private Long studentId;
     private Long courseId;
     private TestNumber testNumber;
