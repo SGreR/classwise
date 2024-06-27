@@ -1,4 +1,4 @@
-package com.classwise.classwiseclassroomservices;
+package com.classwise.classwisecourseservices;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -22,7 +22,7 @@ public class StudentGatewayController {
 
     @GetMapping
     public ResponseEntity<List<StudentDTO>> getAllStudents(){
-        List<StudentDTO> students = studentGatewayService.getAllStudents();
+        List<StudentDTO> students = studentGatewayService.getAll();
         if (students.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
@@ -32,7 +32,7 @@ public class StudentGatewayController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getStudentById(@PathVariable Long id){
         try{
-            StudentDTO student = studentGatewayService.getStudentById(id);
+            StudentDTO student = studentGatewayService.getById(id);
             return ResponseEntity.ok(student);
         } catch (Exception e){
             Map<String, String> message = Map.of("Message", e.getMessage());
@@ -43,14 +43,14 @@ public class StudentGatewayController {
 
     @PostMapping
     public ResponseEntity<MessagePayload> createStudent(@RequestBody StudentDTO student){
-        studentGatewayService.addStudent(student);
+        studentGatewayService.add(student);
         return ResponseEntity.status(HttpStatus.CREATED).body(new MessagePayload("Criado com sucesso"));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<MessagePayload> updateStudent(@PathVariable Long id, @RequestBody StudentDTO student){
         try{
-            studentGatewayService.updateStudent(id, student);
+            studentGatewayService.update(id, student);
             return ResponseEntity.ok(new MessagePayload("Atualizado com sucesso"));
         } catch(Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessagePayload(e.getMessage()));
@@ -59,11 +59,12 @@ public class StudentGatewayController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<MessagePayload> deleteStudent(@PathVariable Long id){
-        try{
-            studentGatewayService.deleteStudentById(id);
+        ResponseEntity<?> response = studentGatewayService.deleteById(id);
+        if(response.getStatusCode() == HttpStatus.NO_CONTENT){
             return ResponseEntity.ok(new MessagePayload("Deletado com sucesso"));
-        } catch(Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessagePayload(e.getMessage()));
+        } else if(response.getStatusCode() == HttpStatus.NOT_FOUND){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessagePayload("Objeto não encontrado"));
         }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 }

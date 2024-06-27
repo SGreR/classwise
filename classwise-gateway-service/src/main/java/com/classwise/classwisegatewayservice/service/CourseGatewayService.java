@@ -1,24 +1,25 @@
 package com.classwise.classwisegatewayservice.service;
 
 import com.classwise.classwisegatewayservice.interfaces.ServiceInterface;
-import com.classwise.classwisegatewayservice.model.StudentDTO;
+import com.classwise.classwisegatewayservice.model.CourseDTO;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.http.*;
 
 import java.util.List;
 
 @Service
-public class StudentGatewayService implements ServiceInterface<StudentDTO> {
+public class CourseGatewayService implements ServiceInterface<CourseDTO> {
 
     private final RestTemplate restTemplate;
 
-    public StudentGatewayService(RestTemplate restTemplate) {
+    public CourseGatewayService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    public List<StudentDTO> getAll() {
-        String url = "http://localhost:8084/internal/students";
+    @Override
+    public List<CourseDTO> getAll() {
+        String url = "http://localhost:8081/internal/courses";
         HttpHeaders headers = new HttpHeaders();
         headers.setBasicAuth("admin", "admin");
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -32,68 +33,71 @@ public class StudentGatewayService implements ServiceInterface<StudentDTO> {
         return response.getBody();
     }
 
-    public StudentDTO getById(Long id) {
-        String url = "http://localhost:8084/internal/students/" + id;
+    @Override
+    public CourseDTO getById(Long id) {
+        String url = "http://localhost:8081/internal/courses/" + id;
         HttpHeaders headers = new HttpHeaders();
         headers.setBasicAuth("admin", "admin");
         HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        ResponseEntity<StudentDTO> response = restTemplate.exchange(
+        ResponseEntity<CourseDTO> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 entity,
-                StudentDTO.class
+                CourseDTO.class
         );
+
         return response.getBody();
     }
 
-    public StudentDTO add(StudentDTO student) {
-        String url = "http://localhost:8084/internal/students";
+    @Override
+    public CourseDTO add(CourseDTO course) {
+        String url = "http://localhost:8081/internal/courses";
         HttpHeaders headers = new HttpHeaders();
         headers.setBasicAuth("admin", "admin");
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<StudentDTO> entity = new HttpEntity<>(student, headers);
+        HttpEntity<CourseDTO> entity = new HttpEntity<>(course, headers);
 
-        ResponseEntity<StudentDTO> response = restTemplate.exchange(
+        ResponseEntity<CourseDTO> response = restTemplate.exchange(
                 url,
                 HttpMethod.POST,
                 entity,
-                StudentDTO.class
+                CourseDTO.class
         );
 
         return response.getBody();
     }
 
-    public StudentDTO update(Long id, StudentDTO student) {
-        String url = "http://localhost:8084/internal/students/" + id;
+    @Override
+    public CourseDTO update(Long id, CourseDTO course) {
+        String url = "http://localhost:8081/internal/courses/" + id;
         HttpHeaders headers = new HttpHeaders();
         headers.setBasicAuth("admin", "admin");
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<StudentDTO> entity = new HttpEntity<>(student, headers);
+        HttpEntity<CourseDTO> entity = new HttpEntity<>(course, headers);
 
-        ResponseEntity<StudentDTO> response = restTemplate.exchange(
+        ResponseEntity<CourseDTO> response = restTemplate.exchange(
                 url,
                 HttpMethod.PUT,
                 entity,
-                StudentDTO.class
+                CourseDTO.class
         );
 
         return response.getBody();
     }
 
+    @Override
     public ResponseEntity<?> deleteById(Long id) {
-        String url = "http://localhost:8084/internal/students/" + id;
+        String url = "http://localhost:8081/internal/courses/" + id;
         HttpHeaders headers = new HttpHeaders();
         headers.setBasicAuth("admin", "admin");
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<StudentDTO> entity = new HttpEntity<>(headers);
+        HttpEntity<CourseDTO> entity = new HttpEntity<>(headers);
 
         return restTemplate.exchange(
                 url,
                 HttpMethod.DELETE,
                 entity,
-                StudentDTO.class
+                CourseDTO.class
         );
     }
 }
-

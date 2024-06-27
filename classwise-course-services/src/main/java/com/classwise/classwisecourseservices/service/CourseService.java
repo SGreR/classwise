@@ -1,7 +1,7 @@
-package com.classwise.classwiseclassroomservices.service;
+package com.classwise.classwisecourseservices.service;
 
-import com.classwise.classwiseclassroomservices.model.Course;
-import com.classwise.classwiseclassroomservices.repository.CourseRepository;
+import com.classwise.classwisecourseservices.model.Course;
+import com.classwise.classwisecourseservices.repository.CourseRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

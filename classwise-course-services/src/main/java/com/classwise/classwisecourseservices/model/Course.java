@@ -1,4 +1,4 @@
-package com.classwise.classwiseclassroomservices.model;
+package com.classwise.classwisecourseservices.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

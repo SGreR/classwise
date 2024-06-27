@@ -1,7 +1,7 @@
-package com.classwise.classwiseclassroomservices.controller;
+package com.classwise.classwisecourseservices.controller;
 
-import com.classwise.classwiseclassroomservices.model.Course;
-import com.classwise.classwiseclassroomservices.service.CourseService;
+import com.classwise.classwisecourseservices.model.Course;
+import com.classwise.classwisecourseservices.service.CourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@RestController("/internal/courses")
+@RestController
+@RequestMapping("/internal/courses")
 public class CourseController {
 
     private final CourseService courseService;
