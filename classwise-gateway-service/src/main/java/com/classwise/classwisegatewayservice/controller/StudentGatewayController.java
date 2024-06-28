@@ -1,5 +1,6 @@
 package com.classwise.classwisegatewayservice.controller;
 
+import com.classwise.classwisegatewayservice.filters.StudentDTOFilter;
 import com.classwise.classwisegatewayservice.model.StudentDTO;
 import com.classwise.classwisegatewayservice.payload.MessagePayload;
 import com.classwise.classwisegatewayservice.service.StudentGatewayService;
@@ -30,9 +31,18 @@ public class StudentGatewayController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getStudentById(@PathVariable Long id){
+    public ResponseEntity<?> getStudentById(
+            @PathVariable Long id,
+            @RequestHeader(value = "Include-Courses", defaultValue = "false") boolean includeCourses){
         try{
-            StudentDTO student = studentGatewayService.getById(id);
+            StudentDTOFilter filter = new StudentDTOFilter();
+            filter.setIncludeCourses(includeCourses);
+            StudentDTO student;
+            if(includeCourses){
+                student = studentGatewayService.getStudentWithDetails(id, filter);
+            } else {
+                student = studentGatewayService.getById(id);
+            }
             return ResponseEntity.ok(student);
         } catch (Exception e){
             Map<String, String> message = Map.of("Message", e.getMessage());

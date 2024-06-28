@@ -2,103 +2,56 @@ package com.classwise.classwisegatewayservice.service;
 
 import com.classwise.classwisegatewayservice.interfaces.ServiceInterface;
 import com.classwise.classwisegatewayservice.model.SemesterDTO;
-import com.classwise.classwisegatewayservice.model.SemesterDTO;
-import org.springframework.http.*;
+import com.classwise.classwisegatewayservice.util.RestClientUtil;
+import com.classwise.classwisegatewayservice.util.ServiceURLs;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
 @Service
 public class SemesterGatewayService implements ServiceInterface<SemesterDTO> {
 
-    private final RestTemplate restTemplate;
+    private final RestClientUtil restClientUtil;
+    private final ServiceURLs serviceURLs;
 
-    public SemesterGatewayService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public SemesterGatewayService(RestClientUtil restClientUtil, ServiceURLs serviceURLs) {
+        this.restClientUtil = restClientUtil;
+        this.serviceURLs = serviceURLs;
     }
 
     @Override
     public List<SemesterDTO> getAll() {
-        String url = "http://localhost:8083/internal/semesters";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth("admin", "admin");
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<List> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                entity,
-                List.class
-        );
-
+        String url = serviceURLs.getSemesterUrl();
+        ResponseEntity<List> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), List.class);
         return response.getBody();
     }
 
     @Override
     public SemesterDTO getById(Long id) {
-        String url = "http://localhost:8083/internal/semesters/" + id;
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth("admin", "admin");
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<SemesterDTO> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                entity,
-                SemesterDTO.class
-        );
-
+        String url = serviceURLs.getSemesterUrl() + "/" + id;
+        ResponseEntity<SemesterDTO> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), SemesterDTO.class);
         return response.getBody();
     }
 
     @Override
     public SemesterDTO add(SemesterDTO semester) {
-        String url = "http://localhost:8083/internal/semesters";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth("admin", "admin");
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<SemesterDTO> entity = new HttpEntity<>(semester, headers);
-
-        ResponseEntity<SemesterDTO> response = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                entity,
-                SemesterDTO.class
-        );
-
+        String url = serviceURLs.getSemesterUrl();
+        ResponseEntity<SemesterDTO> response = restClientUtil.exchange(url, HttpMethod.POST, restClientUtil.createHttpEntity(semester), SemesterDTO.class);
         return response.getBody();
     }
 
     @Override
     public SemesterDTO update(Long id, SemesterDTO semester) {
-        String url = "http://localhost:8083/internal/semesters/" + id;
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth("admin", "admin");
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<SemesterDTO> entity = new HttpEntity<>(semester, headers);
-
-        ResponseEntity<SemesterDTO> response = restTemplate.exchange(
-                url,
-                HttpMethod.PUT,
-                entity,
-                SemesterDTO.class
-        );
-
+        String url = serviceURLs.getSemesterUrl() + "/" + id;
+        ResponseEntity<SemesterDTO> response = restClientUtil.exchange(url, HttpMethod.PUT, restClientUtil.createHttpEntity(semester), SemesterDTO.class);
         return response.getBody();
     }
 
     @Override
     public ResponseEntity<?> deleteById(Long id) {
-        String url = "http://localhost:8083/internal/semesters/" + id;
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth("admin", "admin");
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<SemesterDTO> entity = new HttpEntity<>(headers);
-
-        return restTemplate.exchange(
-                url,
-                HttpMethod.DELETE,
-                entity,
-                SemesterDTO.class
-        );
+        String url = serviceURLs.getSemesterUrl() + "/" + id;
+        return restClientUtil.exchange(url, HttpMethod.DELETE, restClientUtil.createHttpEntity(null), SemesterDTO.class);
     }
 }

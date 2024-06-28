@@ -28,6 +28,17 @@ public class CourseController {
         return ResponseEntity.ok(courses);
     }
 
+    @PostMapping("/student/{id}")
+    public ResponseEntity<?> getCoursesByStudentId(@PathVariable Long id) {
+        try{
+            List<Course> courses = courseService.getCourseByStudentId(id);
+            return ResponseEntity.ok(courses);
+        }catch (Exception e) {
+            Map<String, String> message = Map.of("Message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getCourseById(@PathVariable Long id) {
         try{

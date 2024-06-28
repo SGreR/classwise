@@ -23,6 +23,10 @@ public class CourseService {
         return courseRepository.findById(id).orElseThrow();
     }
 
+    public List<Course> getCourseByStudentId(Long id) {
+        return courseRepository.findAll().stream().filter(course -> course.getStudentIds().contains(id)).toList();
+    }
+
     public Course addCourse(Course course) {
         return courseRepository.save(course);
     }

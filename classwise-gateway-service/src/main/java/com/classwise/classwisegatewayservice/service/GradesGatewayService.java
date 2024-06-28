@@ -2,103 +2,55 @@ package com.classwise.classwisegatewayservice.service;
 
 import com.classwise.classwisegatewayservice.interfaces.ServiceInterface;
 import com.classwise.classwisegatewayservice.model.GradesDTO;
+import com.classwise.classwisegatewayservice.util.RestClientUtil;
+import com.classwise.classwisegatewayservice.util.ServiceURLs;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
 @Service
 public class GradesGatewayService implements ServiceInterface<GradesDTO> {
-    
-    private final RestTemplate restTemplate;
 
-    public GradesGatewayService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    private final RestClientUtil restClientUtil;
+    private final ServiceURLs serviceURLs;
+
+    public GradesGatewayService(RestClientUtil restClientUtil, ServiceURLs serviceURLs) {
+        this.restClientUtil = restClientUtil;
+        this.serviceURLs = serviceURLs;
     }
 
     @Override
     public List<GradesDTO> getAll() {
-        String url = "http://localhost:8082/internal/grades";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth("admin", "admin");
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<List> response = restTemplate.exchange(
-                url,
-
-                HttpMethod.GET,
-                entity,
-                List.class
-        );
-
+        String url = serviceURLs.getGradesUrl();
+        ResponseEntity<List> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), List.class);
         return response.getBody();
     }
 
     @Override
     public GradesDTO getById(Long id) {
-        String url = "http://localhost:8082/internal/grades/" + id;
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth("admin", "admin");
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<GradesDTO> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                entity,
-                GradesDTO.class
-        );
-
+        String url = serviceURLs.getGradesUrl() + "/" + id;
+        ResponseEntity<GradesDTO> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), GradesDTO.class);
         return response.getBody();
     }
 
     @Override
     public GradesDTO add(GradesDTO grades) {
-        String url = "http://localhost:8082/internal/grades";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth("admin", "admin");
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<GradesDTO> entity = new HttpEntity<>(grades, headers);
-
-        ResponseEntity<GradesDTO> response = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                entity,
-                GradesDTO.class
-        );
-
+        String url = serviceURLs.getGradesUrl();
+        ResponseEntity<GradesDTO> response = restClientUtil.exchange(url, HttpMethod.POST, restClientUtil.createHttpEntity(grades), GradesDTO.class);
         return response.getBody();
     }
 
     @Override
     public GradesDTO update(Long id, GradesDTO grades) {
-        String url = "http://localhost:8082/internal/grades/" + id;
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth("admin", "admin");
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<GradesDTO> entity = new HttpEntity<>(grades, headers);
-
-        ResponseEntity<GradesDTO> response = restTemplate.exchange(
-                url,
-                HttpMethod.PUT,
-                entity,
-                GradesDTO.class
-        );
-
+        String url = serviceURLs.getGradesUrl() + "/" + id;
+        ResponseEntity<GradesDTO> response = restClientUtil.exchange(url, HttpMethod.PUT, restClientUtil.createHttpEntity(grades), GradesDTO.class);
         return response.getBody();
     }
 
     @Override
     public ResponseEntity<?> deleteById(Long id) {
-        String url = "http://localhost:8082/internal/grades/" + id;
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth("admin", "admin");
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<GradesDTO> entity = new HttpEntity<>(headers);
-
-        return restTemplate.exchange(
-                url,
-                HttpMethod.DELETE,
-                entity,
-                GradesDTO.class
-        );
+        String url = serviceURLs.getGradesUrl() + "/" + id;
+        return restClientUtil.exchange(url, HttpMethod.DELETE, restClientUtil.createHttpEntity(null), GradesDTO.class);
     }
 }
