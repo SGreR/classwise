@@ -13,11 +13,8 @@ import java.util.Arrays;
 public class ClassPerformance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="classperformance_id")
     private Long classPerformanceId;
-
-    @OneToOne
-    @JoinColumn(name = "grades_id", referencedColumnName = "gradesId")
-    private Grades grades;
     private int presenceGrade;
     private int homeworkGrade;
     private int participationGrade;

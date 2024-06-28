@@ -18,10 +18,7 @@ public class Grades {
     private Long courseId;
     @Enumerated(EnumType.STRING)
     private TestNumber testNumber;
-    @OneToOne(mappedBy = "grades", cascade = CascadeType.ALL)
-    private Skills skills;
-    @OneToOne(mappedBy = "grades", cascade = CascadeType.ALL)
-    private Speaking speaking;
-    @OneToOne(mappedBy = "grades", cascade = CascadeType.ALL)
-    private ClassPerformance classPerformance;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="abilities_id")
+    private Abilities abilities;
 }

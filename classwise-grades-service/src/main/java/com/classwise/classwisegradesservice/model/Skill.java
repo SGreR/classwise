@@ -8,22 +8,25 @@ import lombok.NoArgsConstructor;
 
 import java.util.Arrays;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Skills {
+@Entity
+public class Skill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long skillId;
+    public Long skillId;
     @Enumerated(EnumType.STRING)
     private SkillName skillName;
-    @OneToOne
-    @JoinColumn(name = "grades_id", referencedColumnName = "gradesId")
-    private Grades grades;
     private double teacherGrade = 0.0;
     private double testGrade = 0.0;
     private double averageGrade;
+
+    public Skill(SkillName skillName, double teacherGrade, double testGrade) {
+        this.skillName = skillName;
+        this.teacherGrade = teacherGrade;
+        this.testGrade = testGrade;
+    }
 
     @PrePersist
     @PreUpdate

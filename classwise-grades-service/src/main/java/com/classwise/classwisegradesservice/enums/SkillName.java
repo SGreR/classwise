@@ -7,7 +7,7 @@ public enum SkillName {
     READING(1),
     WRITING(2),
     LISTENING(3),
-    GRAMMAR(4);
+    USEOFENGLISH(4);
 
     private final int value;
 
