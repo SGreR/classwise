@@ -1,7 +1,7 @@
-package com.classwise.classwisestudentsservice.controller;
+package com.classwise.classwisesemesterservices.controller;
 
-import com.classwise.classwisestudentsservice.model.Student;
-import com.classwise.classwisestudentsservice.service.StudentService;
+import com.classwise.classwisesemesterservices.model.Semester;
+import com.classwise.classwisesemesterservices.service.SemesterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,55 +10,46 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/internal/students")
-public class StudentController {
+@RequestMapping("/internal/semesters")
+public class SemesterController {
+    
+    private final SemesterService semesterService;
 
-    private final StudentService studentService;
-
-    public StudentController(StudentService studentService) {
-        this.studentService = studentService;
+    public SemesterController(SemesterService semesterService) {
+        this.semesterService = semesterService;
     }
 
     @GetMapping
-    public ResponseEntity<List<Student>> getAllStudents() {
-        List<Student> students = studentService.getAllStudents();
-        if (students.isEmpty()) {
+    public ResponseEntity<List<Semester>> getAllSemesters() {
+        List<Semester> semesters = semesterService.getAllSemesters();
+        if (semesters.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-        return ResponseEntity.ok(students);
+        return ResponseEntity.ok(semesters);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getStudentById(@PathVariable Long id) {
+    public ResponseEntity<?> getSemesterById(@PathVariable Long id) {
         try {
-            Student student = studentService.getStudentById(id);
-            return ResponseEntity.ok(student);
+            Semester semester = semesterService.getSemesterById(id);
+            return ResponseEntity.ok(semester);
         } catch (Exception e) {
             Map<String, String> message = Map.of("Message", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
         }
     }
 
-    @PostMapping("/multiple")
-    public ResponseEntity<List<Student>> getStudentsByIds(@RequestBody List<Long> ids) {
-        List<Student> students = studentService.getStudentsByIds(ids);
-        if (students.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.ok(students);
-    }
-
     @PostMapping
-    public ResponseEntity<?> addStudent(@RequestBody Student student) {
-        studentService.addStudent(student);
+    public ResponseEntity<?> addSemester(@RequestBody Semester semester) {
+        semesterService.addSemester(semester);
         Map<String, String> message = Map.of("Message", "Criado com sucesso");
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateStudent(@PathVariable Long id, @RequestBody Student newStudent) {
+    public ResponseEntity<?> updateSemester(@PathVariable Long id, @RequestBody Semester newSemester) {
         try {
-            studentService.updateStudent(id, newStudent);
+            semesterService.updateSemester(id, newSemester);
             Map<String, String> message = Map.of("Message", "Atualizado com sucesso");
             return ResponseEntity.status(HttpStatus.CREATED).body(message);
         } catch (Exception e) {
@@ -68,9 +59,9 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteStudent(@PathVariable Long id) {
+    public ResponseEntity<?> deleteSemester(@PathVariable Long id) {
         try {
-            studentService.deleteStudent(id);
+            semesterService.deleteSemester(id);
             Map<String, String> message = Map.of("Message", "Deletado com sucesso");
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(message);
         } catch (Exception e) {

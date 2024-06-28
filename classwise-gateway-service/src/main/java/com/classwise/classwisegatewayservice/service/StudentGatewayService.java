@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -45,6 +46,23 @@ public class StudentGatewayService implements ServiceInterface<StudentDTO> {
                 StudentDTO.class
         );
         return response.getBody();
+    }
+
+    public List<StudentDTO> getMultipleByIds(List<Long> ids) {
+        String url = "http://localhost:8084/internal/students/multiple";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBasicAuth("admin", "admin");
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<List<Long>> entity = new HttpEntity<>(ids, headers);
+
+        ResponseEntity<StudentDTO[]> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                entity,
+                StudentDTO[].class
+        );
+
+        return Arrays.asList(response.getBody());
     }
 
     public StudentDTO add(StudentDTO student) {

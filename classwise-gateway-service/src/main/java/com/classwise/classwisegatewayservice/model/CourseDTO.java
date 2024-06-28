@@ -8,6 +8,7 @@ import java.util.List;
 public class CourseDTO {
     public Long courseId;
     private String courseName;
+    private boolean active;
     private Long semesterId;
     private SemesterDTO semester;
     private Long teacherId;

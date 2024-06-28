@@ -12,6 +12,6 @@ public class Semester {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long semesterId;
-    public int year;
+    public int schoolYear;
     public int semesterNumber;
 }

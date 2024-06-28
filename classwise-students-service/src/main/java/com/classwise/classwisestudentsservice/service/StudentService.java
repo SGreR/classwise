@@ -23,6 +23,10 @@ public class StudentService {
         return studentRepository.findById(id).orElseThrow();
     }
 
+    public List<Student> getStudentsByIds(List<Long> ids) {
+        return studentRepository.findAllById(ids);
+    }
+
     public Student addStudent(Student student) {
         return studentRepository.save(student);
     }

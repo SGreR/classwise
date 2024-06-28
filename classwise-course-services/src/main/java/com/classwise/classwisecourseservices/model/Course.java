@@ -18,6 +18,7 @@ public class Course {
     private String courseName;
     private Long semesterId;
     private Long teacherId;
+    private boolean active;
     @ElementCollection
     private List<Long> studentIds;
 }
