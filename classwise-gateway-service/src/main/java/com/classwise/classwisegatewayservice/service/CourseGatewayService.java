@@ -6,9 +6,12 @@ import com.classwise.classwisegatewayservice.model.CourseDTO;
 import com.classwise.classwisegatewayservice.model.SemesterDTO;
 import com.classwise.classwisegatewayservice.model.StudentDTO;
 import com.classwise.classwisegatewayservice.model.TeacherDTO;
+import com.classwise.classwisegatewayservice.util.MessageBuilderUtil;
 import com.classwise.classwisegatewayservice.util.RestClientUtil;
 import com.classwise.classwisegatewayservice.util.ServiceURLs;
 import org.springframework.http.*;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -19,10 +22,12 @@ public class CourseGatewayService implements ServiceInterface<CourseDTO> {
 
     private final RestClientUtil restClientUtil;
     private final ServiceURLs serviceURLs;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public CourseGatewayService(RestClientUtil restClientUtil, ServiceURLs serviceURLs) {
+    public CourseGatewayService(RestClientUtil restClientUtil, ServiceURLs serviceURLs, KafkaTemplate<String, String> kafkaTemplate) {
         this.restClientUtil = restClientUtil;
         this.serviceURLs = serviceURLs;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
@@ -61,21 +66,23 @@ public class CourseGatewayService implements ServiceInterface<CourseDTO> {
 
     @Override
     public CourseDTO add(CourseDTO course) {
-        String url = serviceURLs.getCourseUrl();
-        ResponseEntity<CourseDTO> response = restClientUtil.exchange(url, HttpMethod.POST, restClientUtil.createHttpEntity(course), CourseDTO.class);
-        return response.getBody();
+        Message message = MessageBuilderUtil.buildMessage("course-events", "create-course", course);
+        kafkaTemplate.send(message);
+        return course;
     }
 
     @Override
     public CourseDTO update(Long id, CourseDTO course) {
-        String url = serviceURLs.getCourseUrl() + "/" + id;
-        ResponseEntity<CourseDTO> response = restClientUtil.exchange(url, HttpMethod.PUT, restClientUtil.createHttpEntity(course), CourseDTO.class);
-        return response.getBody();
+        course.setCourseId(id);
+        Message message = MessageBuilderUtil.buildMessage("course-events", "update-course", course);
+        kafkaTemplate.send(message);
+        return course;
     }
 
     @Override
     public ResponseEntity<?> deleteById(Long id) {
-        String url = serviceURLs.getCourseUrl() + "/" + id;
-        return restClientUtil.exchange(url, HttpMethod.DELETE, restClientUtil.createHttpEntity(null), StudentDTO.class);
+        Message message = MessageBuilderUtil.buildMessage("course-events", "delete-course", id);
+        kafkaTemplate.send(message);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

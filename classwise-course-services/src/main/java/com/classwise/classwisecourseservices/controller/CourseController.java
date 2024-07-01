@@ -2,8 +2,15 @@ package com.classwise.classwisecourseservices.controller;
 
 import com.classwise.classwisecourseservices.model.Course;
 import com.classwise.classwisecourseservices.service.CourseService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,9 +21,40 @@ import java.util.Map;
 public class CourseController {
 
     private final CourseService courseService;
+    private final ObjectMapper objectMapper;
 
-    public CourseController(CourseService courseService) {
+
+    public CourseController(CourseService courseService, ObjectMapper objectMapper) {
         this.courseService = courseService;
+        this.objectMapper = objectMapper;
+    }
+
+    @KafkaListener(topics = "teacher-events",
+            groupId = "courses-group",
+            containerFactory = "courseListener")
+    public void
+    handleDeletedTeacherEvent(@Payload String payload, @Header("event-type") String eventType)
+    {
+        if("teacher-deleted".equals(eventType)){
+            courseService.removeTeacherFromCourses(payload);
+        }
+    }
+
+    @KafkaListener(topics = "course-events",
+            groupId = "courses-group",
+            containerFactory = "courseListener")
+    public void
+    handleCourseEvents(@Payload String payload, @Header("event-type") String eventType)
+    {
+        if("create-course".equals(eventType)){
+            addCourse(payload);
+        }
+        else if("update-course".equals(eventType)){
+            updateCourse(payload);
+        }
+        else if("delete-course".equals(eventType)){
+            deleteCourse(payload);
+        }
     }
 
     @GetMapping
@@ -50,34 +88,51 @@ public class CourseController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<?> addCourse(@RequestBody Course course) {
-        courseService.addCourse(course);
-        Map<String, String> message = Map.of("Message", "Criado com sucesso");
-        return ResponseEntity.status(HttpStatus.CREATED).body(message);
-    }
+    public void addCourse(String string) {
+        try {
+            JsonNode jsonNode = objectMapper.readTree(string);
+            if (jsonNode.isObject()) {
+                ObjectNode objectNode = (ObjectNode) jsonNode;
+                objectNode.remove("semester");
+                objectNode.remove("teacher");
+                objectNode.remove("students");
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateCourse(@PathVariable Long id, @RequestBody Course newCourse) {
-        try{
-            courseService.updateCourse(id, newCourse);
-            Map<String, String> message = Map.of("Message", "Atualizado com sucesso");
-            return ResponseEntity.status(HttpStatus.CREATED).body(message);
+                Course course = objectMapper.treeToValue(objectNode, Course.class);
+                courseService.addCourse(course);
+            } else {
+                throw new IllegalArgumentException("Invalid JSON format");
+            }
         } catch (Exception e) {
-            Map<String, String> message = Map.of("Message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+            throw new RuntimeException("Failed to add course: " + e.getMessage(), e);
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCourse(@PathVariable Long id) {
-        try{
-            courseService.deleteCourse(id);
-            Map<String, String> message = Map.of("Message", "Deletado com sucesso");
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(message);
+    public void updateCourse(String string) {
+        try {
+            JsonNode jsonNode = objectMapper.readTree(string);
+            if (jsonNode.isObject()) {
+                ObjectNode objectNode = (ObjectNode) jsonNode;
+                objectNode.remove("semester");
+                objectNode.remove("teacher");
+                objectNode.remove("students");
+
+                Course course = objectMapper.treeToValue(objectNode, Course.class);
+                courseService.updateCourse(course.getCourseId(), course);
+            } else {
+                throw new IllegalArgumentException("Invalid JSON format");
+            }
         } catch (Exception e) {
-            Map<String, String> message = Map.of("Message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+            throw new RuntimeException("Failed to add course: " + e.getMessage(), e);
+        }
+    }
+
+    public void deleteCourse(String string) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Long id = mapper.readValue(string, Long.class);
+            courseService.deleteCourse(id);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 }

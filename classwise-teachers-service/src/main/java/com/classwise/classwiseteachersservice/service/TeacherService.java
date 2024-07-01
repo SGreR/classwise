@@ -2,6 +2,9 @@ package com.classwise.classwiseteachersservice.service;
 
 import com.classwise.classwiseteachersservice.model.Teacher;
 import com.classwise.classwiseteachersservice.repository.TeacherRepository;
+import com.classwise.classwiseteachersservice.util.MessageBuilderUtil;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,9 +13,11 @@ import java.util.List;
 public class TeacherService {
 
     private final TeacherRepository teacherRepository;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public TeacherService(TeacherRepository teacherRepository) {
+    public TeacherService(TeacherRepository teacherRepository, KafkaTemplate<String, String> kafkaTemplate) {
         this.teacherRepository = teacherRepository;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     public List<Teacher> getAllTeachers() {
@@ -35,7 +40,13 @@ public class TeacherService {
 
     public void deleteTeacher(Long id) {
         teacherRepository.findById(id).orElseThrow();
-        teacherRepository.deleteById(id);
+        try{
+            teacherRepository.deleteById(id);
+            Message message = MessageBuilderUtil.buildMessage("teacher-events", "teacher-deleted", id);
+            kafkaTemplate.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 

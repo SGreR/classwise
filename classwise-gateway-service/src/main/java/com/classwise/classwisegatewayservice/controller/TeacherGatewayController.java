@@ -44,14 +44,14 @@ public class TeacherGatewayController {
     @PostMapping
     public ResponseEntity<MessagePayload> createTeacher(@RequestBody TeacherDTO teacher){
         teacherGatewayService.add(teacher);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new MessagePayload("Criado com sucesso"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MessagePayload("Requisição enviada com sucesso"));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<MessagePayload> updateTeacher(@PathVariable Long id, @RequestBody TeacherDTO teacher){
         try{
             teacherGatewayService.update(id, teacher);
-            return ResponseEntity.ok(new MessagePayload("Atualizado com sucesso"));
+            return ResponseEntity.ok(new MessagePayload("Requisição enviada com sucesso"));
         } catch(Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessagePayload(e.getMessage()));
         }
@@ -61,7 +61,7 @@ public class TeacherGatewayController {
     public ResponseEntity<MessagePayload> deleteTeacher(@PathVariable Long id){
         try{
             teacherGatewayService.deleteById(id);
-            return ResponseEntity.ok(new MessagePayload("Deletado com sucesso"));
+            return ResponseEntity.ok(new MessagePayload("Requisição enviada com sucesso"));
         } catch(Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessagePayload(e.getMessage()));
         }

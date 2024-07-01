@@ -2,8 +2,13 @@ package com.classwise.classwiseteachersservice.controller;
 
 import com.classwise.classwiseteachersservice.model.Teacher;
 import com.classwise.classwiseteachersservice.service.TeacherService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,8 +20,26 @@ public class TeacherController {
 
     private final TeacherService teacherService;
 
+
     public TeacherController(TeacherService teacherService) {
         this.teacherService = teacherService;
+    }
+
+    @KafkaListener(topics = "teacher-events",
+            groupId = "teachers-group",
+            containerFactory = "teacherListener")
+    public void
+    handleTeacherEvents(@Payload String payload, @Header("event-type") String eventType)
+    {
+        if("create-teacher".equals(eventType)){
+            addTeacher(payload);
+        }
+        else if("update-teacher".equals(eventType)){
+            updateTeacher(payload);
+        }
+        else if("delete-teacher".equals(eventType)){
+            deleteTeacher(payload);
+        }
     }
 
     @GetMapping
@@ -40,33 +63,36 @@ public class TeacherController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addTeacher(@RequestBody Teacher teacher) {
-        teacherService.addTeacher(teacher);
+    public void addTeacher(String string) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Teacher teacher = mapper.readValue(string, Teacher.class);
+            teacherService.addTeacher(teacher);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        /*teacherService.addTeacher(teacher);
         Map<String, String> message = Map.of("Message", "Criado com sucesso");
-        return ResponseEntity.status(HttpStatus.CREATED).body(message);
+        return ResponseEntity.status(HttpStatus.CREATED).body(message);*/
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateTeacher(@PathVariable Long id, @RequestBody Teacher newTeacher) {
+    public void updateTeacher(String string) {
         try {
-            teacherService.updateTeacher(id, newTeacher);
-            Map<String, String> message = Map.of("Message", "Atualizado com sucesso");
-            return ResponseEntity.status(HttpStatus.CREATED).body(message);
-        } catch (Exception e) {
-            Map<String, String> message = Map.of("Message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+            ObjectMapper mapper = new ObjectMapper();
+            Teacher teacher = mapper.readValue(string, Teacher.class);
+            teacherService.updateTeacher(teacher.getTeacherId(), teacher);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTeacher(@PathVariable Long id) {
+    public void deleteTeacher(String string) {
         try {
+            ObjectMapper mapper = new ObjectMapper();
+            Long id = mapper.readValue(string, Long.class);
             teacherService.deleteTeacher(id);
-            Map<String, String> message = Map.of("Message", "Deletado com sucesso");
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(message);
-        } catch (Exception e) {
-            Map<String, String> message = Map.of("Message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 }

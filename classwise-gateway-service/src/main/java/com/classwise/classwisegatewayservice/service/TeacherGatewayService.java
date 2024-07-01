@@ -2,11 +2,15 @@ package com.classwise.classwisegatewayservice.service;
 
 import com.classwise.classwisegatewayservice.interfaces.ServiceInterface;
 import com.classwise.classwisegatewayservice.model.TeacherDTO;
+import com.classwise.classwisegatewayservice.util.MessageBuilderUtil;
 import com.classwise.classwisegatewayservice.util.RestClientUtil;
 import com.classwise.classwisegatewayservice.util.ServiceURLs;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.messaging.Message;
 
 import java.util.List;
 
@@ -15,10 +19,12 @@ public class TeacherGatewayService implements ServiceInterface<TeacherDTO> {
 
     private final RestClientUtil restClientUtil;
     private final ServiceURLs serviceURLs;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public TeacherGatewayService(RestClientUtil restClientUtil, ServiceURLs serviceURLs) {
+    public TeacherGatewayService(RestClientUtil restClientUtil, ServiceURLs serviceURLs, KafkaTemplate<String, String> kafkaTemplate) {
         this.restClientUtil = restClientUtil;
         this.serviceURLs = serviceURLs;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
@@ -37,21 +43,25 @@ public class TeacherGatewayService implements ServiceInterface<TeacherDTO> {
 
     @Override
     public TeacherDTO add(TeacherDTO teacher) {
-        String url = serviceURLs.getTeachersUrl();
-        ResponseEntity<TeacherDTO> response = restClientUtil.exchange(url, HttpMethod.POST, restClientUtil.createHttpEntity(teacher), TeacherDTO.class);
-        return response.getBody();
+        Message message = MessageBuilderUtil.buildMessage("teacher-events", "create-teacher", teacher);
+        kafkaTemplate.send(message);
+        return teacher;
     }
 
     @Override
     public TeacherDTO update(Long id, TeacherDTO teacher) {
-        String url = serviceURLs.getTeachersUrl() + "/" + id;
-        ResponseEntity<TeacherDTO> response = restClientUtil.exchange(url, HttpMethod.PUT, restClientUtil.createHttpEntity(teacher), TeacherDTO.class);
-        return response.getBody();
+        teacher.setTeacherId(id);
+        Message message = MessageBuilderUtil.buildMessage("teacher-events", "update-teacher", teacher);
+        kafkaTemplate.send(message);
+        return teacher;
     }
 
     @Override
     public ResponseEntity<?> deleteById(Long id) {
-        String url = serviceURLs.getTeachersUrl() + "/" + id;
-        return restClientUtil.exchange(url, HttpMethod.DELETE, restClientUtil.createHttpEntity(null), TeacherDTO.class);
+        Message message = MessageBuilderUtil.buildMessage("teacher-events", "delete-teacher", id);
+        kafkaTemplate.send(message);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        /*String url = serviceURLs.getTeachersUrl() + "/" + id;
+        return restClientUtil.exchange(url, HttpMethod.DELETE, restClientUtil.createHttpEntity(null), TeacherDTO.class);*/
     }
 }
