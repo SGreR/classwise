@@ -1,14 +1,13 @@
 package com.classwise.classwisegatewayservice.model;
 
 import lombok.Data;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class StudentDTO {
     public Long studentId;
     private String studentName;
-    private List<Long> courseIds = new ArrayList<>();
-    private List<CourseDTO> courses = new ArrayList<>();
+    private Set<Long> courseIds = new HashSet<>();
+    private Set<CourseDTO> courses = new HashSet<>();
 }

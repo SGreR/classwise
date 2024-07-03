@@ -2,8 +2,15 @@ package com.classwise.classwisestudentsservice.controller;
 
 import com.classwise.classwisestudentsservice.model.Student;
 import com.classwise.classwisestudentsservice.service.StudentService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,9 +21,42 @@ import java.util.Map;
 public class StudentController {
 
     private final StudentService studentService;
+    private final ObjectMapper objectMapper;
 
-    public StudentController(StudentService studentService) {
+    public StudentController(StudentService studentService, ObjectMapper objectMapper) {
         this.studentService = studentService;
+        this.objectMapper = objectMapper;
+    }
+
+    @KafkaListener(topics = "student-events",
+            groupId = "students-group",
+            containerFactory = "studentListener")
+    public void
+    handleStudentEvents(@Payload String payload, @Header("event-type") String eventType)
+    {
+        if("create-student".equals(eventType)){
+            addStudent(payload);
+        }
+        else if("update-student".equals(eventType)){
+            updateStudent(payload);
+        }
+        else if("delete-student".equals(eventType)){
+            deleteStudent(payload);
+        }
+    }
+
+    @KafkaListener(topics = "course-events",
+            groupId = "students-group",
+            containerFactory = "studentListener")
+    public void
+    handleCourseEvents(@Payload String payload, @Header("event-type") String eventType)
+    {
+        if("course-deleted".equals(eventType)){
+            studentService.removeCourseFromStudents(payload);
+        }
+        else if("course-updated".equals(eventType)){
+            studentService.matchCoursesAndStudents(payload);
+        }
     }
 
     @GetMapping
@@ -48,34 +88,47 @@ public class StudentController {
         return ResponseEntity.ok(students);
     }
 
-    @PostMapping
-    public ResponseEntity<?> addStudent(@RequestBody Student student) {
-        studentService.addStudent(student);
-        Map<String, String> message = Map.of("Message", "Criado com sucesso");
-        return ResponseEntity.status(HttpStatus.CREATED).body(message);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateStudent(@PathVariable Long id, @RequestBody Student newStudent) {
+    public void addStudent(String string) {
         try {
-            studentService.updateStudent(id, newStudent);
-            Map<String, String> message = Map.of("Message", "Atualizado com sucesso");
-            return ResponseEntity.status(HttpStatus.CREATED).body(message);
+            JsonNode jsonNode = objectMapper.readTree(string);
+            if (jsonNode.isObject()) {
+                ObjectNode objectNode = (ObjectNode) jsonNode;
+                objectNode.remove("courses");
+
+                Student student = objectMapper.treeToValue(objectNode, Student.class);
+                studentService.addStudent(student);
+            } else {
+                throw new IllegalArgumentException("Invalid JSON format");
+            }
         } catch (Exception e) {
-            Map<String, String> message = Map.of("Message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+            throw new RuntimeException("Failed to add course: " + e.getMessage(), e);
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteStudent(@PathVariable Long id) {
+    public void updateStudent(String string) {
         try {
-            studentService.deleteStudent(id);
-            Map<String, String> message = Map.of("Message", "Deletado com sucesso");
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(message);
+            JsonNode jsonNode = objectMapper.readTree(string);
+            if (jsonNode.isObject()) {
+                ObjectNode objectNode = (ObjectNode) jsonNode;
+                objectNode.remove("courses");
+
+                Student student = objectMapper.treeToValue(objectNode, Student.class);
+                studentService.updateStudent(student.getStudentId(), student);
+            } else {
+                throw new IllegalArgumentException("Invalid JSON format");
+            }
         } catch (Exception e) {
-            Map<String, String> message = Map.of("Message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+            throw new RuntimeException("Failed to add course: " + e.getMessage(), e);
+        }
+    }
+
+    public void deleteStudent(String string) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Long id = mapper.readValue(string, Long.class);
+            studentService.deleteStudent(id);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 }

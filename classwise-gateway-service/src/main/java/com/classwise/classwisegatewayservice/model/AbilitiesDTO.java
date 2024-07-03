@@ -1,13 +1,12 @@
 package com.classwise.classwisegatewayservice.model;
 
 import lombok.Data;
-
-import java.util.List;
+import java.util.Set;
 
 @Data
 public class AbilitiesDTO {
     private Long abilitiesId;
-    private List<SkillDTO> skills;
+    private Set<SkillDTO> skills;
     private SpeakingDTO speaking;
     private ClassPerformanceDTO classPerformance;
 }

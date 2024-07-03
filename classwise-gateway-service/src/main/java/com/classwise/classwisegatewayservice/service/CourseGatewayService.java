@@ -13,9 +13,8 @@ import org.springframework.http.*;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CourseGatewayService implements ServiceInterface<CourseDTO> {
@@ -30,14 +29,12 @@ public class CourseGatewayService implements ServiceInterface<CourseDTO> {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    @Override
     public List<CourseDTO> getAll() {
         String url = serviceURLs.getCourseUrl();
         ResponseEntity<List> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), List.class);
         return response.getBody();
     }
 
-    @Override
     public CourseDTO getById(Long id) {
         String url = serviceURLs.getCourseUrl() + "/" + id;
         ResponseEntity<CourseDTO> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), CourseDTO.class);
@@ -48,8 +45,8 @@ public class CourseGatewayService implements ServiceInterface<CourseDTO> {
         CourseDTO course = getById(id);
         if(filter.isIncludeStudents()){
             String studentsUrl = serviceURLs.getStudentsUrl() + "/multiple";
-            ResponseEntity<StudentDTO[]> response = restClientUtil.exchange(studentsUrl, HttpMethod.POST, restClientUtil.createHttpEntity(course.getStudentIds()), StudentDTO[].class);
-            course.setStudents(Arrays.stream(response.getBody()).toList());
+            Set<StudentDTO> response = restClientUtil.exchange(studentsUrl, HttpMethod.POST, restClientUtil.createHttpEntity(course.getStudentIds()), Set.class).getBody();
+            course.setStudents(response);
         }
         if(filter.isIncludeTeacher()){
             String teachersURL = serviceURLs.getTeachersUrl() + "/" + course.getTeacherId();
@@ -64,7 +61,6 @@ public class CourseGatewayService implements ServiceInterface<CourseDTO> {
         return course;
     }
 
-    @Override
     public CourseDTO add(CourseDTO course) {
         Message message = MessageBuilderUtil.buildMessage("course-events", "create-course", course);
         kafkaTemplate.send(message);

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import static org.hibernate.internal.util.collections.CollectionHelper.listOf;
+import static org.hibernate.internal.util.collections.CollectionHelper.setOf;
 
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -15,13 +15,18 @@ public class DataLoader implements CommandLineRunner {
     private StudentRepository studentRepository;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
 
         Student student = new Student();
-        student.setStudentId(1L);
         student.setStudentName("Pedro");
-        student.setCourseIds(listOf(1L, 2L));
+        student.setCourseIds(setOf(1L, 2L, 3L));
 
         studentRepository.save(student);
+
+        Student student2 = new Student();
+        student2.setStudentName("Anna");
+        student2.setCourseIds(setOf(1L, 2L, 3L));
+
+        studentRepository.save(student2);
     }
 }

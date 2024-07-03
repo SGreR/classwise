@@ -2,8 +2,13 @@ package com.classwise.classwisesemesterservices.controller;
 
 import com.classwise.classwisesemesterservices.model.Semester;
 import com.classwise.classwisesemesterservices.service.SemesterService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +22,23 @@ public class SemesterController {
 
     public SemesterController(SemesterService semesterService) {
         this.semesterService = semesterService;
+    }
+
+    @KafkaListener(topics = "semester-events",
+            groupId = "semesters-group",
+            containerFactory = "semesterListener")
+    public void
+    handleSemesterEvents(@Payload String payload, @Header("event-type") String eventType)
+    {
+        if("create-semester".equals(eventType)){
+            addSemester(payload);
+        }
+        else if("update-semester".equals(eventType)){
+            updateSemester(payload);
+        }
+        else if("delete-semester".equals(eventType)){
+            deleteSemester(payload);
+        }
     }
 
     @GetMapping
@@ -39,34 +61,33 @@ public class SemesterController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<?> addSemester(@RequestBody Semester semester) {
-        semesterService.addSemester(semester);
-        Map<String, String> message = Map.of("Message", "Criado com sucesso");
-        return ResponseEntity.status(HttpStatus.CREATED).body(message);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateSemester(@PathVariable Long id, @RequestBody Semester newSemester) {
+    public void addSemester(String string) {
         try {
-            semesterService.updateSemester(id, newSemester);
-            Map<String, String> message = Map.of("Message", "Atualizado com sucesso");
-            return ResponseEntity.status(HttpStatus.CREATED).body(message);
-        } catch (Exception e) {
-            Map<String, String> message = Map.of("Message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+            ObjectMapper mapper = new ObjectMapper();
+            Semester semester = mapper.readValue(string, Semester.class);
+            semesterService.addSemester(semester);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteSemester(@PathVariable Long id) {
+    public void updateSemester(String string) {
         try {
+            ObjectMapper mapper = new ObjectMapper();
+            Semester semester = mapper.readValue(string, Semester.class);
+            semesterService.updateSemester(semester.getSemesterId(), semester);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteSemester(String string) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Long id = mapper.readValue(string, Long.class);
             semesterService.deleteSemester(id);
-            Map<String, String> message = Map.of("Message", "Deletado com sucesso");
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(message);
-        } catch (Exception e) {
-            Map<String, String> message = Map.of("Message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 }

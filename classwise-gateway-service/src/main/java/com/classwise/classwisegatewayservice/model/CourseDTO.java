@@ -1,8 +1,7 @@
 package com.classwise.classwisegatewayservice.model;
 
 import lombok.Data;
-
-import java.util.List;
+import java.util.Set;
 
 @Data
 public class CourseDTO {
@@ -13,7 +12,7 @@ public class CourseDTO {
     private SemesterDTO semester;
     private Long teacherId;
     private TeacherDTO teacher;
-    private List<Long> studentIds;
-    private List<StudentDTO> students;
+    private Set<Long> studentIds;
+    private Set<StudentDTO> students;
 
 }

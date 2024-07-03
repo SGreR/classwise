@@ -62,7 +62,6 @@ public class TeacherController {
         }
     }
 
-    @PostMapping
     public void addTeacher(String string) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -71,9 +70,6 @@ public class TeacherController {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        /*teacherService.addTeacher(teacher);
-        Map<String, String> message = Map.of("Message", "Criado com sucesso");
-        return ResponseEntity.status(HttpStatus.CREATED).body(message);*/
     }
 
     public void updateTeacher(String string) {

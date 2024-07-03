@@ -2,8 +2,13 @@ package com.classwise.classwisegradesservice.controller;
 
 import com.classwise.classwisegradesservice.model.Grades;
 import com.classwise.classwisegradesservice.service.GradesService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +22,45 @@ public class GradesController {
 
     public GradesController(GradesService gradesService) {
         this.gradesService = gradesService;
+    }
+
+    @KafkaListener(topics = "grades-events",
+            groupId = "grades-group",
+            containerFactory = "gradesListener")
+    public void
+    handleGradesEvents(@Payload String payload, @Header("event-type") String eventType)
+    {
+        if("create-grades".equals(eventType)){
+            addGrades(payload);
+        }
+        else if("update-grades".equals(eventType)){
+            updateGrades(payload);
+        }
+        else if("delete-grades".equals(eventType)){
+            deleteGrades(payload);
+        }
+    }
+
+    @KafkaListener(topics = "course-events",
+            groupId = "grades-group",
+            containerFactory = "gradesListener")
+    public void
+    handleCourseEvents(@Payload String payload, @Header("event-type") String eventType)
+    {
+        if("course-deleted".equals(eventType)){
+            gradesService.deleteGradesByCourseId(payload);
+        }
+    }
+
+    @KafkaListener(topics = "student-events",
+            groupId = "grades-group",
+            containerFactory = "gradesListener")
+    public void
+    handleStudentEvents(@Payload String payload, @Header("event-type") String eventType)
+    {
+        if("student-deleted".equals(eventType)){
+            gradesService.deleteGradesByStudentId(payload);
+        }
     }
 
     @GetMapping
@@ -39,34 +83,33 @@ public class GradesController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<?> addGrades(@RequestBody Grades grades) {
-        gradesService.addGrades(grades);
-        Map<String, String> message = Map.of("Message", "Criado com sucesso");
-        return ResponseEntity.status(HttpStatus.CREATED).body(message);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateGrades(@PathVariable Long id, @RequestBody Grades newGrades) {
+    public void addGrades(String string) {
         try {
-            gradesService.updateGrades(id, newGrades);
-            Map<String, String> message = Map.of("Message", "Atualizado com sucesso");
-            return ResponseEntity.status(HttpStatus.CREATED).body(message);
-        } catch (Exception e) {
-            Map<String, String> message = Map.of("Message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+            ObjectMapper mapper = new ObjectMapper();
+            Grades grades = mapper.readValue(string, Grades.class);
+            gradesService.addGrades(grades);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteGrades(@PathVariable Long id) {
+    public void updateGrades(String string) {
         try {
+            ObjectMapper mapper = new ObjectMapper();
+            Grades grades = mapper.readValue(string, Grades.class);
+            gradesService.updateGrades(grades.getGradesId(), grades);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteGrades(String string) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Long id = mapper.readValue(string, Long.class);
             gradesService.deleteGrades(id);
-            Map<String, String> message = Map.of("Message", "Deletado com sucesso");
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(message);
-        } catch (Exception e) {
-            Map<String, String> message = Map.of("Message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 }

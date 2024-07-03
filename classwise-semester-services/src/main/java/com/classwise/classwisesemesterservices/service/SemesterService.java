@@ -2,6 +2,9 @@ package com.classwise.classwisesemesterservices.service;
 
 import com.classwise.classwisesemesterservices.model.Semester;
 import com.classwise.classwisesemesterservices.repository.SemesterRepository;
+import com.classwise.classwisesemesterservices.util.MessageBuilderUtil;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,9 +13,11 @@ import java.util.List;
 public class SemesterService {
     
     private final SemesterRepository semesterRepository;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public SemesterService(SemesterRepository semesterRepository) {
+    public SemesterService(SemesterRepository semesterRepository, KafkaTemplate<String, String> kafkaTemplate) {
         this.semesterRepository = semesterRepository;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     public List<Semester> getAllSemesters() {
@@ -23,18 +28,24 @@ public class SemesterService {
         return semesterRepository.findById(id).orElseThrow();
     }
 
-    public Semester addSemester(Semester semester) {
-        return semesterRepository.save(semester);
+    public void addSemester(Semester semester) {
+        semesterRepository.save(semester);
     }
 
-    public Semester updateSemester(Long id, Semester newSemester) {
+    public void updateSemester(Long id, Semester newSemester) {
         Semester oldSemester = semesterRepository.findById(id).orElseThrow();
         newSemester.setSemesterId(oldSemester.getSemesterId());
-        return semesterRepository.save(newSemester);
+        semesterRepository.save(newSemester);
     }
 
     public void deleteSemester(Long id) {
         semesterRepository.findById(id).orElseThrow();
-        semesterRepository.deleteById(id);
+        try{
+            semesterRepository.deleteById(id);
+            Message message = MessageBuilderUtil.buildMessage("semester-events", "semester-deleted", id);
+            kafkaTemplate.send(message);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

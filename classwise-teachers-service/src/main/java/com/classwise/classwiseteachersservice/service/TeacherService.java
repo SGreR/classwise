@@ -28,14 +28,14 @@ public class TeacherService {
         return teacherRepository.findById(id).orElseThrow();
     }
 
-    public Teacher addTeacher(Teacher teacher) {
-        return teacherRepository.save(teacher);
+    public void addTeacher(Teacher teacher) {
+        teacherRepository.save(teacher);
     }
 
-    public Teacher updateTeacher(Long id, Teacher newTeacher) {
+    public void updateTeacher(Long id, Teacher newTeacher) {
         Teacher oldTeacher = teacherRepository.findById(id).orElseThrow();
         newTeacher.setTeacherId(oldTeacher.getTeacherId());
-        return teacherRepository.save(newTeacher);
+        teacherRepository.save(newTeacher);
     }
 
     public void deleteTeacher(Long id) {
@@ -45,7 +45,7 @@ public class TeacherService {
             Message message = MessageBuilderUtil.buildMessage("teacher-events", "teacher-deleted", id);
             kafkaTemplate.send(message);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }

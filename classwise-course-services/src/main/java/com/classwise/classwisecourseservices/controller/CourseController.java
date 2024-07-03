@@ -29,17 +29,6 @@ public class CourseController {
         this.objectMapper = objectMapper;
     }
 
-    @KafkaListener(topics = "teacher-events",
-            groupId = "courses-group",
-            containerFactory = "courseListener")
-    public void
-    handleDeletedTeacherEvent(@Payload String payload, @Header("event-type") String eventType)
-    {
-        if("teacher-deleted".equals(eventType)){
-            courseService.removeTeacherFromCourses(payload);
-        }
-    }
-
     @KafkaListener(topics = "course-events",
             groupId = "courses-group",
             containerFactory = "courseListener")
@@ -57,6 +46,42 @@ public class CourseController {
         }
     }
 
+    @KafkaListener(topics = "teacher-events",
+            groupId = "courses-group",
+            containerFactory = "courseListener")
+    public void
+    handleTeacherEvents(@Payload String payload, @Header("event-type") String eventType)
+    {
+        if("teacher-deleted".equals(eventType)){
+            courseService.removeTeacherFromCourses(payload);
+        }
+    }
+
+    @KafkaListener(topics = "student-events",
+            groupId = "courses-group",
+            containerFactory = "courseListener")
+    public void
+    handleStudentEvents(@Payload String payload, @Header("event-type") String eventType)
+    {
+        if("student-deleted".equals(eventType)){
+            courseService.removeStudentFromCourses(payload);
+        }
+        else if("student-updated".equals(eventType) || "student-created".equals(eventType)){
+            courseService.matchStudentsAndCourses(payload);
+        }
+    }
+
+    @KafkaListener(topics = "semester-events",
+            groupId = "courses-group",
+            containerFactory = "courseListener")
+    public void
+    handleSemesterEvents(@Payload String payload, @Header("event-type") String eventType)
+    {
+        if("semester-deleted".equals(eventType)){
+            courseService.removeSemesterFromCourses(payload);
+        }
+    }
+
     @GetMapping
     public ResponseEntity<List<Course>> getAllCourses() {
         List<Course> courses = courseService.getAllCourses();
@@ -69,7 +94,7 @@ public class CourseController {
     @PostMapping("/student/{id}")
     public ResponseEntity<?> getCoursesByStudentId(@PathVariable Long id) {
         try{
-            List<Course> courses = courseService.getCourseByStudentId(id);
+            List<Course> courses = courseService.getCoursesByStudentId(id);
             return ResponseEntity.ok(courses);
         }catch (Exception e) {
             Map<String, String> message = Map.of("Message", e.getMessage());

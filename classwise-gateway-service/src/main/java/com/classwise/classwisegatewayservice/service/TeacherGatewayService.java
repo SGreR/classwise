@@ -61,7 +61,5 @@ public class TeacherGatewayService implements ServiceInterface<TeacherDTO> {
         Message message = MessageBuilderUtil.buildMessage("teacher-events", "delete-teacher", id);
         kafkaTemplate.send(message);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        /*String url = serviceURLs.getTeachersUrl() + "/" + id;
-        return restClientUtil.exchange(url, HttpMethod.DELETE, restClientUtil.createHttpEntity(null), TeacherDTO.class);*/
     }
 }

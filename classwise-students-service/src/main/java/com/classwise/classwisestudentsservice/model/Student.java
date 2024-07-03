@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -16,7 +15,7 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long studentId;
     public String studentName;
-    @ElementCollection
-    public List<Long> courseIds;
+    @ElementCollection(fetch = FetchType.EAGER)
+    public Set<Long> courseIds;
 
 }

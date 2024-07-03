@@ -13,13 +13,17 @@ public class DataLoader implements CommandLineRunner {
     private TeacherRepository teacherRepository;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
 
         Teacher teacher = new Teacher();
-        teacher.setTeacherId(1L);
         teacher.setTeacherName("Carlos");
 
         teacherRepository.save(teacher);
+
+        Teacher teacher2 = new Teacher();
+        teacher2.setTeacherName("Alice");
+
+        teacherRepository.save(teacher2);
 
     }
 }

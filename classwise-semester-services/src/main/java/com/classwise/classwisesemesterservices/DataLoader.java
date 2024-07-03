@@ -13,13 +13,19 @@ public class DataLoader implements CommandLineRunner {
     private SemesterRepository semesterRepository;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
 
         Semester semester = new Semester();
         semester.setSemesterNumber(1);
         semester.setSchoolYear(2024);
 
         semesterRepository.save(semester);
+
+        Semester semester2 = new Semester();
+        semester2.setSemesterNumber(2);
+        semester2.setSchoolYear(2023);
+
+        semesterRepository.save(semester2);
 
     }
 }

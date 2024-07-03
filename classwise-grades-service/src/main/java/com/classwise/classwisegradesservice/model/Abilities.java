@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -15,7 +15,7 @@ public class Abilities {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long abilitiesId;
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Skill> skills;
+    private Set<Skill> skills;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="speaking_id")
     private Speaking speaking;
