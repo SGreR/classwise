@@ -1,5 +1,6 @@
 package com.classwise.classwisegatewayservice.controller;
 
+import com.classwise.classwisegatewayservice.filters.SemesterDTOFilter;
 import com.classwise.classwisegatewayservice.model.SemesterDTO;
 import com.classwise.classwisegatewayservice.payload.MessagePayload;
 import com.classwise.classwisegatewayservice.service.SemesterGatewayService;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/classwise/semesters")
 public class SemesterGatewayController {
     private final SemesterGatewayService semesterGatewayService;
@@ -28,9 +30,17 @@ public class SemesterGatewayController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getSemesterById(@PathVariable Long id){
+    public ResponseEntity<?> getSemesterById(@PathVariable Long id,
+                                             @RequestHeader(value = "Include-Courses", defaultValue = "false") boolean includeCourses){
         try{
-            SemesterDTO semester = semesterGatewayService.getById(id);
+            SemesterDTOFilter filter = new SemesterDTOFilter();
+            filter.setIncludeCourses(includeCourses);
+            SemesterDTO semester;
+            if(filter.isIncludeCourses()){
+                semester = semesterGatewayService.getSemesterWithCourses(id);
+            } else{
+                semester = semesterGatewayService.getById(id);
+            }
             return ResponseEntity.ok(semester);
         } catch (Exception e){
             Map<String, String> message = Map.of("Message", e.getMessage());

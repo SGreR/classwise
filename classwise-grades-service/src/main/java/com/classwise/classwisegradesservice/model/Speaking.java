@@ -23,17 +23,18 @@ public class Speaking {
     private int languageUse;
     private double averageGrade;
 
-    @PrePersist
-    @PreUpdate
-    private void calculateAverageGrade(){
+    public double getAverageGrade() {
+        return calculateAverageGrade();
+    }
+
+    private double calculateAverageGrade(){
         int[] grades = {productionAndFluencyGrade, spokenInteractionGrade, languageRangeGrade, accuracyGrade};
         double sumGrades = Arrays.stream(grades).sum();
         double weightedSum = sumGrades * 5;
 
         double multiplier = (5 - languageUse) * 0.1;
-        double finalScore = weightedSum - (weightedSum * multiplier);
 
-        this.averageGrade = finalScore / 10;
+        return weightedSum - (weightedSum * multiplier);
     }
 
 }

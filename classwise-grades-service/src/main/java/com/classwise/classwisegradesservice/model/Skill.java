@@ -26,11 +26,14 @@ public class Skill {
         this.skillName = skillName;
         this.teacherGrade = teacherGrade;
         this.testGrade = testGrade;
+        this.averageGrade = calculateAverageGrade();
     }
 
-    @PrePersist
-    @PreUpdate
-    private void calculateAverageGrade(){
-        this.averageGrade = Arrays.stream(new double[] {teacherGrade, testGrade}).average().orElse(0);
+    public double getAverageGrade() {
+        return calculateAverageGrade();
+    }
+
+    private double calculateAverageGrade(){
+        return Arrays.stream(new double[] {teacherGrade, testGrade}).average().orElse(0);
     }
 }

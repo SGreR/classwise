@@ -1,6 +1,7 @@
 package com.classwise.classwisegatewayservice.service;
 
 import com.classwise.classwisegatewayservice.interfaces.ServiceInterface;
+import com.classwise.classwisegatewayservice.model.CourseDTO;
 import com.classwise.classwisegatewayservice.model.TeacherDTO;
 import com.classwise.classwisegatewayservice.util.MessageBuilderUtil;
 import com.classwise.classwisegatewayservice.util.RestClientUtil;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.messaging.Message;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class TeacherGatewayService implements ServiceInterface<TeacherDTO> {
@@ -39,6 +41,19 @@ public class TeacherGatewayService implements ServiceInterface<TeacherDTO> {
         String url = serviceURLs.getTeachersUrl() + "/" + id;
         ResponseEntity<TeacherDTO> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), TeacherDTO.class);
         return response.getBody();
+    }
+
+    public TeacherDTO getTeacherWithCourses(Long id) {
+        String teachersUrl = serviceURLs.getTeachersUrl() + "/" + id;
+        TeacherDTO teacher = restClientUtil.exchange(teachersUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), TeacherDTO.class).getBody();
+
+        String coursesUrl = serviceURLs.getCourseUrl() + "/teacher/" + id;
+        Set<CourseDTO> courses = restClientUtil.exchange(coursesUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), Set.class).getBody();
+
+        teacher.setCourses(courses);
+
+        return teacher;
+
     }
 
     @Override

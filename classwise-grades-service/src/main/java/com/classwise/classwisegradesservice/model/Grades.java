@@ -18,7 +18,7 @@ public class Grades {
     private Long courseId;
     @Enumerated(EnumType.STRING)
     private TestNumber testNumber;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="abilities_id")
     private Abilities abilities;
 }

@@ -36,8 +36,7 @@ public class CourseService {
     }
 
     public List<Course> getCoursesByStudentId(Long id) {
-        List<Course> matchingCourses = courseRepository.findAll().stream().filter(course -> course.getStudentIds().contains(id)).toList();
-        return matchingCourses;
+        return courseRepository.findAll().stream().filter(course -> course.getStudentIds().contains(id)).toList();
     }
 
     public List<Course> getCoursesByTeacherId(Long id) {

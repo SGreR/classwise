@@ -19,7 +19,6 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { Nav } from "reactstrap";
-// javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
 
 import logo from "logo.svg";
@@ -31,7 +30,7 @@ function Sidebar(props) {
   const sidebar = React.useRef();
   // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName) => {
-    return location.pathname.indexOf(routeName) > -1 ? "active" : "";
+    return location.pathname === routeName ? "active" : "";
   };
   React.useEffect(() => {
     if (navigator.platform.indexOf("Win") > -1) {
@@ -54,18 +53,18 @@ function Sidebar(props) {
       >
         <div className="logo">
           <a
-              href="https://www.creative-tim.com"
+              href=""
               className="simple-text logo-mini"
           >
             <div className="logo-img">
-              <img src={logo} alt="react-logo" />
+              <img src={logo} alt="school-logo" />
             </div>
           </a>
           <a
-              href="https://www.creative-tim.com"
+              href=""
               className="simple-text logo-normal"
           >
-            Creative Tim
+            Classwise
           </a>
         </div>
         <div className="sidebar-wrapper" ref={sidebar}>

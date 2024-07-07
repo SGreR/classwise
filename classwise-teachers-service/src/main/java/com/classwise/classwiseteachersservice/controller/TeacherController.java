@@ -3,7 +3,9 @@ package com.classwise.classwiseteachersservice.controller;
 import com.classwise.classwiseteachersservice.model.Teacher;
 import com.classwise.classwiseteachersservice.service.TeacherService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -19,10 +21,13 @@ import java.util.Map;
 public class TeacherController {
 
     private final TeacherService teacherService;
+    private final ObjectMapper objectMapper;
 
 
-    public TeacherController(TeacherService teacherService) {
+
+    public TeacherController(TeacherService teacherService, ObjectMapper objectMapper) {
         this.teacherService = teacherService;
+        this.objectMapper = objectMapper;
     }
 
     @KafkaListener(topics = "teacher-events",
@@ -64,21 +69,35 @@ public class TeacherController {
 
     public void addTeacher(String string) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            Teacher teacher = mapper.readValue(string, Teacher.class);
-            teacherService.addTeacher(teacher);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            JsonNode jsonNode = objectMapper.readTree(string);
+            if (jsonNode.isObject()) {
+                ObjectNode objectNode = (ObjectNode) jsonNode;
+                objectNode.remove("courses");
+
+                Teacher teacher = objectMapper.readValue(string, Teacher.class);
+                teacherService.addTeacher(teacher);
+            } else {
+                throw new IllegalArgumentException("Invalid JSON format");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to add course: " + e.getMessage(), e);
         }
     }
 
     public void updateTeacher(String string) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            Teacher teacher = mapper.readValue(string, Teacher.class);
-            teacherService.updateTeacher(teacher.getTeacherId(), teacher);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            JsonNode jsonNode = objectMapper.readTree(string);
+            if (jsonNode.isObject()) {
+                ObjectNode objectNode = (ObjectNode) jsonNode;
+                objectNode.remove("courses");
+
+                Teacher teacher = objectMapper.readValue(string, Teacher.class);
+                teacherService.updateTeacher(teacher.getTeacherId(), teacher);
+            } else {
+                throw new IllegalArgumentException("Invalid JSON format");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to add course: " + e.getMessage(), e);
         }
     }
 

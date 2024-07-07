@@ -4,14 +4,17 @@ import com.classwise.classwisegatewayservice.filters.CourseDTOFilter;
 import com.classwise.classwisegatewayservice.model.CourseDTO;
 import com.classwise.classwisegatewayservice.payload.MessagePayload;
 import com.classwise.classwisegatewayservice.service.CourseGatewayService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/classwise/courses")
 public class CourseGatewayController {
 
@@ -22,8 +25,23 @@ public class CourseGatewayController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CourseDTO>> getAllCourses(){
+    public ResponseEntity<List<CourseDTO>> getAllCourses(
+            @RequestHeader(value = "Include-Students", defaultValue = "false") boolean includeStudents,
+            @RequestHeader(value = "Include-Teacher", defaultValue = "false") boolean includeTeacher,
+            @RequestHeader(value = "Include-Semester", defaultValue = "false") boolean includeSemester){
+        CourseDTOFilter filter = new CourseDTOFilter();
+        filter.setIncludeStudents(includeStudents);
+        filter.setIncludeTeacher(includeTeacher);
+        filter.setIncludeSemester(includeSemester);
+
         List<CourseDTO> courses = courseGatewayService.getAll();
+        if (filter.isIncludeStudents() || filter.isIncludeTeacher() || filter.isIncludeSemester()) {
+            List<CourseDTO> detailedCourses = new ArrayList<>();
+            for (CourseDTO course : courses) {
+                detailedCourses.add(courseGatewayService.getCourseWithDetails(course.getCourseId(), filter));
+            }
+            courses = detailedCourses;
+            }
         if (courses.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }

@@ -21,11 +21,13 @@ public class ClassPerformance {
     private int behaviorGrade;
     public double averageGrade;
 
-    @PrePersist
-    @PreUpdate
-    private void calculateAverageGrade(){
+    public double getAverageGrade() {
+        return calculateAverageGrade();
+    }
+
+    private double calculateAverageGrade(){
         int[] grades = {presenceGrade, homeworkGrade, participationGrade, behaviorGrade};
-        this.averageGrade = (double) Arrays.stream(grades).sum() / 2;
+        return (double) Arrays.stream(grades).sum() / 2 * 10;
     }
 
 }

@@ -1,5 +1,7 @@
 package com.classwise.classwisegatewayservice.controller;
 
+import com.classwise.classwisegatewayservice.filters.TeacherDTOFilter;
+import com.classwise.classwisegatewayservice.model.SemesterDTO;
 import com.classwise.classwisegatewayservice.model.TeacherDTO;
 import com.classwise.classwisegatewayservice.payload.MessagePayload;
 import com.classwise.classwisegatewayservice.service.TeacherGatewayService;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/classwise/teachers")
 public class TeacherGatewayController {
 
@@ -30,15 +33,22 @@ public class TeacherGatewayController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getTeacherById(@PathVariable Long id){
+    public ResponseEntity<?> getTeacherById(@PathVariable Long id,
+                                            @RequestHeader(value = "Include-Courses", defaultValue = "false") boolean includeCourses){
         try{
-            TeacherDTO teacher = teacherGatewayService.getById(id);
+            TeacherDTOFilter filter = new TeacherDTOFilter();
+            filter.setIncludeCourses(includeCourses);
+            TeacherDTO teacher;
+            if(filter.isIncludeCourses()){
+                teacher = teacherGatewayService.getTeacherWithCourses(id);
+            } else{
+                teacher = teacherGatewayService.getById(id);
+            }
             return ResponseEntity.ok(teacher);
         } catch (Exception e){
             Map<String, String> message = Map.of("Message", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
         }
-
     }
 
     @PostMapping

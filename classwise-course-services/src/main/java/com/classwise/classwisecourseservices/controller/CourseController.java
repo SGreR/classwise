@@ -102,6 +102,28 @@ public class CourseController {
         }
     }
 
+    @PostMapping("/semester/{id}")
+    public ResponseEntity<?> getCoursesBySemesterId(@PathVariable Long id) {
+        try{
+            List<Course> courses = courseService.getCoursesBySemesterId(id);
+            return ResponseEntity.ok(courses);
+        }catch (Exception e) {
+            Map<String, String> message = Map.of("Message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        }
+    }
+
+    @PostMapping("/teacher/{id}")
+    public ResponseEntity<?> getCoursesByTeacherId(@PathVariable Long id) {
+        try{
+            List<Course> courses = courseService.getCoursesByTeacherId(id);
+            return ResponseEntity.ok(courses);
+        }catch (Exception e) {
+            Map<String, String> message = Map.of("Message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getCourseById(@PathVariable Long id) {
         try{

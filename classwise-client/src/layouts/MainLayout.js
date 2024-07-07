@@ -23,6 +23,10 @@ import Navbar from "../components/Navbars/Navbar.js";
 import Sidebar from "../components/Sidebar/Sidebar.js";
 import FixedPlugin from "../components/FixedPlugin/FixedPlugin.js";
 import routes from "../routes.js";
+import StudentDetailsPage from "pages/Student/StudentDetailsPage";
+import CourseDetailsPage from "pages/Course/CourseDetailsPage";
+import GradesDetailsPage from "pages/Grades/GradesDetailsPage";
+import TeacherDetailsPage from "pages/Teacher/TeacherDetailsPage";
 
 var ps;
 
@@ -74,6 +78,10 @@ function Dashboard(props) {
               />
             );
           })}
+          <Route path="/students/:id" element={<StudentDetailsPage />} />
+          <Route path="/courses/:id" element={<CourseDetailsPage />} />
+          <Route path="/grades/:id" element={<GradesDetailsPage />} />
+          <Route path="/teachers/:id" element={<TeacherDetailsPage />} />
         </Routes>
       </div>
       <FixedPlugin

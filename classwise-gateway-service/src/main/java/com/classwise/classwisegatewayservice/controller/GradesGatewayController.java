@@ -1,5 +1,6 @@
 package com.classwise.classwisegatewayservice.controller;
 
+import com.classwise.classwisegatewayservice.filters.GradesDTOFilter;
 import com.classwise.classwisegatewayservice.model.GradesDTO;
 import com.classwise.classwisegatewayservice.payload.MessagePayload;
 import com.classwise.classwisegatewayservice.service.GradesGatewayService;
@@ -7,10 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/classwise/grades")
 public class GradesGatewayController {
 
@@ -21,8 +24,24 @@ public class GradesGatewayController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GradesDTO>> getAllGradess(){
+    public ResponseEntity<List<GradesDTO>> getAllGradess(
+            @RequestHeader(value = "Include-Student", defaultValue = "false") boolean includeStudent,
+            @RequestHeader(value = "Include-Course", defaultValue = "false") boolean includeCourse
+    ){
+        GradesDTOFilter filter = new GradesDTOFilter();
+        filter.setIncludeStudent(includeStudent);
+        filter.setIncludeCourse(includeCourse);
+
         List<GradesDTO> grades = gradesGatewayService.getAll();
+
+        if(filter.isIncludeCourse() || filter.isIncludeStudent()){
+            List<GradesDTO> detailedGrades = new ArrayList<>();
+            for(GradesDTO grade : grades){
+                GradesDTO detailedGrade = gradesGatewayService.getGradesWithDetails(grade.getGradesId(), filter);
+                detailedGrades.add(detailedGrade);
+            }
+            grades = detailedGrades;
+        }
         if (grades.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }

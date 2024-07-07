@@ -3,7 +3,9 @@ package com.classwise.classwisesemesterservices.controller;
 import com.classwise.classwisesemesterservices.model.Semester;
 import com.classwise.classwisesemesterservices.service.SemesterService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -19,9 +21,11 @@ import java.util.Map;
 public class SemesterController {
     
     private final SemesterService semesterService;
+    private final ObjectMapper objectMapper;
 
-    public SemesterController(SemesterService semesterService) {
+    public SemesterController(SemesterService semesterService, ObjectMapper objectMapper) {
         this.semesterService = semesterService;
+        this.objectMapper = objectMapper;
     }
 
     @KafkaListener(topics = "semester-events",
@@ -63,21 +67,35 @@ public class SemesterController {
 
     public void addSemester(String string) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            Semester semester = mapper.readValue(string, Semester.class);
-            semesterService.addSemester(semester);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            JsonNode jsonNode = objectMapper.readTree(string);
+            if (jsonNode.isObject()) {
+                ObjectNode objectNode = (ObjectNode) jsonNode;
+                objectNode.remove("courses");
+
+                Semester semester = objectMapper.readValue(string, Semester.class);
+                semesterService.addSemester(semester);
+            } else {
+                throw new IllegalArgumentException("Invalid JSON format");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to add course: " + e.getMessage(), e);
         }
     }
 
     public void updateSemester(String string) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            Semester semester = mapper.readValue(string, Semester.class);
-            semesterService.updateSemester(semester.getSemesterId(), semester);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            JsonNode jsonNode = objectMapper.readTree(string);
+            if (jsonNode.isObject()) {
+                ObjectNode objectNode = (ObjectNode) jsonNode;
+                objectNode.remove("courses");
+
+                Semester semester = objectMapper.readValue(string, Semester.class);
+                semesterService.updateSemester(semester.getSemesterId(), semester);
+            } else {
+                throw new IllegalArgumentException("Invalid JSON format");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to add course: " + e.getMessage(), e);
         }
     }
 

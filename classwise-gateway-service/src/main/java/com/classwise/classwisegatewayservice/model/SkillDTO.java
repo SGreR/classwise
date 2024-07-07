@@ -13,6 +13,6 @@ public class SkillDTO {
     private double averageGrade = calculateAverageGrade();
 
     private double calculateAverageGrade(){
-        return Arrays.stream(new double[] {teacherGrade, testGrade}).average().orElse(0);
+        return Arrays.stream(new double[] {teacherGrade, testGrade}).average().orElse(0) / 10;
     }
 }

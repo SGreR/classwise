@@ -1,6 +1,7 @@
 package com.classwise.classwisegatewayservice.service;
 
 import com.classwise.classwisegatewayservice.interfaces.ServiceInterface;
+import com.classwise.classwisegatewayservice.model.CourseDTO;
 import com.classwise.classwisegatewayservice.model.SemesterDTO;
 import com.classwise.classwisegatewayservice.util.MessageBuilderUtil;
 import com.classwise.classwisegatewayservice.util.RestClientUtil;
@@ -13,6 +14,7 @@ import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class SemesterGatewayService implements ServiceInterface<SemesterDTO> {
@@ -37,6 +39,19 @@ public class SemesterGatewayService implements ServiceInterface<SemesterDTO> {
         String url = serviceURLs.getSemesterUrl() + "/" + id;
         ResponseEntity<SemesterDTO> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), SemesterDTO.class);
         return response.getBody();
+    }
+
+    public SemesterDTO getSemesterWithCourses(Long id) {
+        String semestersUrl = serviceURLs.getSemesterUrl() + "/" + id;
+        SemesterDTO semester = restClientUtil.exchange(semestersUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), SemesterDTO.class).getBody();
+
+        String coursesUrl = serviceURLs.getCourseUrl() + "/semester/" + id;
+        Set<CourseDTO> courses = restClientUtil.exchange(coursesUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), Set.class).getBody();
+
+        semester.setCourses(courses);
+
+        return semester;
+
     }
 
     public SemesterDTO add(SemesterDTO semester) {

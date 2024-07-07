@@ -9,10 +9,14 @@ import com.classwise.classwisegatewayservice.model.TeacherDTO;
 import com.classwise.classwisegatewayservice.util.MessageBuilderUtil;
 import com.classwise.classwisegatewayservice.util.RestClientUtil;
 import com.classwise.classwisegatewayservice.util.ServiceURLs;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -23,7 +27,7 @@ public class CourseGatewayService implements ServiceInterface<CourseDTO> {
     private final ServiceURLs serviceURLs;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public CourseGatewayService(RestClientUtil restClientUtil, ServiceURLs serviceURLs, KafkaTemplate<String, String> kafkaTemplate) {
+    public CourseGatewayService(RestClientUtil restClientUtil, ServiceURLs serviceURLs, KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper  ) {
         this.restClientUtil = restClientUtil;
         this.serviceURLs = serviceURLs;
         this.kafkaTemplate = kafkaTemplate;
@@ -31,7 +35,7 @@ public class CourseGatewayService implements ServiceInterface<CourseDTO> {
 
     public List<CourseDTO> getAll() {
         String url = serviceURLs.getCourseUrl();
-        ResponseEntity<List> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), List.class);
+        ResponseEntity<List<CourseDTO>> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), new ParameterizedTypeReference<>() {});
         return response.getBody();
     }
 
