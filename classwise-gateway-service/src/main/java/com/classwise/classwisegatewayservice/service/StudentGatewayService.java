@@ -3,10 +3,13 @@ package com.classwise.classwisegatewayservice.service;
 import com.classwise.classwisegatewayservice.filters.StudentDTOFilter;
 import com.classwise.classwisegatewayservice.interfaces.ServiceInterface;
 import com.classwise.classwisegatewayservice.model.CourseDTO;
+import com.classwise.classwisegatewayservice.model.SemesterDTO;
 import com.classwise.classwisegatewayservice.model.StudentDTO;
+import com.classwise.classwisegatewayservice.model.TeacherDTO;
 import com.classwise.classwisegatewayservice.util.MessageBuilderUtil;
 import com.classwise.classwisegatewayservice.util.RestClientUtil;
 import com.classwise.classwisegatewayservice.util.ServiceURLs;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
@@ -43,7 +46,21 @@ public class StudentGatewayService implements ServiceInterface<StudentDTO> {
         StudentDTO studentDTO = getById(id);
         if(filter.isIncludeCourses()){
             String url = serviceURLs.getCourseUrl() + "/student/" + id;
-            Set<CourseDTO> courses = restClientUtil.exchange(url, HttpMethod.POST, restClientUtil.createHttpEntity(null), Set.class).getBody();
+            ResponseEntity<Set<CourseDTO>> response = restClientUtil.exchange(url, HttpMethod.POST, restClientUtil.createHttpEntity(null), new ParameterizedTypeReference<>() {});
+            Set<CourseDTO> courses = response.getBody();
+
+            if(courses != null) {
+                for (CourseDTO course : courses) {
+                    String teachersUrl = serviceURLs.getTeachersUrl() + "/" + course.getTeacherId();
+                    TeacherDTO teacher = restClientUtil.exchange(teachersUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), TeacherDTO.class).getBody();
+
+                    String semestersUrl = serviceURLs.getSemesterUrl() + "/" + course.getSemesterId();
+                    SemesterDTO semester = restClientUtil.exchange(semestersUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), SemesterDTO.class).getBody();
+
+                    course.setTeacher(teacher);
+                    course.setSemester(semester);
+                }
+            }
             studentDTO.setCourses(courses);
         }
         return studentDTO;

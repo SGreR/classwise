@@ -25,6 +25,7 @@ const InfoCard = ({itemType, item}) => {
     }, [itemType]);
 
     const buildStudentCard = () => {
+        console.log(item)
         setCardContent(
             <>
                 <h5 className="title">{item.studentName}</h5>
@@ -33,20 +34,24 @@ const InfoCard = ({itemType, item}) => {
                     <Row>
                         <Col className="ml-auto" lg="3" md="6" xs="6">
                             <h5>
-                                {item.studentId} <br/>
-                                <small>Id</small>
+                                <small>Id</small><br/>
+                                {item.studentId}
+
                             </h5>
                         </Col>
                         <Col className="ml-auto mr-auto" lg="4" md="6" xs="6">
                             <h5>
-                                {item.courses.length} <br/>
-                                <small>Courses</small>
+                                <small>Courses</small><br/>
+                                {item.courses.length}
+
                             </h5>
                         </Col>
-                        <Col className="mr-auto" lg="3">
+                    </Row>
+                    <Row>
+                        <Col className="mr-auto ml-auto">
                             <h5>
-                                {item.courses.find(course => course.active === true).courseName} <br/>
-                                <small>Current Course</small>
+                                <small>Current Course</small><br/>
+                                {item.courses.find(course => course.active === true)?.courseName || "No active course found"}
                             </h5>
                         </Col>
                     </Row>
@@ -64,20 +69,23 @@ const InfoCard = ({itemType, item}) => {
                     <Row>
                         <Col className="ml-auto" lg="3" md="6" xs="6">
                             <h5>
-                                {item.teacherId} <br/>
-                                <small>Id</small>
+                                <small>Id</small><br/>
+                                {item.teacherId}
+
                             </h5>
                         </Col>
                         <Col className="ml-auto mr-auto" lg="4" md="6" xs="6">
                             <h5>
-                                {item.courses.length} <br/>
-                                <small>Courses</small>
+                                <small>Courses</small><br/>
+                                {item.courses.length}
                             </h5>
                         </Col>
-                        <Col className="mr-auto" lg="3">
+                    </Row>
+                    <Row>
+                        <Col className="mr-auto ml-auto">
                             <h5>
-                                {item.courses.find(course => course.active === true).courseName} <br/>
-                                <small>Current Course</small>
+                                <small>Current Course</small><br/>
+                                {item.courses.find(course => course.active === true)?.courseName || "No active courses found"}
                             </h5>
                         </Col>
                     </Row>
@@ -95,20 +103,22 @@ const InfoCard = ({itemType, item}) => {
                     <Row>
                         <Col className="ml-auto" lg="3" md="6" xs="6">
                             <h5>
-                                {item.courseId} <br/>
-                                <small>Id</small>
+                                <small>Id</small><br/>
+                                {item.courseId}
+
                             </h5>
                         </Col>
                         <Col className="ml-auto mr-auto" lg="4" md="6" xs="6">
                             <h5>
-                                {item.semester.schoolYear}-{item.semester.semesterNumber} <br/>
-                                <small>Semester</small>
+                                <small>Semester</small><br/>
+                                {item.semester.schoolYear}-{item.semester.semesterNumber}
+
                             </h5>
                         </Col>
                         <Col className="mr-auto" lg="3">
                             <h5>
-                                {item.students.length} <br/>
-                                <small>Number of Students</small>
+                                <small>Number of Students</small><br/>
+                                {item.students.length}
                             </h5>
                         </Col>
                     </Row>
@@ -120,20 +130,20 @@ const InfoCard = ({itemType, item}) => {
     const buildSemesterCard = () => {
         setCardContent(
             <>
-                <h5 className="title">{item.semester.schoolYear}-{item.semester.semesterNumber}</h5>
+                <h5 className="title">{item.schoolYear}-{item.semesterNumber}</h5>
                 <hr/>
                 <div className="button-container">
                     <Row>
                         <Col className="ml-auto" lg="3" md="6" xs="6">
                             <h5>
-                                {item.semesterId} <br/>
-                                <small>Id</small>
+                                <small>Id</small><br/>
+                                {item.semesterId}
                             </h5>
                         </Col>
                         <Col className="ml-auto mr-auto" lg="4" md="6" xs="6">
                             <h5>
-                                {item.courses.length} <br/>
-                                <small>Courses</small>
+                                <small>Courses</small><br/>
+                                {item.courses.length}
                             </h5>
                         </Col>
                     </Row>

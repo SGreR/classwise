@@ -3,9 +3,11 @@ package com.classwise.classwisegatewayservice.service;
 import com.classwise.classwisegatewayservice.interfaces.ServiceInterface;
 import com.classwise.classwisegatewayservice.model.CourseDTO;
 import com.classwise.classwisegatewayservice.model.SemesterDTO;
+import com.classwise.classwisegatewayservice.model.TeacherDTO;
 import com.classwise.classwisegatewayservice.util.MessageBuilderUtil;
 import com.classwise.classwisegatewayservice.util.RestClientUtil;
 import com.classwise.classwisegatewayservice.util.ServiceURLs;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -46,7 +49,14 @@ public class SemesterGatewayService implements ServiceInterface<SemesterDTO> {
         SemesterDTO semester = restClientUtil.exchange(semestersUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), SemesterDTO.class).getBody();
 
         String coursesUrl = serviceURLs.getCourseUrl() + "/semester/" + id;
-        Set<CourseDTO> courses = restClientUtil.exchange(coursesUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), Set.class).getBody();
+        ResponseEntity<Set<CourseDTO>> response = restClientUtil.exchange(coursesUrl, HttpMethod.POST, restClientUtil.createHttpEntity(null), new ParameterizedTypeReference<>(){});
+        Set<CourseDTO> courses = response.getBody();
+
+        for (CourseDTO course : courses) {
+            String teachersUrl = serviceURLs.getTeachersUrl() + "/" + course.getTeacherId();
+            TeacherDTO teacher = restClientUtil.exchange(teachersUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), TeacherDTO.class).getBody();
+            course.setTeacher(teacher);
+        }
 
         semester.setCourses(courses);
 

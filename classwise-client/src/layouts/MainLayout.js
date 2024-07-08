@@ -27,6 +27,7 @@ import StudentDetailsPage from "pages/Student/StudentDetailsPage";
 import CourseDetailsPage from "pages/Course/CourseDetailsPage";
 import GradesDetailsPage from "pages/Grades/GradesDetailsPage";
 import TeacherDetailsPage from "pages/Teacher/TeacherDetailsPage";
+import SemesterDetailsPage from "../pages/Semester/SemesterDetailsPage";
 
 var ps;
 
@@ -82,6 +83,7 @@ function Dashboard(props) {
           <Route path="/courses/:id" element={<CourseDetailsPage />} />
           <Route path="/grades/:id" element={<GradesDetailsPage />} />
           <Route path="/teachers/:id" element={<TeacherDetailsPage />} />
+          <Route path="/semesters/:id" element={<SemesterDetailsPage />} />
         </Routes>
       </div>
       <FixedPlugin

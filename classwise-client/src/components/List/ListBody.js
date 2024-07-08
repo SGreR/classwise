@@ -1,7 +1,9 @@
 import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 const ListBody = ({itemType, itemList}) => {
     const[listBody, setListBody] = useState(null)
+    const navigate = useNavigate();
 
     useEffect(() => {
         switch (itemType){
@@ -26,11 +28,15 @@ const ListBody = ({itemType, itemList}) => {
         }
     }, [itemType, itemList]);
 
+    const handleRowClick = (path, id) => {
+        navigate(`${path}/${id}`);
+    };
+
     const buildStudentList = () => {
         setListBody(
             itemList.map(item => {
                 return (
-                    <tr>
+                    <tr key={item.studentId} onClick={() => handleRowClick('/students', item.studentId)}>
                         <td>{item.studentId}</td>
                         <td>{item.studentName}</td>
                     </tr>
@@ -43,7 +49,7 @@ const ListBody = ({itemType, itemList}) => {
         setListBody(
             itemList.map(item => {
                 return (
-                    <tr>
+                    <tr key={item.teacherId} onClick={() => handleRowClick('/teachers', item.teacherId)}>
                         <td>{item.teacherId}</td>
                         <td>{item.teacherName}</td>
                     </tr>
@@ -56,7 +62,7 @@ const ListBody = ({itemType, itemList}) => {
         setListBody(
             itemList.map(item => {
                 return (
-                    <tr>
+                    <tr key={item.semesterId} onClick={() => handleRowClick('/semesters', item.semesterId)}>
                         <td>{item.semesterId}</td>
                         <td>{item.schoolYear}-{item.semesterNumber}</td>
                     </tr>
@@ -66,11 +72,10 @@ const ListBody = ({itemType, itemList}) => {
     }
 
     const buildCourseList = () => {
-        console.log(itemList)
         setListBody(
             itemList.map(item => {
                 return (
-                    <tr>
+                    <tr key={item.courseId} onClick={() => handleRowClick('/courses', item.courseId)}>
                         <td>{item.courseId}</td>
                         <td>{item.courseName}</td>
                         <td>{item.semester.schoolYear}-{item.semester.semesterNumber}</td>
@@ -85,7 +90,7 @@ const ListBody = ({itemType, itemList}) => {
     const buildGradesList = () => {
         setListBody(itemList.map((item) => {
             return (
-                <tr>
+                <tr key={item.gradesId} onClick={() => handleRowClick('/grades', item.gradesId)}>
                     <td>{item.gradesId}</td>
                     <td>{item.course.courseName} {item.course.semester.schoolYear}-{item.course.semester.semesterNumber}</td>
                     <td>{item.testNumber}</td>
