@@ -57,12 +57,12 @@ public class CourseGatewayService implements ServiceInterface<CourseDTO> {
                 course.setStudents(response.getBody());
             }
         }
-        if(filter.isIncludeTeacher()){
+        if(filter.isIncludeTeacher() && course.getTeacherId() != null){
             String teachersURL = serviceURLs.getTeachersUrl() + "/" + course.getTeacherId();
             ResponseEntity<TeacherDTO> response = restClientUtil.exchange(teachersURL, HttpMethod.GET, restClientUtil.createHttpEntity(null), TeacherDTO.class);
             course.setTeacher(response.getBody());
         }
-        if(filter.isIncludeSemester()){
+        if(filter.isIncludeSemester() && course.getSemesterId() != null){
             String semestersURL = serviceURLs.getSemesterUrl() + "/" + course.getSemesterId();
             ResponseEntity<SemesterDTO> response = restClientUtil.exchange(semestersURL, HttpMethod.GET, restClientUtil.createHttpEntity(null), SemesterDTO.class);
             course.setSemester(response.getBody());

@@ -78,8 +78,8 @@ const ListBody = ({itemType, itemList}) => {
                     <tr key={item.courseId} onClick={() => handleRowClick('/courses', item.courseId)}>
                         <td>{item.courseId}</td>
                         <td>{item.courseName}</td>
-                        <td>{item.semester.schoolYear}-{item.semester.semesterNumber}</td>
-                        <td>{item.teacher.teacherName}</td>
+                        <td>{item.semester !== null ? `${item.semester.schoolYear}-${item.semester.semesterNumber}` : "Unassigned"}</td>
+                        <td>{item.teacher !== null ? item.teacher.teacherName : "Unassigned"}</td>
                         <td>{item.active ? "Active" : "Inactive"}</td>
                     </tr>
                 )
@@ -92,7 +92,8 @@ const ListBody = ({itemType, itemList}) => {
             return (
                 <tr key={item.gradesId} onClick={() => handleRowClick('/grades', item.gradesId)}>
                     <td>{item.gradesId}</td>
-                    <td>{item.course.courseName} {item.course.semester.schoolYear}-{item.course.semester.semesterNumber}</td>
+                    <td>{item.course ? item.course.courseName : "Unassigned"}</td>
+                    <td>{item.course.semester ? `${item.course.semester.schoolYear}-${item.course.semester.semesterNumber}` : "Unassigned"}</td>
                     <td>{item.testNumber}</td>
                     <td>{item.abilities.skills.find(skill => skill.skillName === 'READING')?.averageGrade || 0}%</td>
                     <td>{item.abilities.skills.find(skill => skill.skillName === 'WRITING')?.averageGrade || 0}%</td>

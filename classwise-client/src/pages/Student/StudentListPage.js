@@ -3,24 +3,14 @@ import {useEffect, useState} from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import {Card, Col} from "reactstrap";
 import axios from "axios";
+import {getAllStudents} from "../../components/APIService";
 
 const StudentListPage = () => {
     const[students, setStudents] = useState(null)
 
     useEffect(() => {
-        axios({
-            method: 'get',
-            url: 'http://localhost:8080/classwise/students',
-            auth: {
-                username: "admin",
-                password: "admin"
-            },
-            headers: {
-                'Include-Semester' : 'true',
-                'Include-Teacher' : 'true'
-            }
-
-        }).then(response => setStudents(response.data))
+        getAllStudents()
+            .then(response => setStudents(response.data))
     }, []);
 
     return (

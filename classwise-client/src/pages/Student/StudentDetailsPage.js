@@ -6,6 +6,7 @@ import StripedList from "components/List/StripedList";
 import InfoCard from "components/Cards/InfoCard";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
+import {deleteStudentById, getStudentById, putStudent} from "../../components/APIService";
 
 const StudentDetailsPage = () => {
     const {id} = useParams()
@@ -48,30 +49,13 @@ const StudentDetailsPage = () => {
     }
 
     const fetchStudent = () => {
-        axios({
-            method: 'get',
-            url: 'http://localhost:8080/classwise/students/' + id,
-            auth: {
-                username: "admin",
-                password: "admin"
-            },
-            headers: {
-                'Include-Courses': 'true',
-            }
-
-        }).then(response => setStudent(response.data))
+        getStudentById(id)
+            .then(response => setStudent(response.data))
+            .catch(error => console.error('Error fetching student:', error))
     }
 
     const updateStudent = (student) => {
-        axios({
-            method: 'put',
-            url: 'http://localhost:8080/classwise/students/' + id,
-            auth: {
-                username: "admin",
-                password: "admin"
-            },
-            data: student
-        })
+        putStudent(id, student)
             .then(response => {
                 setAlert(response.data.message)
                 fetchStudent()
@@ -80,14 +64,7 @@ const StudentDetailsPage = () => {
         }
 
     const deleteStudent = () => {
-        axios({
-            method: 'delete',
-            url: 'http://localhost:8080/classwise/students/' + id,
-            auth: {
-                username: "admin",
-                password: "admin"
-            },
-        })
+        deleteStudentById(id)
             .then(response => {
                 setAlert(response.data.message)
             })

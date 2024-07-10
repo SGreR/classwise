@@ -55,10 +55,12 @@ public class TeacherGatewayService implements ServiceInterface<TeacherDTO> {
 
         if(courses != null) {
             for (CourseDTO course : courses) {
-                String semestersUrl = serviceURLs.getSemesterUrl() + "/" + course.getSemesterId();
-                SemesterDTO semester = restClientUtil.exchange(semestersUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), SemesterDTO.class).getBody();
+                if(course.getSemesterId() != null){
+                    String semestersUrl = serviceURLs.getSemesterUrl() + "/" + course.getSemesterId();
+                    SemesterDTO semester = restClientUtil.exchange(semestersUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), SemesterDTO.class).getBody();
 
-                course.setSemester(semester);
+                    course.setSemester(semester);
+                }
             }
         }
 
