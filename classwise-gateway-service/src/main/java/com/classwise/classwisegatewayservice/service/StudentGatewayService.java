@@ -32,7 +32,7 @@ public class StudentGatewayService implements ServiceInterface<StudentDTO> {
 
     public List<StudentDTO> getAll() {
         String url = serviceURLs.getStudentsUrl();
-        ResponseEntity<List> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), List.class);
+        ResponseEntity<List<StudentDTO>> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), new ParameterizedTypeReference<>() {});
         return response.getBody();
     }
 

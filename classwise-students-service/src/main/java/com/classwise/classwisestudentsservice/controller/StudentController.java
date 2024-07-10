@@ -13,6 +13,7 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -83,7 +84,7 @@ public class StudentController {
     public ResponseEntity<List<Student>> getStudentsByIds(@RequestBody List<Long> ids) {
         List<Student> students = studentService.getStudentsByIds(ids);
         if (students.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
         }
         return ResponseEntity.ok(students);
     }

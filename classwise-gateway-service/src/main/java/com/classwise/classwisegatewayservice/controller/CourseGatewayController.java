@@ -35,6 +35,9 @@ public class CourseGatewayController {
         filter.setIncludeSemester(includeSemester);
 
         List<CourseDTO> courses = courseGatewayService.getAll();
+        if (courses == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
+        }
         if (filter.isIncludeStudents() || filter.isIncludeTeacher() || filter.isIncludeSemester()) {
             List<CourseDTO> detailedCourses = new ArrayList<>();
             for (CourseDTO course : courses) {
@@ -42,9 +45,6 @@ public class CourseGatewayController {
             }
             courses = detailedCourses;
             }
-        if (courses.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
         return ResponseEntity.ok(courses);
     }
 
@@ -76,14 +76,14 @@ public class CourseGatewayController {
     @PostMapping
     public ResponseEntity<MessagePayload> createCourse(@RequestBody CourseDTO course){
         courseGatewayService.add(course);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new MessagePayload("Criado com sucesso"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MessagePayload("Criado com sucesso!"));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<MessagePayload> updateCourse(@PathVariable Long id, @RequestBody CourseDTO course){
         try{
             courseGatewayService.update(id, course);
-            return ResponseEntity.ok(new MessagePayload("Atualizado com sucesso"));
+            return ResponseEntity.ok(new MessagePayload("Atualizado com sucesso!"));
         } catch(Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessagePayload(e.getMessage()));
         }
@@ -93,7 +93,7 @@ public class CourseGatewayController {
     public ResponseEntity<MessagePayload> deleteCourse(@PathVariable Long id){
         try{
             courseGatewayService.deleteById(id);
-            return ResponseEntity.ok(new MessagePayload("Deletado com sucesso"));
+            return ResponseEntity.ok(new MessagePayload("Deletado com sucesso!"));
         } catch(Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessagePayload(e.getMessage()));
         }

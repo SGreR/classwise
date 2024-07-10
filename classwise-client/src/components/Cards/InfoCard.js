@@ -1,8 +1,10 @@
-import {Card, CardBody, Col, Row} from "reactstrap";
+import {Button, Card, CardBody, Col, Row} from "reactstrap";
 import {useEffect, useState} from "react";
 
-const InfoCard = ({itemType, item}) => {
+const InfoCard = ({itemType, item: initialItem, onItemChange, onDelete}) => {
+    const[item, setItem] = useState(initialItem)
     const[cardContent, setCardContent] = useState(null)
+    const[editing, setEditing] = useState(false)
 
     useEffect(() => {
         switch (itemType){
@@ -22,15 +24,39 @@ const InfoCard = ({itemType, item}) => {
                 break;
 
         }
-    }, [itemType]);
+    }, [itemType, editing, item]);
+
+    const handleTextChange = (event, fieldName) => {
+        const value = event.target.value;
+        setItem((prevItem) => ({
+            ...prevItem,
+            [fieldName]: value
+        }))
+        onItemChange({ ...item, [fieldName]: value });
+    }
 
     const buildStudentCard = () => {
-        console.log(item)
         setCardContent(
             <>
-                <h5 className="title">{item.studentName}</h5>
-                <hr/>
+                <Row>
+                    <Col className="text-right">
+                        <Button color="primary" size={"sm"} onClick={() => setEditing(!editing)}>Edit</Button>
+                        <Button color="danger" size={"sm"} onClick={() => onDelete()}>Delete</Button>
+                    </Col>
+                </Row>
                 <div className="button-container">
+
+                    <Row>
+                        <Col className="mr-auto ml-auto">
+                            {editing ?
+                                (
+                                    <input type={"text"} value={item.studentName} onChange={(event) => handleTextChange(event, "studentName")}  />
+                                    ) : (
+                                    <h5 className="title">{item.studentName}</h5>
+                                )}
+                        </Col>
+                    </Row>
+                    <hr/>
                     <Row>
                         <Col className="ml-auto" lg="3" md="6" xs="6">
                             <h5>
@@ -117,8 +143,8 @@ const InfoCard = ({itemType, item}) => {
                         </Col>
                         <Col className="mr-auto" lg="3">
                             <h5>
-                                <small>Number of Students</small><br/>
-                                {item.students.length}
+                                <small>Teacher</small><br/>
+                                {item.teacher.teacherName}
                             </h5>
                         </Col>
                     </Row>

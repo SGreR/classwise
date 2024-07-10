@@ -1,6 +1,6 @@
-import {useParams} from "react-router-dom";
-import {Col, Row} from "reactstrap";
-import {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import {Alert, Button, Col, Row} from "reactstrap";
+import React, {useEffect, useState} from "react";
 import GraphCard from "components/Cards/GraphCard";
 import StripedList from "components/List/StripedList";
 import InfoCard from "components/Cards/InfoCard";
@@ -10,8 +10,44 @@ import axios from "axios";
 const StudentDetailsPage = () => {
     const {id} = useParams()
     const [student, setStudent] = useState(null)
+    const [alert, setAlert] = useState(null)
+    const [modified, setModified] = useState(false)
+    const [saved, setSaved] = useState(true)
+    const navigate = useNavigate()
 
     useEffect(() => {
+        fetchStudent();
+    }, []);
+
+    useEffect(() => {
+        if(modified && !saved){
+            setAlert("This item has been edited, don't forget to save")
+        }
+    }, [modified, saved]);
+
+    const handleItemChange = (newStudent) => {
+        setModified(true)
+        setSaved(false)
+        setStudent(newStudent)
+    }
+
+    const handleSave = () => {
+        setAlert(null)
+        setModified(false)
+        setSaved(true)
+        updateStudent(student)
+    }
+
+    const handleDelete = () => {
+        //open modal here for confirmation later on
+        deleteStudent()
+        const timeoutId = setTimeout(() => {
+            navigate('/students');
+            }, 3000);
+        return () => clearTimeout(timeoutId);
+    }
+
+    const fetchStudent = () => {
         axios({
             method: 'get',
             url: 'http://localhost:8080/classwise/students/' + id,
@@ -20,29 +56,73 @@ const StudentDetailsPage = () => {
                 password: "admin"
             },
             headers: {
-                'Include-Courses' : 'true',
+                'Include-Courses': 'true',
             }
 
         }).then(response => setStudent(response.data))
-    }, []);
+    }
+
+    const updateStudent = (student) => {
+        axios({
+            method: 'put',
+            url: 'http://localhost:8080/classwise/students/' + id,
+            auth: {
+                username: "admin",
+                password: "admin"
+            },
+            data: student
+        })
+            .then(response => {
+                setAlert(response.data.message)
+                fetchStudent()
+            })
+            .catch(error => console.error('Error saving student:', error));
+        }
+
+    const deleteStudent = () => {
+        axios({
+            method: 'delete',
+            url: 'http://localhost:8080/classwise/students/' + id,
+            auth: {
+                username: "admin",
+                password: "admin"
+            },
+        })
+            .then(response => {
+                setAlert(response.data.message)
+            })
+            .catch(error => console.error('Error saving student:', error));
+    }
 
     return (
         <>
             <div className="content">
+                {alert &&
+                    <Alert color="info">{alert}</Alert>
+                }
+                {
+                    (modified && !saved) && <Button color="success" size={"sm"} onClick={handleSave}>Save</Button>
+                }
                 {
                 student == null ?
                 (
                     <CircularProgress color={"secondary"}/>
                 ) : (
-                    <Row>
-                        <Col md="4">
-                            <InfoCard itemType={"students"} item={student}/>
-                            <GraphCard data={student.grades}/>
-                        </Col>
-                        <Col md="8">
-                            <StripedList itemType={"courses"} itemList={student.courses}/>
-                        </Col>
-                    </Row>
+                    <>
+                        <Row>
+                            <Col md="3">
+                                <InfoCard itemType={"students"} item={student} onItemChange={handleItemChange} onDelete={handleDelete}/>
+                            </Col>
+                            <Col md="9">
+                                <StripedList itemType={"courses"} itemList={student.courses}/>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col md="12">
+                                <GraphCard data={student.grades}/>
+                            </Col>
+                        </Row>
+                    </>
                 )}
             </div>
         </>

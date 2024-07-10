@@ -7,6 +7,8 @@ import com.classwise.classwisegatewayservice.service.SemesterGatewayService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +25,8 @@ public class SemesterGatewayController {
     @GetMapping
     public ResponseEntity<List<SemesterDTO>> getAllSemesters(){
         List<SemesterDTO> semesters = semesterGatewayService.getAll();
-        if (semesters.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        if (semesters == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
         }
         return ResponseEntity.ok(semesters);
     }
@@ -52,14 +54,14 @@ public class SemesterGatewayController {
     @PostMapping
     public ResponseEntity<MessagePayload> createSemester(@RequestBody SemesterDTO semester){
         semesterGatewayService.add(semester);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new MessagePayload("Criado com sucesso"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MessagePayload("Criado com sucesso!"));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<MessagePayload> updateSemester(@PathVariable Long id, @RequestBody SemesterDTO semester){
         try{
             semesterGatewayService.update(id, semester);
-            return ResponseEntity.ok(new MessagePayload("Atualizado com sucesso"));
+            return ResponseEntity.ok(new MessagePayload("Atualizado com sucesso!"));
         } catch(Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessagePayload(e.getMessage()));
         }
@@ -69,7 +71,7 @@ public class SemesterGatewayController {
     public ResponseEntity<MessagePayload> deleteSemester(@PathVariable Long id){
         try{
             semesterGatewayService.deleteById(id);
-            return ResponseEntity.ok(new MessagePayload("Deletado com sucesso"));
+            return ResponseEntity.ok(new MessagePayload("Deletado com sucesso!"));
         } catch(Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessagePayload(e.getMessage()));
         }

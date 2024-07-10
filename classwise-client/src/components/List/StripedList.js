@@ -1,4 +1,4 @@
-import {Card, CardBody, CardHeader, CardTitle, Col, Table} from "reactstrap";
+import {Button, Card, CardBody, CardHeader, CardTitle, Col, Row, Table} from "reactstrap";
 import ListHeaders from "./ListHeaders";
 import ListBody from "./ListBody";
 import {capitalize} from "../../utils/utils";
@@ -7,18 +7,43 @@ import CircularProgress from "@mui/material/CircularProgress";
 const StripedList = ({itemType, itemList}) => {
 
     return (
-        itemList == null ?
+        itemList === null ?
             (
                 <Col md="12">
                     <Card>
                         <CircularProgress color={"secondary"}/>
                     </Card>
                 </Col>
-            ): (
+            ) : itemList.length === 0 ? (
+                <Col md="12">
+                    <Card>
+                        <CardHeader>
+                            <Row>
+                                <Col>
+                                    <CardTitle tag="h4">{capitalize(itemType)} Table</CardTitle>
+                                </Col>
+                                <Col className="text-right">
+                                    <Button color="primary">+ Add {itemType}</Button>
+                                </Col>
+                            </Row>
+                        </CardHeader>
+                        <CardBody>
+                            <h5>No Items found</h5>
+                        </CardBody>
+                    </Card>
+                </Col>
+            ) : (
             <Col md="12">
                 <Card>
                     <CardHeader>
-                        <CardTitle tag="h4">{capitalize(itemType)} Table</CardTitle>
+                        <Row>
+                            <Col>
+                                <CardTitle tag="h4">{capitalize(itemType)} Table</CardTitle>
+                            </Col>
+                            <Col className="text-right">
+                                <Button color="primary">+ Add {itemType}</Button>
+                            </Col>
+                        </Row>
                     </CardHeader>
                     <CardBody>
                         <Table responsive>

@@ -36,14 +36,12 @@ const CourseDetailsPage = () => {
                 (
                     <CircularProgress color={"secondary"}/>
                 ) : (
-                    <Row>
-                        <Col md="4">
+                    <Col>
+                        <Col md="8">
                             <InfoCard itemType={"courses"} item={course}/>
                         </Col>
-                        <Col md="8">
-                            <StripedList itemType={"students"} itemList={course.students}/>
-                        </Col>
-                    </Row>
+                        <StripedList itemType={"students"} itemList={course.students}/>
+                    </Col>
                 )
                 }
             </div>

@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +26,8 @@ public class StudentGatewayController {
     @GetMapping
     public ResponseEntity<List<StudentDTO>> getAllStudents(){
         List<StudentDTO> students = studentGatewayService.getAll();
-        if (students.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        if (students == null) {
+            return ResponseEntity.ok(new ArrayList<>());
         }
         return ResponseEntity.ok(students);
     }
@@ -55,14 +56,14 @@ public class StudentGatewayController {
     @PostMapping
     public ResponseEntity<MessagePayload> createStudent(@RequestBody StudentDTO student){
         studentGatewayService.add(student);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new MessagePayload("Criado com sucesso"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MessagePayload("Criado com sucesso!"));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<MessagePayload> updateStudent(@PathVariable Long id, @RequestBody StudentDTO student){
         try{
             studentGatewayService.update(id, student);
-            return ResponseEntity.ok(new MessagePayload("Atualizado com sucesso"));
+            return ResponseEntity.ok(new MessagePayload("Atualizado com sucesso!"));
         } catch(Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessagePayload(e.getMessage()));
         }
@@ -72,9 +73,9 @@ public class StudentGatewayController {
     public ResponseEntity<MessagePayload> deleteStudent(@PathVariable Long id){
         ResponseEntity<?> response = studentGatewayService.deleteById(id);
         if(response.getStatusCode() == HttpStatus.NO_CONTENT){
-            return ResponseEntity.ok(new MessagePayload("Deletado com sucesso"));
+            return ResponseEntity.ok(new MessagePayload("Deletado com sucesso!"));
         } else if(response.getStatusCode() == HttpStatus.NOT_FOUND){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessagePayload("Objeto não encontrado"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessagePayload("Objeto não encontrado."));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }

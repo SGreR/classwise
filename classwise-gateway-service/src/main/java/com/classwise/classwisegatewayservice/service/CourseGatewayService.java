@@ -17,6 +17,7 @@ import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -49,8 +50,12 @@ public class CourseGatewayService implements ServiceInterface<CourseDTO> {
         CourseDTO course = getById(id);
         if(filter.isIncludeStudents()){
             String studentsUrl = serviceURLs.getStudentsUrl() + "/multiple";
-            Set<StudentDTO> response = restClientUtil.exchange(studentsUrl, HttpMethod.POST, restClientUtil.createHttpEntity(course.getStudentIds()), Set.class).getBody();
-            course.setStudents(response);
+            ResponseEntity<Set<StudentDTO>> response = restClientUtil.exchange(studentsUrl, HttpMethod.POST, restClientUtil.createHttpEntity(course.getStudentIds()), new ParameterizedTypeReference<>(){});
+            if(response.getBody() == null){
+                course.setStudents(new HashSet<>());
+            } else {
+                course.setStudents(response.getBody());
+            }
         }
         if(filter.isIncludeTeacher()){
             String teachersURL = serviceURLs.getTeachersUrl() + "/" + course.getTeacherId();
