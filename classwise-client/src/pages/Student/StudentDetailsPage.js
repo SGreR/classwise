@@ -1,12 +1,11 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {Alert, Button, Col, Row} from "reactstrap";
 import React, {useEffect, useState} from "react";
-import GraphCard from "components/Cards/GraphCard";
 import StripedList from "components/List/StripedList";
 import InfoCard from "components/Cards/InfoCard";
 import CircularProgress from "@mui/material/CircularProgress";
-import axios from "axios";
 import {deleteStudentById, getStudentById, putStudent} from "../../components/APIService";
+import ChartsCard from "../../components/Cards/ChartsCard";
 
 const StudentDetailsPage = () => {
     const {id} = useParams()
@@ -96,7 +95,7 @@ const StudentDetailsPage = () => {
                         </Row>
                         <Row>
                             <Col md="12">
-                                <GraphCard data={student.grades}/>
+                                <ChartsCard grades={student.grades}/>
                             </Col>
                         </Row>
                     </>

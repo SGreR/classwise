@@ -19,6 +19,7 @@ export const getStudentById = (id) => {
         },
         headers: {
             'Include-Courses': 'true',
+            'Include-Grades': 'true',
         }
     })
 }
@@ -133,7 +134,7 @@ export const getAllGrades = () => {
         },
         headers: {
             'Include-Course': 'true',
-            'Include-Students': 'true'
+            'Include-Student': 'true'
         }
     });
 };

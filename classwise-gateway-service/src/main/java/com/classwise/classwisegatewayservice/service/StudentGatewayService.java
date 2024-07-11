@@ -2,10 +2,7 @@ package com.classwise.classwisegatewayservice.service;
 
 import com.classwise.classwisegatewayservice.filters.StudentDTOFilter;
 import com.classwise.classwisegatewayservice.interfaces.ServiceInterface;
-import com.classwise.classwisegatewayservice.model.CourseDTO;
-import com.classwise.classwisegatewayservice.model.SemesterDTO;
-import com.classwise.classwisegatewayservice.model.StudentDTO;
-import com.classwise.classwisegatewayservice.model.TeacherDTO;
+import com.classwise.classwisegatewayservice.model.*;
 import com.classwise.classwisegatewayservice.util.MessageBuilderUtil;
 import com.classwise.classwisegatewayservice.util.RestClientUtil;
 import com.classwise.classwisegatewayservice.util.ServiceURLs;
@@ -14,8 +11,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 import org.springframework.http.*;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentGatewayService implements ServiceInterface<StudentDTO> {
@@ -43,7 +40,8 @@ public class StudentGatewayService implements ServiceInterface<StudentDTO> {
     }
 
     public StudentDTO getStudentWithDetails(Long id, StudentDTOFilter filter){
-        StudentDTO studentDTO = getById(id);
+        StudentDTO student = getById(id);
+
         if(filter.isIncludeCourses()){
             String url = serviceURLs.getCourseUrl() + "/student/" + id;
             ResponseEntity<Set<CourseDTO>> response = restClientUtil.exchange(url, HttpMethod.POST, restClientUtil.createHttpEntity(null), new ParameterizedTypeReference<>() {});
@@ -51,19 +49,59 @@ public class StudentGatewayService implements ServiceInterface<StudentDTO> {
 
             if(courses != null) {
                 for (CourseDTO course : courses) {
-                    String teachersUrl = serviceURLs.getTeachersUrl() + "/" + course.getTeacherId();
-                    TeacherDTO teacher = restClientUtil.exchange(teachersUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), TeacherDTO.class).getBody();
+                    if (course.getTeacherId() != null) {
+                        String teachersUrl = serviceURLs.getTeachersUrl() + "/" + course.getTeacherId();
+                        TeacherDTO teacher = restClientUtil.exchange(teachersUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), TeacherDTO.class).getBody();
+                        course.setTeacher(teacher);
+                    }
+                    if(course.getSemesterId() != null){
+                        String semestersUrl = serviceURLs.getSemesterUrl() + "/" + course.getSemesterId();
+                        SemesterDTO semester = restClientUtil.exchange(semestersUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), SemesterDTO.class).getBody();
+                        course.setSemester(semester);
+                    }
 
-                    String semestersUrl = serviceURLs.getSemesterUrl() + "/" + course.getSemesterId();
-                    SemesterDTO semester = restClientUtil.exchange(semestersUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), SemesterDTO.class).getBody();
 
-                    course.setTeacher(teacher);
-                    course.setSemester(semester);
                 }
             }
-            studentDTO.setCourses(courses);
+            student.setCourses(courses);
         }
-        return studentDTO;
+        if(filter.isIncludeGrades()){
+            String gradesUrl = serviceURLs.getGradesUrl() + "/student/" + id;
+            ResponseEntity<Set<GradesDTO>> response = restClientUtil.exchange(gradesUrl, HttpMethod.POST, restClientUtil.createHttpEntity(null), new ParameterizedTypeReference<>() {});
+            Set<GradesDTO> grades = response.getBody();
+
+            for(GradesDTO grade: grades){
+                if(grade.getCourseId() != null){
+                    grade.setCourse(
+                            student.getCourses().stream()
+                                    .filter(course -> course.getCourseId().equals(grade.getCourseId()))
+                                    .findFirst()
+                                    .orElse(null)
+                    );
+                }
+            }
+
+            List<GradesDTO> sortedGrades = grades.stream()
+                    .filter(grade -> grade.getCourse() != null && grade.getCourse().getSemester() != null)
+                    .collect(Collectors.groupingBy(
+                            grade -> grade.getCourse().getSemester().getSchoolYear(),
+                            TreeMap::new,
+                            Collectors.toList()
+                    ))
+                    .values()
+                    .stream()
+                    .flatMap(list -> list.stream().sorted(Comparator.comparingInt(grade -> grade.getCourse().getSemester().getSemesterNumber())))
+                    .collect(Collectors.toList());
+
+            sortedGrades.addAll(
+                    grades.stream()
+                            .filter(grade -> grade.getCourse() == null || grade.getCourse().getSemester() == null)
+                            .collect(Collectors.toList())
+            );
+
+            student.setGrades(new LinkedHashSet<>(sortedGrades));
+        }
+        return student;
     }
 
     public StudentDTO add(StudentDTO student) {

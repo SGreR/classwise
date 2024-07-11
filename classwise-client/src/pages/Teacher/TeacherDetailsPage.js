@@ -1,7 +1,6 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {Alert, Button, Col, Row} from "reactstrap";
 import InfoCard from "../../components/Cards/InfoCard";
-import GraphCard from "../../components/Cards/GraphCard";
 import StripedList from "../../components/List/StripedList";
 import React, {useEffect, useState} from "react";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -14,6 +13,7 @@ import {
     putCourse,
     putTeacher
 } from "../../components/APIService";
+import ChartsCard from "../../components/Cards/ChartsCard";
 
 const TeacherDetailsPage = () => {
     const {id} = useParams()
@@ -109,6 +109,7 @@ const TeacherDetailsPage = () => {
                                 </Col>
                                 <Col md="8">
                                     <StripedList itemType={"courses"} itemList={teacher.courses}/>
+                                    <ChartsCard/>
                                 </Col>
                             </Row>
                         )

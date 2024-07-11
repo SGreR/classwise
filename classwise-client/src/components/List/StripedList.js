@@ -46,7 +46,7 @@ const StripedList = ({itemType, itemList}) => {
                         </Row>
                     </CardHeader>
                     <CardBody>
-                        <Table responsive>
+                        <Table striped={true} responsive>
                             <thead className="text-primary">
                             <tr>
                                 <ListHeaders itemType={itemType}/>

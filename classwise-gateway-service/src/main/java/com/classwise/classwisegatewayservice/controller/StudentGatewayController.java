@@ -35,10 +35,12 @@ public class StudentGatewayController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getStudentById(
             @PathVariable Long id,
-            @RequestHeader(value = "Include-Courses", defaultValue = "false") boolean includeCourses){
+            @RequestHeader(value = "Include-Courses", defaultValue = "false") boolean includeCourses,
+            @RequestHeader(value = "Include-Grades", defaultValue = "false") boolean includeGrades){
         try{
             StudentDTOFilter filter = new StudentDTOFilter();
             filter.setIncludeCourses(includeCourses);
+            filter.setIncludeGrades(includeGrades);
             StudentDTO student;
             if(includeCourses){
                 student = studentGatewayService.getStudentWithDetails(id, filter);

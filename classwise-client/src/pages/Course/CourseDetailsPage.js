@@ -1,12 +1,12 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {Alert, Button, Col, Row} from "reactstrap";
 import InfoCard from "../../components/Cards/InfoCard";
-import GraphCard from "../../components/Cards/GraphCard";
 import StripedList from "../../components/List/StripedList";
 import React, {useEffect, useState} from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
 import {deleteCourseById, getCourseById, putCourse} from "../../components/APIService";
+import ChartsCard from "../../components/Cards/ChartsCard";
 
 const CourseDetailsPage = () => {
     const {id} = useParams()
@@ -89,7 +89,7 @@ const CourseDetailsPage = () => {
                             <InfoCard itemType={"courses"} item={course} onItemChange={handleItemChange} onDelete={handleDelete}/>
                         </Col>
                         <StripedList itemType={"students"} itemList={course.students}/>
-                        <GraphCard/>
+                        <ChartsCard/>
                     </Col>
                 )
                 }

@@ -92,8 +92,9 @@ const ListBody = ({itemType, itemList}) => {
             return (
                 <tr key={item.gradesId} onClick={() => handleRowClick('/grades', item.gradesId)}>
                     <td>{item.gradesId}</td>
+                    <td>{item.student ? item.student.studentName : "Unassigned"}</td>
                     <td>{item.course ? item.course.courseName : "Unassigned"}</td>
-                    <td>{item.course.semester ? `${item.course.semester.schoolYear}-${item.course.semester.semesterNumber}` : "Unassigned"}</td>
+                    <td>{item.course && item.course.semester ? `${item.course.semester.schoolYear}-${item.course.semester.semesterNumber}` : "Unassigned"}</td>
                     <td>{item.testNumber}</td>
                     <td>{item.abilities.skills.find(skill => skill.skillName === 'READING')?.averageGrade || 0}%</td>
                     <td>{item.abilities.skills.find(skill => skill.skillName === 'WRITING')?.averageGrade || 0}%</td>
