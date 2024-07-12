@@ -95,7 +95,7 @@ const StudentDetailsPage = () => {
                         </Row>
                         <Row>
                             <Col md="12">
-                                <ChartsCard grades={student.grades}/>
+                                <ChartsCard grades={student.grades} chartType={"student"}/>
                             </Col>
                         </Row>
                     </>

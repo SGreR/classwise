@@ -27,7 +27,7 @@ public class GradesService {
     }
 
     public List<Grades> getGradesByCourseId(Long courseId) {
-        return gradesRepository.findAll().stream().filter(grades -> grades.getCourseId().equals(courseId)).toList();
+        return gradesRepository.findAll().stream().filter(grades -> grades.getCourseId() != null && grades.getCourseId().equals(courseId)).toList();
     }
 
     public List<Grades> getGradesByStudentId(Long studentId) {

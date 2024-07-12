@@ -19,7 +19,6 @@ const StudentGradesChart = ({grades:data}) => {
     const [grades, setGrades] = useState(null)
 
     useEffect(() => {
-        console.log(data)
         setGrades(data);
     }, [data]);
 
@@ -95,7 +94,7 @@ const StudentGradesChart = ({grades:data}) => {
                     <YAxis domain={[0, 100]} />
                     <Tooltip formatter={formatTooltip} />
                     <Legend />
-                    <ReferenceLine y={60} label="Passing Grade" stroke="violet" strokeWidth={3}/>
+                    <ReferenceLine y={60} label={{ value: 'Passing Grade', position: 'insideTop', fill: 'black', fontWeight:'bold' }}  stroke="black" strokeDasharray="3 3" strokeWidth={3}/>
                     {gradesToShow()}
                 </LineChart>
             </ResponsiveContainer>

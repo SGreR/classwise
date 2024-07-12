@@ -49,14 +49,12 @@ const CourseCard = ({item:initialItem, editing, onItemChange}) => {
 
     const fetchSemesters = () => {
         getAllSemesters()
-            .then(response => {console.log(response.data)
-                setSemesters(response.data)})
+            .then(response => setSemesters(response.data))
     }
 
     const fetchTeachers = () => {
         getAllTeachers()
-            .then(response => {console.log(response.data)
-                setTeachers(response.data)})
+            .then(response => setTeachers(response.data))
     }
 
     return (

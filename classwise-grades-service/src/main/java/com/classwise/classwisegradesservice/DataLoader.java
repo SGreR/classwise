@@ -83,9 +83,9 @@ public class DataLoader implements CommandLineRunner {
         abilities2.setClassPerformance(classPerformance2);
 
         Grades grades2 = new Grades();
-        grades2.setStudentId(1L);
+        grades2.setStudentId(2L);
         grades2.setCourseId(1L);
-        grades2.setTestNumber(TestNumber.SECOND);
+        grades2.setTestNumber(TestNumber.FIRST);
         grades2.setAbilities(abilities2);
         gradesRepository.save(grades2);
 
@@ -115,8 +115,8 @@ public class DataLoader implements CommandLineRunner {
         abilities3.setClassPerformance(classPerformance3);
 
         Grades grades3 = new Grades();
-        grades3.setStudentId(1L);
-        grades3.setCourseId(2L);
+        grades3.setStudentId(3L);
+        grades3.setCourseId(1L);
         grades3.setTestNumber(TestNumber.FIRST);
         grades3.setAbilities(abilities3);
         gradesRepository.save(grades3);
@@ -147,9 +147,9 @@ public class DataLoader implements CommandLineRunner {
         abilities4.setClassPerformance(classPerformance4);
 
         Grades grades4 = new Grades();
-        grades4.setStudentId(1L);
-        grades4.setCourseId(2L);
-        grades4.setTestNumber(TestNumber.SECOND);
+        grades4.setStudentId(4L);
+        grades4.setCourseId(1L);
+        grades4.setTestNumber(TestNumber.FIRST);
         grades4.setAbilities(abilities4);
         gradesRepository.save(grades4);
 
@@ -179,8 +179,8 @@ public class DataLoader implements CommandLineRunner {
         abilities5.setClassPerformance(classPerformance5);
 
         Grades grades5 = new Grades();
-        grades5.setStudentId(1L);
-        grades5.setCourseId(3L);
+        grades5.setStudentId(5L);
+        grades5.setCourseId(1L);
         grades5.setTestNumber(TestNumber.FIRST);
         grades5.setAbilities(abilities5);
         gradesRepository.save(grades5);
@@ -211,9 +211,9 @@ public class DataLoader implements CommandLineRunner {
         abilities6.setClassPerformance(classPerformance6);
 
         Grades grades6 = new Grades();
-        grades6.setStudentId(1L);
-        grades6.setCourseId(3L);
-        grades6.setTestNumber(TestNumber.SECOND);
+        grades6.setStudentId(6L);
+        grades6.setCourseId(1L);
+        grades6.setTestNumber(TestNumber.FIRST);
         grades6.setAbilities(abilities6);
         gradesRepository.save(grades6);
 
@@ -243,8 +243,8 @@ public class DataLoader implements CommandLineRunner {
         abilities7.setClassPerformance(classPerformance7);
 
         Grades grades7 = new Grades();
-        grades7.setStudentId(1L);
-        grades6.setCourseId(3L);
+        grades7.setStudentId(7L);
+        grades6.setCourseId(1L);
         grades7.setTestNumber(TestNumber.FIRST);
         grades7.setAbilities(abilities7);
         gradesRepository.save(grades7);
@@ -275,11 +275,269 @@ public class DataLoader implements CommandLineRunner {
         abilities8.setClassPerformance(classPerformance8);
 
         Grades grades8 = new Grades();
-        grades8.setStudentId(1L);
-        grades6.setCourseId(3L);
-        grades8.setTestNumber(TestNumber.SECOND);
+        grades8.setStudentId(8L);
+        grades6.setCourseId(1L);
+        grades8.setTestNumber(TestNumber.FIRST);
         grades8.setAbilities(abilities8);
         gradesRepository.save(grades8);
+
+        // Ninth set of grades
+        Abilities abilities9 = new Abilities();
+        Set<Skill> skills9 = new HashSet<>();
+        skills9.add(new Skill(SkillName.READING, 75.0, 82.0));
+        skills9.add(new Skill(SkillName.WRITING, 70.0, 78.0));
+        skills9.add(new Skill(SkillName.LISTENING, 78.0, 85.0));
+        skills9.add(new Skill(SkillName.USEOFENGLISH, 65.0, 72.0));
+        abilities9.setSkills(skills9);
+
+        Speaking speaking9 = new Speaking();
+        speaking9.setProductionAndFluencyGrade(4);
+        speaking9.setSpokenInteractionGrade(4);
+        speaking9.setLanguageRangeGrade(3);
+        speaking9.setAccuracyGrade(4);
+        speaking9.setLanguageUse(3);
+
+        ClassPerformance classPerformance9 = new ClassPerformance();
+        classPerformance9.setPresenceGrade(3);
+        classPerformance9.setHomeworkGrade(3);
+        classPerformance9.setParticipationGrade(4);
+        classPerformance9.setBehaviorGrade(5);
+
+        abilities9.setSpeaking(speaking9);
+        abilities9.setClassPerformance(classPerformance9);
+
+        Grades grades9 = new Grades();
+        grades9.setStudentId(1L);
+        grades9.setCourseId(1L);
+        grades9.setTestNumber(TestNumber.SECOND);
+        grades9.setAbilities(abilities9);
+        gradesRepository.save(grades9);
+
+// Tenth set of grades
+        Abilities abilities10 = new Abilities();
+        Set<Skill> skills10 = new HashSet<>();
+        skills10.add(new Skill(SkillName.READING, 85.0, 90.0));
+        skills10.add(new Skill(SkillName.WRITING, 80.0, 85.0));
+        skills10.add(new Skill(SkillName.LISTENING, 88.0, 92.0));
+        skills10.add(new Skill(SkillName.USEOFENGLISH, 75.0, 80.0));
+        abilities10.setSkills(skills10);
+
+        Speaking speaking10 = new Speaking();
+        speaking10.setProductionAndFluencyGrade(5);
+        speaking10.setSpokenInteractionGrade(5);
+        speaking10.setLanguageRangeGrade(4);
+        speaking10.setAccuracyGrade(5);
+        speaking10.setLanguageUse(4);
+
+        ClassPerformance classPerformance10 = new ClassPerformance();
+        classPerformance10.setPresenceGrade(5);
+        classPerformance10.setHomeworkGrade(5);
+        classPerformance10.setParticipationGrade(5);
+        classPerformance10.setBehaviorGrade(5);
+
+        abilities10.setSpeaking(speaking10);
+        abilities10.setClassPerformance(classPerformance10);
+
+        Grades grades10 = new Grades();
+        grades10.setStudentId(2L);
+        grades10.setCourseId(1L);
+        grades10.setTestNumber(TestNumber.SECOND);
+        grades10.setAbilities(abilities10);
+        gradesRepository.save(grades10);
+
+// Eleventh set of grades
+        Abilities abilities11 = new Abilities();
+        Set<Skill> skills11 = new HashSet<>();
+        skills11.add(new Skill(SkillName.READING, 65.0, 70.0));
+        skills11.add(new Skill(SkillName.WRITING, 60.0, 65.0));
+        skills11.add(new Skill(SkillName.LISTENING, 68.0, 72.0));
+        skills11.add(new Skill(SkillName.USEOFENGLISH, 55.0, 60.0));
+        abilities11.setSkills(skills11);
+
+        Speaking speaking11 = new Speaking();
+        speaking11.setProductionAndFluencyGrade(3);
+        speaking11.setSpokenInteractionGrade(3);
+        speaking11.setLanguageRangeGrade(2);
+        speaking11.setAccuracyGrade(3);
+        speaking11.setLanguageUse(2);
+
+        ClassPerformance classPerformance11 = new ClassPerformance();
+        classPerformance11.setPresenceGrade(4);
+        classPerformance11.setHomeworkGrade(3);
+        classPerformance11.setParticipationGrade(4);
+        classPerformance11.setBehaviorGrade(5);
+
+        abilities11.setSpeaking(speaking11);
+        abilities11.setClassPerformance(classPerformance11);
+
+        Grades grades11 = new Grades();
+        grades11.setStudentId(3L);
+        grades11.setCourseId(1L);
+        grades11.setTestNumber(TestNumber.SECOND);
+        grades11.setAbilities(abilities11);
+        gradesRepository.save(grades11);
+
+// Twelfth set of grades
+        Abilities abilities12 = new Abilities();
+        Set<Skill> skills12 = new HashSet<>();
+        skills12.add(new Skill(SkillName.READING, 78.0, 85.0));
+        skills12.add(new Skill(SkillName.WRITING, 72.0, 78.0));
+        skills12.add(new Skill(SkillName.LISTENING, 75.0, 82.0));
+        skills12.add(new Skill(SkillName.USEOFENGLISH, 70.0, 75.0));
+        abilities12.setSkills(skills12);
+
+        Speaking speaking12 = new Speaking();
+        speaking12.setProductionAndFluencyGrade(4);
+        speaking12.setSpokenInteractionGrade(4);
+        speaking12.setLanguageRangeGrade(3);
+        speaking12.setAccuracyGrade(4);
+        speaking12.setLanguageUse(3);
+
+        ClassPerformance classPerformance12 = new ClassPerformance();
+        classPerformance12.setPresenceGrade(4);
+        classPerformance12.setHomeworkGrade(4);
+        classPerformance12.setParticipationGrade(4);
+        classPerformance12.setBehaviorGrade(4);
+
+        abilities12.setSpeaking(speaking12);
+        abilities12.setClassPerformance(classPerformance12);
+
+        Grades grades12 = new Grades();
+        grades12.setStudentId(4L);
+        grades12.setCourseId(1L);
+        grades12.setTestNumber(TestNumber.SECOND);
+        grades12.setAbilities(abilities12);
+        gradesRepository.save(grades12);
+
+// Thirteenth set of grades
+        Abilities abilities13 = new Abilities();
+        Set<Skill> skills13 = new HashSet<>();
+        skills13.add(new Skill(SkillName.READING, 82.0, 88.0));
+        skills13.add(new Skill(SkillName.WRITING, 78.0, 84.0));
+        skills13.add(new Skill(SkillName.LISTENING, 80.0, 85.0));
+        skills13.add(new Skill(SkillName.USEOFENGLISH, 75.0, 80.0));
+        abilities13.setSkills(skills13);
+
+        Speaking speaking13 = new Speaking();
+        speaking13.setProductionAndFluencyGrade(5);
+        speaking13.setSpokenInteractionGrade(5);
+        speaking13.setLanguageRangeGrade(4);
+        speaking13.setAccuracyGrade(5);
+        speaking13.setLanguageUse(4);
+
+        ClassPerformance classPerformance13 = new ClassPerformance();
+        classPerformance13.setPresenceGrade(5);
+        classPerformance13.setHomeworkGrade(5);
+        classPerformance13.setParticipationGrade(5);
+        classPerformance13.setBehaviorGrade(5);
+
+        abilities13.setSpeaking(speaking13);
+        abilities13.setClassPerformance(classPerformance13);
+
+        Grades grades13 = new Grades();
+        grades13.setStudentId(5L);
+        grades13.setCourseId(1L);
+        grades13.setTestNumber(TestNumber.SECOND);
+        grades13.setAbilities(abilities13);
+        gradesRepository.save(grades13);
+
+// Fourteenth set of grades
+        Abilities abilities14 = new Abilities();
+        Set<Skill> skills14 = new HashSet<>();
+        skills14.add(new Skill(SkillName.READING, 72.0, 78.0));
+        skills14.add(new Skill(SkillName.WRITING, 68.0, 75.0));
+        skills14.add(new Skill(SkillName.LISTENING, 70.0, 75.0));
+        skills14.add(new Skill(SkillName.USEOFENGLISH, 65.0, 70.0));
+        abilities14.setSkills(skills14);
+
+        Speaking speaking14 = new Speaking();
+        speaking14.setProductionAndFluencyGrade(4);
+        speaking14.setSpokenInteractionGrade(4);
+        speaking14.setLanguageRangeGrade(3);
+        speaking14.setAccuracyGrade(4);
+        speaking14.setLanguageUse(3);
+
+        ClassPerformance classPerformance14 = new ClassPerformance();
+        classPerformance14.setPresenceGrade(4);
+        classPerformance14.setHomeworkGrade(3);
+        classPerformance14.setParticipationGrade(4);
+        classPerformance14.setBehaviorGrade(5);
+
+        abilities14.setSpeaking(speaking14);
+        abilities14.setClassPerformance(classPerformance14);
+
+        Grades grades14 = new Grades();
+        grades14.setStudentId(6L);
+        grades14.setCourseId(1L);
+        grades14.setTestNumber(TestNumber.SECOND);
+        grades14.setAbilities(abilities14);
+        gradesRepository.save(grades14);
+
+// Fifteenth set of grades
+        Abilities abilities15 = new Abilities();
+        Set<Skill> skills15 = new HashSet<>();
+        skills15.add(new Skill(SkillName.READING, 78.0, 82.0));
+        skills15.add(new Skill(SkillName.WRITING, 72.0, 78.0));
+        skills15.add(new Skill(SkillName.LISTENING, 75.0, 80.0));
+        skills15.add(new Skill(SkillName.USEOFENGLISH, 70.0, 75.0));
+        abilities15.setSkills(skills15);
+
+        Speaking speaking15 = new Speaking();
+        speaking15.setProductionAndFluencyGrade(4);
+        speaking15.setSpokenInteractionGrade(4);
+        speaking15.setLanguageRangeGrade(3);
+        speaking15.setAccuracyGrade(4);
+        speaking15.setLanguageUse(3);
+
+        ClassPerformance classPerformance15 = new ClassPerformance();
+        classPerformance15.setPresenceGrade(3);
+        classPerformance15.setHomeworkGrade(3);
+        classPerformance15.setParticipationGrade(4);
+        classPerformance15.setBehaviorGrade(5);
+
+        abilities15.setSpeaking(speaking15);
+        abilities15.setClassPerformance(classPerformance15);
+
+        Grades grades15 = new Grades();
+        grades15.setStudentId(7L);
+        grades15.setCourseId(1L);
+        grades15.setTestNumber(TestNumber.SECOND);
+        grades15.setAbilities(abilities15);
+        gradesRepository.save(grades15);
+
+// Sixteenth set of grades
+        Abilities abilities16 = new Abilities();
+        Set<Skill> skills16 = new HashSet<>();
+        skills16.add(new Skill(SkillName.READING, 80.0, 85.0));
+        skills16.add(new Skill(SkillName.WRITING, 75.0, 80.0));
+        skills16.add(new Skill(SkillName.LISTENING, 78.0, 85.0));
+        skills16.add(new Skill(SkillName.USEOFENGLISH, 70.0, 75.0));
+        abilities16.setSkills(skills16);
+
+        Speaking speaking16 = new Speaking();
+        speaking16.setProductionAndFluencyGrade(4);
+        speaking16.setSpokenInteractionGrade(4);
+        speaking16.setLanguageRangeGrade(3);
+        speaking16.setAccuracyGrade(4);
+        speaking16.setLanguageUse(3);
+
+        ClassPerformance classPerformance16 = new ClassPerformance();
+        classPerformance16.setPresenceGrade(4);
+        classPerformance16.setHomeworkGrade(3);
+        classPerformance16.setParticipationGrade(4);
+        classPerformance16.setBehaviorGrade(5);
+
+        abilities16.setSpeaking(speaking16);
+        abilities16.setClassPerformance(classPerformance16);
+
+        Grades grades16 = new Grades();
+        grades16.setStudentId(8L);
+        grades16.setCourseId(1L);
+        grades16.setTestNumber(TestNumber.SECOND);
+        grades16.setAbilities(abilities16);
+        gradesRepository.save(grades16);
+
+
     }
 }
 

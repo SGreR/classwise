@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class CourseDTOFilter {
-    private boolean includeStudents = false;
-    private boolean includeTeacher = false;
-    private boolean includeSemester = false;
+    private boolean includeStudents;
+    private boolean includeTeacher;
+    private boolean includeSemester;
+    private boolean includeGrades;
 }

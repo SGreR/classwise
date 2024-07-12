@@ -2,10 +2,7 @@ package com.classwise.classwisegatewayservice.service;
 
 import com.classwise.classwisegatewayservice.filters.CourseDTOFilter;
 import com.classwise.classwisegatewayservice.interfaces.ServiceInterface;
-import com.classwise.classwisegatewayservice.model.CourseDTO;
-import com.classwise.classwisegatewayservice.model.SemesterDTO;
-import com.classwise.classwisegatewayservice.model.StudentDTO;
-import com.classwise.classwisegatewayservice.model.TeacherDTO;
+import com.classwise.classwisegatewayservice.model.*;
 import com.classwise.classwisegatewayservice.util.MessageBuilderUtil;
 import com.classwise.classwisegatewayservice.util.RestClientUtil;
 import com.classwise.classwisegatewayservice.util.ServiceURLs;
@@ -66,6 +63,13 @@ public class CourseGatewayService implements ServiceInterface<CourseDTO> {
             String semestersURL = serviceURLs.getSemesterUrl() + "/" + course.getSemesterId();
             ResponseEntity<SemesterDTO> response = restClientUtil.exchange(semestersURL, HttpMethod.GET, restClientUtil.createHttpEntity(null), SemesterDTO.class);
             course.setSemester(response.getBody());
+        }
+        if(filter.isIncludeGrades()){
+            String gradesURL = serviceURLs.getGradesUrl() + "/course/" + course.getCourseId();
+            ResponseEntity<Set<GradesDTO>> response = restClientUtil.exchange(gradesURL, HttpMethod.POST, restClientUtil.createHttpEntity(null), new ParameterizedTypeReference<>(){});
+            if(response.getBody() != null){
+                course.setGrades(new HashSet<>(response.getBody()));
+            }
         }
         return course;
     }

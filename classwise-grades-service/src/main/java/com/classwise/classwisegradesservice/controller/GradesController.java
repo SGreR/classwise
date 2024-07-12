@@ -94,6 +94,17 @@ public class GradesController {
         }
     }
 
+    @PostMapping("/course/{id}")
+    public ResponseEntity<?> getGradesByCourseId(@PathVariable Long id) {
+        try{
+            List<Grades> grades = gradesService.getGradesByCourseId(id);
+            return ResponseEntity.ok(grades);
+        }catch (Exception e) {
+            Map<String, String> message = Map.of("Message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        }
+    }
+
     public void addGrades(String string) {
         try {
             ObjectMapper mapper = new ObjectMapper();

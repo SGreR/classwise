@@ -15,7 +15,7 @@ const StripedList = ({itemType, itemList}) => {
                     </Card>
                 </Col>
             ) : itemList.length === 0 ? (
-                <Col md="12">
+                <>
                     <Card>
                         <CardHeader>
                             <Row>
@@ -31,9 +31,9 @@ const StripedList = ({itemType, itemList}) => {
                             <h5>No Items found</h5>
                         </CardBody>
                     </Card>
-                </Col>
+                </>
             ) : (
-            <Col md="12">
+            <>
                 <Card>
                     <CardHeader>
                         <Row>
@@ -59,7 +59,7 @@ const StripedList = ({itemType, itemList}) => {
                     </CardBody>
 
                 </Card>
-            </Col>
+            </>
         )
     )
 }

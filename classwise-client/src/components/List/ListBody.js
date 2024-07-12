@@ -96,13 +96,13 @@ const ListBody = ({itemType, itemList}) => {
                     <td>{item.course ? item.course.courseName : "Unassigned"}</td>
                     <td>{item.course && item.course.semester ? `${item.course.semester.schoolYear}-${item.course.semester.semesterNumber}` : "Unassigned"}</td>
                     <td>{item.testNumber}</td>
-                    <td>{item.abilities.skills.find(skill => skill.skillName === 'READING')?.averageGrade || 0}%</td>
-                    <td>{item.abilities.skills.find(skill => skill.skillName === 'WRITING')?.averageGrade || 0}%</td>
-                    <td>{item.abilities.skills.find(skill => skill.skillName === 'LISTENING')?.averageGrade || 0}%</td>
-                    <td>{item.abilities.skills.find(skill => skill.skillName === 'USEOFENGLISH')?.averageGrade || 0}%</td>
-                    <td>{item.abilities.speaking.averageGrade}%</td>
-                    <td>{item.abilities.classPerformance.averageGrade}%</td>
-                    <td>{item.abilities.finalGrade}%</td>
+                    <td>{Math.round(item.abilities.skills.find(skill => skill.skillName === 'READING')?.averageGrade) || 0}%</td>
+                    <td>{Math.round(item.abilities.skills.find(skill => skill.skillName === 'WRITING')?.averageGrade) || 0}%</td>
+                    <td>{Math.round(item.abilities.skills.find(skill => skill.skillName === 'LISTENING')?.averageGrade) || 0}%</td>
+                    <td>{Math.round(item.abilities.skills.find(skill => skill.skillName === 'USEOFENGLISH')?.averageGrade) || 0}%</td>
+                    <td>{Math.round(item.abilities.speaking.averageGrade)}%</td>
+                    <td>{Math.round(item.abilities.classPerformance.averageGrade)}%</td>
+                    <td>{Math.round(item.abilities.finalGrade)}%</td>
                 </tr>
             )
 

@@ -10,7 +10,7 @@ import ChartsCard from "../../components/Cards/ChartsCard";
 
 const CourseDetailsPage = () => {
     const {id} = useParams()
-    const[course, setCourse] = useState(null);
+    const [course, setCourse] = useState(null);
     const [alert, setAlert] = useState(null)
     const [modified, setModified] = useState(false)
     const [saved, setSaved] = useState(true)
@@ -84,13 +84,31 @@ const CourseDetailsPage = () => {
                 (
                     <CircularProgress color={"secondary"}/>
                 ) : (
-                    <Col>
-                        <Col md="5">
-                            <InfoCard itemType={"courses"} item={course} onItemChange={handleItemChange} onDelete={handleDelete}/>
-                        </Col>
-                        <StripedList itemType={"students"} itemList={course.students}/>
-                        <ChartsCard/>
-                    </Col>
+                    <>
+                        <Row>
+                            <Col md="5">
+                                <InfoCard itemType={"courses"} item={course} onItemChange={handleItemChange} onDelete={handleDelete}/>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col md="12">
+                                <StripedList itemType={"students"} itemList={course.students}/>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col md="12">
+                                <ChartsCard grades={course.grades} chartType={"course"}/>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col md="12">
+                                <StripedList itemType={"grades"} itemList={course.grades}/>
+                            </Col>
+                        </Row>
+                    </>
+
+
+
                 )
                 }
             </div>

@@ -14,5 +14,6 @@ public class CourseDTO {
     private TeacherDTO teacher;
     private Set<Long> studentIds;
     private Set<StudentDTO> students;
+    private Set<GradesDTO> grades;
 
 }

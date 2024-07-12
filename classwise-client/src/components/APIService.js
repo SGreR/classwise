@@ -64,7 +64,8 @@ export const getCourseById = (id) => {
         headers: {
             'Include-Students': 'true',
             'Include-Semester': 'true',
-            'Include-Teacher': 'true'
+            'Include-Teacher': 'true',
+            'Include-Grades': 'true'
         }
     });
 };
