@@ -64,7 +64,7 @@ const SemesterDetailsPage = () => {
         setSemester(newSemester)
     }
 
-    const handleSave = () => {
+    const handleUpdate = () => {
         setAlert(null)
         setModified(false)
         setSaved(true)
@@ -87,7 +87,7 @@ const SemesterDetailsPage = () => {
                     <Alert color="info">{alert}</Alert>
                 }
                 {
-                    (modified && !saved) && <Button color="success" size={"sm"} onClick={handleSave}>Save</Button>
+                    (modified && !saved) && <Button color="success" size={"sm"} onClick={handleUpdate}>Save</Button>
                 }
                 {
                     semester == null ?

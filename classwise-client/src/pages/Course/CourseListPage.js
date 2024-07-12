@@ -1,23 +1,39 @@
 import StripedList from "../../components/List/StripedList";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import CircularProgress from "@mui/material/CircularProgress";
-import {Card, Col} from "reactstrap";
+import {Alert, Card, Col} from "reactstrap";
 import axios from 'axios';
 import {getAllCourses} from "../../components/APIService";
 
 const CourseListPage = () => {
-    const[courses, setCourses] = useState(null)
+    const [courses, setCourses] = useState(null)
+    const [alert, setAlert] = useState(null)
 
     useEffect(() => {
+        fetchCourses()
+    }, []);
+
+    const fetchCourses = () => {
         getAllCourses()
             .then(response => setCourses(response.data))
-    }, []);
+    }
+
+    const handleItemSaved = () =>{
+        setAlert("Item salvo com sucesso!")
+        const timeoutId = setTimeout(() => {
+            setAlert(null);
+            fetchCourses();
+        }, 1500);
+        return () => clearTimeout(timeoutId);
+    }
 
     return (
         <>
             <div className="content">
-                {
-                courses == null ?
+                {alert &&
+                    <Alert color="info">{alert}</Alert>
+                }
+                {courses == null ?
                     (
                         <Col md="12">
                             <Card>
@@ -25,7 +41,7 @@ const CourseListPage = () => {
                             </Card>
                         </Col>
                     ) : (
-                <StripedList itemType={"courses"} itemList={courses}/>
+                <StripedList triggerAlert={handleItemSaved} itemType={"courses"} itemList={courses}/>
                 )}
             </div>
         </>

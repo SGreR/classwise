@@ -54,7 +54,7 @@ const CourseDetailsPage = () => {
         setCourse(newCourse)
     }
 
-    const handleSave = () => {
+    const handleUpdate = () => {
         setAlert(null)
         setModified(false)
         setSaved(true)
@@ -62,7 +62,6 @@ const CourseDetailsPage = () => {
     }
 
     const handleDelete = () => {
-        //open modal here for confirmation later on
         deleteCourse()
         const timeoutId = setTimeout(() => {
             navigate('/courses');
@@ -77,7 +76,7 @@ const CourseDetailsPage = () => {
                     <Alert color="info">{alert}</Alert>
                 }
                 {
-                    (modified && !saved) && <Button color="success" size={"sm"} onClick={handleSave}>Save</Button>
+                    (modified && !saved) && <Button color="success" size={"sm"} onClick={handleUpdate}>Save</Button>
                 }
                 {
                     course == null ?

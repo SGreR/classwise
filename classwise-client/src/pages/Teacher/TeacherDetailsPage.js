@@ -73,7 +73,7 @@ const TeacherDetailsPage = () => {
         setTeacher(newTeacher)
     }
 
-    const handleSave = () => {
+    const handleUpdate = () => {
         setAlert(null)
         setModified(false)
         setSaved(true)
@@ -96,7 +96,7 @@ const TeacherDetailsPage = () => {
                         <Alert color="info">{alert}</Alert>
                     }
                     {
-                        (modified && !saved) && <Button color="success" size={"sm"} onClick={handleSave}>Save</Button>
+                        (modified && !saved) && <Button color="success" size={"sm"} onClick={handleUpdate}>Save</Button>
                     }
                     {
                         teacher == null ?

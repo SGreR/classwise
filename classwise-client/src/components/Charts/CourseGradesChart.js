@@ -64,7 +64,9 @@ const CourseGradesChart = ({grades:initialData}) => {
 
     useEffect(() => {
         console.log(initialData)
-        setGrades(filterData(initialData))
+        if(initialData.length > 0){
+            setGrades(filterData(initialData))
+        }
     }, [initialData]);
 
     const filterData = (data) => {
@@ -184,7 +186,6 @@ const CourseGradesChart = ({grades:initialData}) => {
             value: grades[testNumber][chartType][threshold],
             fill: COLORS[threshold]
         }));
-        console.log(data)
 
         return (
             <PieChart width="100%">
@@ -270,16 +271,28 @@ const CourseGradesChart = ({grades:initialData}) => {
                             <Tab value="Class Performance" label="Class Performance" />
                         </Tabs>
                     </Col>
-                    <Col md="5">
-                        <ResponsiveContainer width="100%" >
-                            {grades != null ? pieChart() : <></>}
-                        </ResponsiveContainer>
-                    </Col>
-                    <Col md="5">
-                        <ResponsiveContainer width="100%" >
-                            {grades != null ? barChart() : <></>}
-                        </ResponsiveContainer>
-                    </Col>
+                    {grades != null ?
+                    (
+                        <>
+                            <Col md="5">
+                                <ResponsiveContainer width="100%" >
+                                    {pieChart()}
+                                </ResponsiveContainer>
+                            </Col>
+                            <Col md="5">
+                                <ResponsiveContainer width="100%" >
+                                    {barChart()}
+                                </ResponsiveContainer>
+                            </Col>
+                        </>
+                    ) : (
+                        <Col className="d-flex justify-content-center align-items-center" md="10">
+                            <h1>No Grades to Show</h1>
+                        </Col>
+                    )
+                    }
+
+
                 </Row>
         </>
     )

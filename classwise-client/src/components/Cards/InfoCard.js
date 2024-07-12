@@ -4,6 +4,7 @@ import StudentCard from "./StudentCard";
 import CourseCard from "./CourseCard";
 import TeacherCard from "./TeacherCard";
 import SemesterCard from "./SemesterCard";
+import ModalCard from "../Modal/ModalCard";
 
 const InfoCard = ({itemType, item: initialItem, onItemChange, onDelete}) => {
     const[item, setItem] = useState(initialItem)
@@ -42,7 +43,7 @@ const InfoCard = ({itemType, item: initialItem, onItemChange, onDelete}) => {
                 <Row>
                     <Col className="text-right">
                         <Button color="primary" size={"sm"} onClick={() => setEditing(!editing)}>Edit</Button>
-                        <Button color="danger" size={"sm"} onClick={() => onDelete()}>Delete</Button>
+                        <ModalCard mode="delete" type={itemType} onDeleteConfirmed={onDelete}/>
                     </Col>
                 </Row>
                 {cardContent}
