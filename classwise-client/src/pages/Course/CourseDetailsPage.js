@@ -12,7 +12,6 @@ const CourseDetailsPage = () => {
     const {id} = useParams()
     const [course, setCourse] = useState(null);
     const [alert, setAlert] = useState(null)
-    const [temporaryAlert, setTemporaryAlert] = useState(null)
     const [modified, setModified] = useState(false)
     const [saved, setSaved] = useState(true)
     const [tempStudents, setTempStudents] = useState([])
@@ -55,6 +54,14 @@ const CourseDetailsPage = () => {
         setModified(true)
         setSaved(false)
         setCourse(newCourse)
+    }
+
+    const setTemporaryAlert = (alertMessage) => {
+        setAlert(alertMessage)
+        const timeoutId = setTimeout(() => {
+            setAlert(null)
+        }, 3000);
+        return () => clearTimeout(timeoutId);
     }
 
     const handleAddStudent = (student) => {

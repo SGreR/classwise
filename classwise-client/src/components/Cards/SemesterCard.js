@@ -1,8 +1,13 @@
 import {Col, DropdownItem, DropdownMenu, DropdownToggle, Row, UncontrolledDropdown} from "reactstrap";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const SemesterCard = ({item:initialItem, editing, onItemChange}) => {
-    const [item, setItem] = useState(initialItem)
+    const [item, setItem] = useState(null)
+
+    useEffect(() => {
+        setItem(initialItem)
+    }, [initialItem]);
 
     const handleTextChange = (event, fieldName) => {
         const value = event.target.value;
@@ -25,49 +30,54 @@ const SemesterCard = ({item:initialItem, editing, onItemChange}) => {
     };
 
     return (
-        <>
-            <div className="button-container">
-                <Row>
-                    <Col>
-                        {editing ?
-                            (
-                                <>
-                                    <input type={"text"} value={item.schoolYear}
-                                           onChange={(event) => handleTextChange(event, "schoolYear")}/>
-                                    <UncontrolledDropdown>
-                                        <DropdownToggle caret size="sm">
-                                            Select Semester
-                                        </DropdownToggle>
-                                        <DropdownMenu>
-                                            <DropdownItem header>Semesters</DropdownItem>
-                                            <DropdownItem onClick={() => handleSelectChange(1)}>1</DropdownItem>
-                                            <DropdownItem onClick={() => handleSelectChange(2)}>2</DropdownItem>
-                                        </DropdownMenu>
-                                    </UncontrolledDropdown>
-                                    <h5 className="title">{item.schoolYear}-{item.semesterNumber}</h5>
-                                </>
-                            ) : (
-                                <h5 className="title">{item.schoolYear}-{item.semesterNumber}</h5>
-                            )}
-                    </Col>
-                </Row>
-                <hr/>
-                <Row>
-                    <Col className="ml-auto" lg="3" md="6" xs="6">
-                        <h5>
-                            <small>Id</small><br/>
-                            {item.semesterId}
-                        </h5>
-                    </Col>
-                    <Col className="ml-auto mr-auto" lg="4" md="6" xs="6">
-                        <h5>
-                            <small>Courses</small><br/>
-                            {item.courses.length}
-                        </h5>
-                    </Col>
-                </Row>
-            </div>
-        </>
+        item != null ?
+            (
+                <>
+                    <div className="button-container">
+                        <Row>
+                            <Col>
+                                {editing ?
+                                    (
+                                        <>
+                                            <input type={"text"} value={item.schoolYear}
+                                                   onChange={(event) => handleTextChange(event, "schoolYear")}/>
+                                            <UncontrolledDropdown>
+                                                <DropdownToggle caret size="sm">
+                                                    Select Semester
+                                                </DropdownToggle>
+                                                <DropdownMenu>
+                                                    <DropdownItem header>Semesters</DropdownItem>
+                                                    <DropdownItem onClick={() => handleSelectChange(1)}>1</DropdownItem>
+                                                    <DropdownItem onClick={() => handleSelectChange(2)}>2</DropdownItem>
+                                                </DropdownMenu>
+                                            </UncontrolledDropdown>
+                                            <h5 className="title">{item.schoolYear}-{item.semesterNumber}</h5>
+                                        </>
+                                    ) : (
+                                        <h5 className="title">{item.schoolYear}-{item.semesterNumber}</h5>
+                                    )}
+                            </Col>
+                        </Row>
+                        <hr/>
+                        <Row>
+                            <Col className="ml-auto" lg="3" md="6" xs="6">
+                                <h5>
+                                    <small>Id</small><br/>
+                                    {item.semesterId}
+                                </h5>
+                            </Col>
+                            <Col className="ml-auto mr-auto" lg="4" md="6" xs="6">
+                                <h5>
+                                    <small>Courses</small><br/>
+                                    {item.courses.length}
+                                </h5>
+                            </Col>
+                        </Row>
+                    </div>
+                </>
+            ) : (
+                <CircularProgress color="secondary"/>
+            )
     )
 }
 

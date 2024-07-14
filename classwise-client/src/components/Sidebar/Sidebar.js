@@ -28,7 +28,6 @@ var ps;
 function Sidebar(props) {
   const location = useLocation();
   const sidebar = React.useRef();
-  // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName) => {
     return location.pathname === routeName ? "active" : "";
   };
@@ -77,8 +76,8 @@ function Sidebar(props) {
                       }
                       key={key}
                   >
-                    <NavLink to={prop.layout + prop.path} className="nav-NavLink">
-                      <i className={prop.icon} />
+                    <NavLink to={prop.layout + prop.path} className="nav-NavLink d-flex align-items-center">
+                      <i>{prop.icon}</i>
                       <p>{prop.name}</p>
                     </NavLink>
                   </li>

@@ -21,6 +21,7 @@ const TeacherDetailsPage = () => {
     const [alert, setAlert] = useState(null)
     const [modified, setModified] = useState(false)
     const [saved, setSaved] = useState(true)
+    const [tempCourses, setTempCourses] = useState([])
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -50,11 +51,12 @@ const TeacherDetailsPage = () => {
         });
     }
 
-    const updateTeacher = (course) => {
-        putTeacher(id, course)
+    const updateTeacher = (teacher) => {
+        putTeacher(id, teacher)
             .then(response => {
                 setAlert(response.data.message)
                 fetchTeacher()
+                setTempCourses([])
             })
             .catch(error => console.error('Error saving student:', error));
     }
@@ -77,7 +79,8 @@ const TeacherDetailsPage = () => {
         setAlert(null)
         setModified(false)
         setSaved(true)
-        updateTeacher(teacher)
+        handleUpdateCourses()
+        updateTeacher(teacher);
     }
 
     const handleDelete = () => {
@@ -88,12 +91,39 @@ const TeacherDetailsPage = () => {
         return () => clearTimeout(timeoutId);
     }
 
-    const handleCourseAdded = (course) => {
-        getCourseById(course.courseId)
-            .then(response => teacher.courses.push(response.data))
-        setModified(true)
-        setSaved(false)
+    const setTemporaryAlert = (alertMessage) => {
+        setAlert(alertMessage)
+        const timeoutId = setTimeout(() => {
+            setAlert(null)
+        }, 3000);
+        return () => clearTimeout(timeoutId);
     }
+
+    const handleAddCourse = (course) => {
+        let alertMessage = null;
+        if(course === null) {
+            alertMessage = "Error receiving course."
+        }else if(teacher.courses.find(currentCourse => currentCourse.courseId === course.courseId)){
+            alertMessage = "This teacher is already assigned to this course."
+        }else if(tempCourses.find(tempCourse => tempCourse.courseId === course.courseId)) {
+            alertMessage = "This course has already been added. Awaiting save."
+        } else {
+            const updatedTempCourses = [...tempCourses,course]
+            setTempCourses(updatedTempCourses)
+            setModified(true)
+            setSaved(false)
+        }
+        setTemporaryAlert(alertMessage)
+    }
+
+    const handleUpdateCourses = () => {
+        tempCourses.forEach(course => {
+            course.teacherId = teacher.teacherId;
+            putCourse(course.courseId, course)
+                .catch(error => console.error('Error updating course:', error));
+        });
+    }
+
 
     return (
             <>
@@ -109,15 +139,19 @@ const TeacherDetailsPage = () => {
                         (
                             <CircularProgress color={"secondary"}/>
                         ) : (
-                            <Row>
-                                <Col md="4">
-                                    <InfoCard itemType={"teachers"} item={teacher} onItemChange={handleItemChange} onDelete={handleDelete}/>
-                                </Col>
-                                <Col md="8">
-                                    <ItemList mode="update" onSave={handleCourseAdded} itemType={"courses"} itemList={teacher.courses}/>
-                                    <ChartsCard/>
-                                </Col>
-                            </Row>
+                            <>
+                                <Row>
+                                    <Col md="4">
+                                        <InfoCard itemType={"teachers"} item={teacher} onItemChange={handleItemChange} onDelete={handleDelete}/>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col md="8">
+                                        <ItemList onItemAdded={handleAddCourse} mode="update" itemType={"courses"} itemList={teacher.courses} tempItems={tempCourses}/>
+                                        <ChartsCard/>
+                                    </Col>
+                                </Row>
+                            </>
                         )
                     }
                 </div>

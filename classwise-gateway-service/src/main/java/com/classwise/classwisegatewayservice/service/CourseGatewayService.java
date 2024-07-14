@@ -13,10 +13,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class CourseGatewayService implements ServiceInterface<CourseDTO> {
@@ -67,7 +64,20 @@ public class CourseGatewayService implements ServiceInterface<CourseDTO> {
         if(filter.isIncludeGrades()){
             String gradesURL = serviceURLs.getGradesUrl() + "/course/" + course.getCourseId();
             ResponseEntity<Set<GradesDTO>> response = restClientUtil.exchange(gradesURL, HttpMethod.POST, restClientUtil.createHttpEntity(null), new ParameterizedTypeReference<>(){});
+            Set<GradesDTO> grades = response.getBody();
             if(response.getBody() != null){
+                for(GradesDTO grade : grades){
+                    CourseDTO courseDTO = new CourseDTO();
+                    courseDTO.setCourseName(course.getCourseName());
+                    courseDTO.setSemester(course.getSemester());
+
+                    Optional<StudentDTO> optStudent = course.getStudents().stream()
+                            .filter(studentDTO -> Objects.equals(studentDTO.getStudentId(), grade.getStudentId()))
+                            .findFirst();
+
+                    optStudent.ifPresent(grade::setStudent);
+                    grade.setCourse(courseDTO);
+                }
                 course.setGrades(new HashSet<>(response.getBody()));
             }
         }

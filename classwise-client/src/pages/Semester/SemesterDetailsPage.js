@@ -5,7 +5,7 @@ import ItemList from "../../components/List/ItemList";
 import React, {useEffect, useState} from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
-import {deleteSemesterById, getSemesterById, putSemester} from "../../components/APIService";
+import {deleteSemesterById, getSemesterById, putCourse, putSemester} from "../../components/APIService";
 
 const SemesterDetailsPage = () => {
     const {id} = useParams()
@@ -13,6 +13,7 @@ const SemesterDetailsPage = () => {
     const [alert, setAlert] = useState(null)
     const [modified, setModified] = useState(false)
     const [saved, setSaved] = useState(true)
+    const [tempCourses, setTempCourses] = useState([])
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -46,6 +47,7 @@ const SemesterDetailsPage = () => {
             .then(response => {
                 setAlert(response.data.message)
                 fetchSemester()
+                setTempCourses([])
             })
             .catch(error => console.error('Error saving student:', error));
     }
@@ -58,6 +60,33 @@ const SemesterDetailsPage = () => {
             .catch(error => console.error('Error saving student:', error));
     }
 
+    const setTemporaryAlert = (alertMessage) => {
+        setAlert(alertMessage)
+        const timeoutId = setTimeout(() => {
+            setAlert(null)
+        }, 3000);
+        return () => clearTimeout(timeoutId);
+    }
+
+    const handleAddCourse = (course) => {
+        let alertMessage = null;
+        if(course === null) {
+            alertMessage = "Error receiving course."
+            setTemporaryAlert(alertMessage)
+        }else if(semester.courses.find(currentCourse => currentCourse.courseId === course.courseId)){
+            alertMessage = "This course already belongs to this semester."
+            setTemporaryAlert(alertMessage)
+        }else if(tempCourses.find(tempCourse => tempCourse.courseId === course.courseId)) {
+            alertMessage = "This course has already been added. Awaiting save."
+            setTemporaryAlert(alertMessage)
+        } else {
+            const updatedTempCourses = [...tempCourses,course]
+            setTempCourses(updatedTempCourses)
+            setModified(true)
+            setSaved(false)
+        }
+    }
+
     const handleItemChange = (newSemester) => {
         setModified(true)
         setSaved(false)
@@ -68,6 +97,7 @@ const SemesterDetailsPage = () => {
         setAlert(null)
         setModified(false)
         setSaved(true)
+        handleUpdateCourses()
         updateSemester(semester)
     }
 
@@ -78,6 +108,15 @@ const SemesterDetailsPage = () => {
         }, 3000);
         return () => clearTimeout(timeoutId);
     }
+
+    const handleUpdateCourses = () => {
+        tempCourses.forEach(course => {
+            course.semesterId = semester.semesterId;
+            putCourse(course.courseId, course)
+                .catch(error => console.error('Error updating course:', error));
+        });
+    }
+
 
     return (
         <>
@@ -98,7 +137,7 @@ const SemesterDetailsPage = () => {
                                 <InfoCard itemType={"semesters"} item={semester} onItemChange={handleItemChange} onDelete={handleDelete}/>
                             </Col>
                             <Col md="8">
-                                <ItemList mode="update" itemType={"courses"} itemList={semester.courses}/>
+                                <ItemList mode="update" itemType={"courses"} itemList={semester.courses} tempItems={tempCourses} onItemAdded={handleAddCourse}/>
                             </Col>
                         </Row>
                     )

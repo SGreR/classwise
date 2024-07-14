@@ -22,47 +22,48 @@ import CourseListPage from "pages/Course/CourseListPage";
 import GradesListPage from "pages/Grades/GradesListPage";
 import TeacherListPage from "./pages/Teacher/TeacherListPage";
 import SemesterListPage from "./pages/Semester/SemesterListPage";
+import {FaBook, FaCalendarAlt, FaChalkboardTeacher, FaChartBar, FaGraduationCap, FaHome} from "react-icons/fa";
 
 var routes = [
   {
     path: "/",
     name: "Home",
-    icon: "nc-icon nc-bank",
+    icon: <FaHome size={32} />,
     component: <HomePage />,
     layout: "",
   },
   {
     path: "/students",
     name: "Students",
-    icon: "nc-icon nc-bank",
+    icon: <FaGraduationCap size={32}/>,
     component: <StudentListPage />,
     layout: "",
   },
   {
     path: "/courses",
     name: "Courses",
-    icon: "nc-icon nc-bank",
+    icon: <FaBook size={28}/>,
     component: <CourseListPage />,
     layout: "",
   },
   {
     path: "/grades",
     name: "Grades",
-    icon: "nc-icon nc-bank",
+    icon: <FaChartBar size={32}/>,
     component: <GradesListPage />,
     layout: "",
   },
   {
     path: "/teachers",
     name: "Teachers",
-    icon: "nc-icon nc-bank",
+    icon: <FaChalkboardTeacher size={34}/>,
     component: <TeacherListPage />,
     layout: "",
   },
   {
     path: "/semesters",
     name: "Semesters",
-    icon: "nc-icon nc-bank",
+    icon: <FaCalendarAlt size={28} />,
     component: <SemesterListPage />,
     layout: "",
   }
