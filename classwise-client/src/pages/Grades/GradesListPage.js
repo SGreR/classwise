@@ -1,6 +1,6 @@
 import {Card, CardBody, CardHeader, CardTitle, Col, Table} from "reactstrap";
 import {useEffect, useState} from "react";
-import StripedList from "../../components/List/StripedList";
+import ItemList from "../../components/List/ItemList";
 import CircularProgress from '@mui/material/CircularProgress';
 import {getAllGrades} from "../../components/APIService";
 
@@ -25,7 +25,7 @@ const GradesListPage = () => {
                             </Card>
                         </Col>
                     ) : (
-                    <StripedList itemType={"grades"} itemList={grades}/>
+                    <ItemList mode="add" itemType={"grades"} itemList={grades}/>
                     )}
             </div>
         </>

@@ -1,7 +1,7 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {Alert, Button, Col, Row} from "reactstrap";
 import InfoCard from "../../components/Cards/InfoCard";
-import StripedList from "../../components/List/StripedList";
+import ItemList from "../../components/List/ItemList";
 import React, {useEffect, useState} from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
@@ -12,8 +12,10 @@ const CourseDetailsPage = () => {
     const {id} = useParams()
     const [course, setCourse] = useState(null);
     const [alert, setAlert] = useState(null)
+    const [temporaryAlert, setTemporaryAlert] = useState(null)
     const [modified, setModified] = useState(false)
     const [saved, setSaved] = useState(true)
+    const [tempStudents, setTempStudents] = useState([])
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -36,6 +38,7 @@ const CourseDetailsPage = () => {
             .then(response => {
                 setAlert(response.data.message)
                 fetchCourse()
+                setTempStudents([])
             })
             .catch(error => console.error('Error saving student:', error));
     }
@@ -54,11 +57,37 @@ const CourseDetailsPage = () => {
         setCourse(newCourse)
     }
 
+    const handleAddStudent = (student) => {
+        let alertMessage = null;
+        if(student === null) {
+            alertMessage = "Error receiving student."
+        }else if(course.studentIds.includes(student.studentId)){
+            alertMessage = "This student already belongs to this course."
+        }else if(tempStudents.find(tempStudent => tempStudent.studentId === student.studentId)) {
+            alertMessage = "This student has already been added. Awaiting save."
+        } else {
+            const updatedTempStudents = [...tempStudents, student]
+            setTempStudents(updatedTempStudents)
+            setModified(true)
+            setSaved(false)
+        }
+        setTemporaryAlert(alertMessage)
+        const timeoutId = setTimeout(() => {
+            setTemporaryAlert(null);
+        }, 3000);
+        return () => clearTimeout(timeoutId);
+    }
+
     const handleUpdate = () => {
         setAlert(null)
         setModified(false)
         setSaved(true)
-        updateCourse(course)
+        const updatedCourse = {
+            ...course,
+            studentIds: [...course.studentIds, ...tempStudents.map(student => student.studentId)],
+        };
+        setCourse(updatedCourse);
+        updateCourse(updatedCourse)
     }
 
     const handleDelete = () => {
@@ -91,7 +120,7 @@ const CourseDetailsPage = () => {
                         </Row>
                         <Row>
                             <Col md="12">
-                                <StripedList itemType={"students"} itemList={course.students}/>
+                                <ItemList onItemAdded={handleAddStudent} mode="update" itemType={"students"} itemList={course.students} tempItems={tempStudents}/>
                             </Col>
                         </Row>
                         <Row>
@@ -101,7 +130,7 @@ const CourseDetailsPage = () => {
                         </Row>
                         <Row>
                             <Col md="12">
-                                <StripedList itemType={"grades"} itemList={course.grades}/>
+                                <ItemList mode="update" itemType={"grades"} itemList={course.grades}/>
                             </Col>
                         </Row>
                     </>

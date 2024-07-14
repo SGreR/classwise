@@ -11,7 +11,7 @@ import {
 import {useEffect, useState} from "react";
 import {getAllSemesters, getAllTeachers} from "../APIService";
 
-const AddCourseContent = ({onItemChange}) => {
+const AddNewCourseModalContent = ({onItemChange}) => {
     const [course, setCourse] = useState({
         "courseName" : "",
         "active" : false,
@@ -26,10 +26,6 @@ const AddCourseContent = ({onItemChange}) => {
         getAllSemesters().then(response => setSemesters(response.data))
         getAllTeachers().then(response => setTeachers(response.data))
     }, []);
-
-    useEffect(() => {
-        console.log(course)
-    }, [course]);
 
     const handleTextChange = (event, fieldName) => {
         const value = event.target.value;
@@ -132,4 +128,4 @@ const AddCourseContent = ({onItemChange}) => {
     )
 }
 
-export default AddCourseContent
+export default AddNewCourseModalContent

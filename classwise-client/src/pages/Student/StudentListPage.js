@@ -1,8 +1,8 @@
-import StripedList from "../../components/List/StripedList";
+import ItemList from "../../components/List/ItemList";
 import React, {useEffect, useState} from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import {Alert, Card, Col} from "reactstrap";
-import {getAllStudents} from "../../components/APIService";
+import {getAllStudents, postStudent} from "../../components/APIService";
 
 const StudentListPage = () => {
     const [students, setStudents] = useState(null)
@@ -17,8 +17,11 @@ const StudentListPage = () => {
             .then(response => setStudents(response.data))
     }
 
-    const handleItemSaved = () =>{
-        setAlert("Item salvo com sucesso!")
+    const handleSave = (student) =>{
+        postStudent(student)
+            .then(response => {if(response.status === 201) {
+                setAlert("Item salvo com sucesso!")
+            }});
         const timeoutId = setTimeout(() => {
             setAlert(null);
             fetchStudents();
@@ -41,7 +44,7 @@ const StudentListPage = () => {
                             </Card>
                         </Col>
                     ) : (
-                <StripedList triggerAlert={handleItemSaved} itemType={"students"} itemList={students}/>
+                <ItemList mode="add" onSave={handleSave} itemType={"students"} itemList={students}/>
                 )}
             </div>
         </>

@@ -1,7 +1,7 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {Alert, Button, Col, Row} from "reactstrap";
 import InfoCard from "../../components/Cards/InfoCard";
-import StripedList from "../../components/List/StripedList";
+import ItemList from "../../components/List/ItemList";
 import React, {useEffect, useState} from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
@@ -72,7 +72,6 @@ const SemesterDetailsPage = () => {
     }
 
     const handleDelete = () => {
-        //open modal here for confirmation later on
         deleteSemester()
         const timeoutId = setTimeout(() => {
             navigate('/semesters');
@@ -99,7 +98,7 @@ const SemesterDetailsPage = () => {
                                 <InfoCard itemType={"semesters"} item={semester} onItemChange={handleItemChange} onDelete={handleDelete}/>
                             </Col>
                             <Col md="8">
-                                <StripedList itemType={"courses"} itemList={semester.courses}/>
+                                <ItemList mode="update" itemType={"courses"} itemList={semester.courses}/>
                             </Col>
                         </Row>
                     )

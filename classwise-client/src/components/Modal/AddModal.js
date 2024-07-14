@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import CircularProgress from "@mui/material/CircularProgress";
-import AddStudentContent from "./AddStudentContent";
-import AddCourseContent from "./AddCourseContent";
+import AddNewStudentModalContent from "./AddNewStudentModalContent";
+import AddNewCourseModalContent from "./AddNewCourseModalContent";
 
 const AddModal = ({type, onItemChange}) => {
     const [content, setContent] = useState(null)
@@ -9,10 +9,10 @@ const AddModal = ({type, onItemChange}) => {
     useEffect(() => {
         switch(type){
             case "students":
-                setContent(<AddStudentContent onItemChange={onItemChange}/>)
+                setContent(<AddNewStudentModalContent onItemChange={onItemChange}/>)
                 break;
             case "courses":
-                setContent(<AddCourseContent onItemChange={onItemChange}/>)
+                setContent(<AddNewCourseModalContent onItemChange={onItemChange}/>)
                 break;
             case "grades":
                 setContent(<></>)

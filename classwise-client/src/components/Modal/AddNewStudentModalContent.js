@@ -1,7 +1,7 @@
 import {Input, InputGroup} from "reactstrap";
 import {useEffect, useState} from "react";
 
-const AddStudentContent = ({onItemChange}) => {
+const AddNewStudentModalContent = ({onItemChange}) => {
     const [student, setStudent] = useState({
         "studentName": ""
     })
@@ -23,4 +23,4 @@ const AddStudentContent = ({onItemChange}) => {
         </>
     )
 }
-export default AddStudentContent
+export default AddNewStudentModalContent

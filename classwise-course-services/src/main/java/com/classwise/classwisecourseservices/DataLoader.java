@@ -20,21 +20,21 @@ public class DataLoader implements CommandLineRunner {
         course.setCourseName("Discover 1");
         course.setSemesterId(1L);
         course.setTeacherId(1L);
-        course.setStudentIds(setOf(1L, 2L));
+        course.setStudentIds(setOf(1L, 2L, 3L));
         courseRepository.save(course);
 
         Course course2 = new Course();
         course2.setCourseName("Independent 1");
         course2.setSemesterId(1L);
         course2.setTeacherId(1L);
-        course2.setStudentIds(setOf(1L, 2L));
+        course2.setStudentIds(setOf(4L, 5L, 6L));
         courseRepository.save(course2);
 
         Course course3 = new Course();
         course3.setCourseName("Expert B2a");
         course3.setSemesterId(2L);
         course3.setTeacherId(2L);
-        course3.setStudentIds(setOf(1L, 2L));
+        course3.setStudentIds(setOf(7L, 8L));
         courseRepository.save(course3);
 
     }

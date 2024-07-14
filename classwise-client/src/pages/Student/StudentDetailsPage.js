@@ -1,7 +1,7 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {Alert, Button, Col, Row} from "reactstrap";
 import React, {useEffect, useState} from "react";
-import StripedList from "components/List/StripedList";
+import ItemList from "../../components/List/ItemList";
 import InfoCard from "components/Cards/InfoCard";
 import CircularProgress from "@mui/material/CircularProgress";
 import {deleteStudentById, getStudentById, putStudent} from "../../components/APIService";
@@ -13,6 +13,7 @@ const StudentDetailsPage = () => {
     const [alert, setAlert] = useState(null)
     const [modified, setModified] = useState(false)
     const [saved, setSaved] = useState(true)
+    const [tempCourses, setTempCourses] = useState([])
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -31,15 +32,46 @@ const StudentDetailsPage = () => {
         setStudent(newStudent)
     }
 
+    const setTemporaryAlert = (alertMessage) => {
+        setAlert(alertMessage)
+        const timeoutId = setTimeout(() => {
+            setAlert(null)
+        }, 3000);
+        return () => clearTimeout(timeoutId);
+    }
+
+    const handleAddCourse = (course) => {
+        let alertMessage = null;
+        if(course === null) {
+            alertMessage = "Error receiving course."
+            setTemporaryAlert(alertMessage)
+        }else if(student.courseIds.includes(course.courseId)){
+            alertMessage = "This student already belongs to this course."
+            setTemporaryAlert(alertMessage)
+        }else if(tempCourses.find(tempCourse => tempCourse.courseId === course.courseId)) {
+            alertMessage = "This course has already been added. Awaiting save."
+            setTemporaryAlert(alertMessage)
+        } else {
+            const updatedTempCourses = [...tempCourses,course]
+            setTempCourses(updatedTempCourses)
+            setModified(true)
+            setSaved(false)
+        }
+    }
+
     const handleUpdate = () => {
         setAlert(null)
         setModified(false)
         setSaved(true)
-        updateStudent(student)
+        const updatedStudent = {
+            ...student,
+            courseIds: [...student.courseIds, ...tempCourses.map(course => course.courseId)],
+        };
+        setStudent(updatedStudent);
+        updateStudent(updatedStudent);
     }
 
     const handleDelete = () => {
-        //open modal here for confirmation later on
         deleteStudent()
         const timeoutId = setTimeout(() => {
             navigate('/students');
@@ -58,6 +90,7 @@ const StudentDetailsPage = () => {
             .then(response => {
                 setAlert(response.data.message)
                 fetchStudent()
+                setTempCourses([])
             })
             .catch(error => console.error('Error saving student:', error));
         }
@@ -90,7 +123,7 @@ const StudentDetailsPage = () => {
                                 <InfoCard itemType={"students"} item={student} onItemChange={handleItemChange} onDelete={handleDelete}/>
                             </Col>
                             <Col md="9">
-                                <StripedList itemType={"courses"} itemList={student.courses}/>
+                                <ItemList onItemAdded={handleAddCourse} mode="update" itemType={"courses"} itemList={student.courses} tempItems={tempCourses}/>
                             </Col>
                         </Row>
                         <Row>

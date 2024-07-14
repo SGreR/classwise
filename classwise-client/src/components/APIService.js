@@ -127,6 +127,15 @@ export const getTeacherById = (id) => {
     });
 };
 
+export const postTeacher = (teacher) => {
+    return axios.post(`${API_BASE_URL}/teachers`, teacher, {
+        auth: {
+            username: "admin",
+            password: "admin"
+        }
+    })
+}
+
 export const putTeacher = (id, teacher) => {
     return axios.put(`${API_BASE_URL}/teachers/${id}`, teacher, {
         auth: {
@@ -205,6 +214,15 @@ export const getSemesterById = (id) => {
         }
     });
 };
+
+export const postSemester = (semester) => {
+    return axios.post(`${API_BASE_URL}/semesters`, semester, {
+        auth: {
+            username: "admin",
+            password: "admin"
+        }
+    })
+}
 
 export const putSemester = (id, semester) => {
     return axios.put(`${API_BASE_URL}/semesters/${id}`, semester, {

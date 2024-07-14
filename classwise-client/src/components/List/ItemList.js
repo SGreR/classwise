@@ -4,28 +4,8 @@ import ListBody from "./ListBody";
 import {capitalize} from "../../utils/utils";
 import CircularProgress from "@mui/material/CircularProgress";
 import ModalCard from "../Modal/ModalCard";
-import {postCourse, postStudent} from "../APIService";
 
-const StripedList = ({itemType, itemList, triggerAlert}) => {
-
-    const handleSave = (item) => {
-        switch(itemType){
-            case "students":
-                postStudent(item)
-                    .then(response => {if(response.status === 201) {
-                        triggerAlert()
-                    }});
-                break
-            case "courses":
-                postCourse(item)
-                    .then(response => {if(response.status === 201) {
-                        triggerAlert()
-                    }});
-                break
-            default:
-                break
-        }
-    }
+const ItemList = ({mode, itemType, itemList, tempItems, onItemAdded, onSave,}) => {
 
     return (
         itemList === null ?
@@ -35,7 +15,7 @@ const StripedList = ({itemType, itemList, triggerAlert}) => {
                         <CircularProgress color={"secondary"}/>
                     </Card>
                 </Col>
-            ) : itemList.length === 0 ? (
+            ) : tempItems?.length === 0 && itemList?.length === 0 ? (
                 <>
                     <Card>
                         <CardHeader>
@@ -44,7 +24,7 @@ const StripedList = ({itemType, itemList, triggerAlert}) => {
                                     <CardTitle tag="h4">{capitalize(itemType)} Table</CardTitle>
                                 </Col>
                                 <Col className="text-right">
-                                    <Button color="primary">+ Add {itemType}</Button>
+                                    <ModalCard onItemAdded={onItemAdded} onSave={onSave} mode={mode} type={itemType}/>
                                 </Col>
                             </Row>
                         </CardHeader>
@@ -62,7 +42,7 @@ const StripedList = ({itemType, itemList, triggerAlert}) => {
                                 <CardTitle tag="h4">{capitalize(itemType)} Table</CardTitle>
                             </Col>
                             <Col className="text-right">
-                                <ModalCard onSave={handleSave} mode="add" type={itemType}/>
+                                <ModalCard onItemAdded={onItemAdded} onSave={onSave} mode={mode} type={itemType}/>
                             </Col>
                         </Row>
                     </CardHeader>
@@ -74,7 +54,7 @@ const StripedList = ({itemType, itemList, triggerAlert}) => {
                             </tr>
                             </thead>
                             <tbody>
-                                <ListBody itemType={itemType} itemList={itemList}/>
+                                <ListBody tempItems={tempItems} itemType={itemType} itemList={itemList}/>
                             </tbody>
                         </Table>
                     </CardBody>
@@ -85,4 +65,4 @@ const StripedList = ({itemType, itemList, triggerAlert}) => {
     )
 }
 
-export default StripedList
+export default ItemList

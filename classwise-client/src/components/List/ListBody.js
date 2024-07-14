@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
-const ListBody = ({itemType, itemList}) => {
+const ListBody = ({itemType, itemList, tempItems}) => {
     const[listBody, setListBody] = useState(null)
     const navigate = useNavigate();
 
@@ -26,7 +26,7 @@ const ListBody = ({itemType, itemList}) => {
                 break;
 
         }
-    }, [itemType, itemList]);
+    }, [itemType, itemList, tempItems]);
 
     const handleRowClick = (path, id) => {
         navigate(`${path}/${id}`);
@@ -34,14 +34,25 @@ const ListBody = ({itemType, itemList}) => {
 
     const buildStudentList = () => {
         setListBody(
-            itemList.map(item => {
-                return (
-                    <tr key={item.studentId} onClick={() => handleRowClick('/students', item.studentId)}>
-                        <td>{item.studentId}</td>
-                        <td>{item.studentName}</td>
-                    </tr>
-                )
-            })
+            <>
+                {itemList.map(item => {
+                    return (
+                        <tr key={item.studentId} onClick={() => handleRowClick('/students', item.studentId)}>
+                            <td>{item.studentId}</td>
+                            <td>{item.studentName}</td>
+                        </tr>
+                    )
+                })}
+                {tempItems?.map(item => {
+                    return (
+                        <tr style={{backgroundColor:"yellow"}} key={item.studentId} onClick={() => handleRowClick('/students', item.studentId)}>
+                            <td>{item.studentId}</td>
+                            <td>{item.studentName}</td>
+                        </tr>
+                    )
+                })}
+            </>
+
         )
     }
 
@@ -73,17 +84,30 @@ const ListBody = ({itemType, itemList}) => {
 
     const buildCourseList = () => {
         setListBody(
-            itemList.map(item => {
-                return (
-                    <tr key={item.courseId} onClick={() => handleRowClick('/courses', item.courseId)}>
-                        <td>{item.courseId}</td>
-                        <td>{item.courseName}</td>
-                        <td>{item.semester !== null ? `${item.semester.schoolYear}-${item.semester.semesterNumber}` : "Unassigned"}</td>
-                        <td>{item.teacher !== null ? item.teacher.teacherName : "Unassigned"}</td>
-                        <td>{item.active ? "Active" : "Inactive"}</td>
-                    </tr>
-                )
-            })
+            <>
+                {itemList.map(item => {
+                    return (
+                        <tr key={item.courseId} onClick={() => handleRowClick('/courses', item.courseId)}>
+                            <td>{item.courseId}</td>
+                            <td>{item.courseName}</td>
+                            <td>{item.semester !== null ? `${item.semester.schoolYear}-${item.semester.semesterNumber}` : "Unassigned"}</td>
+                            <td>{item.teacher !== null ? item.teacher.teacherName : "Unassigned"}</td>
+                            <td>{item.active ? "Active" : "Inactive"}</td>
+                        </tr>
+                    )
+                })}
+                {tempItems?.map(item => {
+                    return (
+                        <tr style={{backgroundColor:"yellow"}} key={item.courseId} onClick={() => handleRowClick('/courses', item.courseId)}>
+                            <td>{item.courseId}</td>
+                            <td>{item.courseName}</td>
+                            <td>{item.semester !== null ? `${item.semester.schoolYear}-${item.semester.semesterNumber}` : "Unassigned"}</td>
+                            <td>{item.teacher !== null ? item.teacher.teacherName : "Unassigned"}</td>
+                            <td>{item.active ? "Active" : "Inactive"}</td>
+                        </tr>
+                    )
+                })}
+            </>
         )
     }
 
