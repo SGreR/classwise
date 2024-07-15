@@ -15,17 +15,20 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
+        createSemester(1, 2024);
+        createSemester(2, 2024);
+        createSemester(1, 2023);
+        createSemester(2, 2023);
+        createSemester(1, 2022);
+        createSemester(2, 2022);
+        createSemester(1, 2021);
+        createSemester(2, 2021);
+    }
+
+    private void createSemester(int semesterNumber, int schoolYear) {
         Semester semester = new Semester();
-        semester.setSemesterNumber(1);
-        semester.setSchoolYear(2024);
-
+        semester.setSemesterNumber(semesterNumber);
+        semester.setSchoolYear(schoolYear);
         semesterRepository.save(semester);
-
-        Semester semester2 = new Semester();
-        semester2.setSemesterNumber(2);
-        semester2.setSchoolYear(2023);
-
-        semesterRepository.save(semester2);
-
     }
 }

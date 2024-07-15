@@ -13,6 +13,7 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,8 +47,16 @@ public class SemesterController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Semester>> getAllSemesters() {
-        List<Semester> semesters = semesterService.getAllSemesters();
+    public ResponseEntity<List<Semester>> getAllSemesters(
+            @RequestParam(required = false) Integer bySchoolYear,
+            @RequestParam(required = false) Integer bySemesterNumber
+    ) {
+        List<Semester> semesters;
+        if(bySchoolYear == null && bySemesterNumber == null){
+            semesters = semesterService.getAllSemesters();
+        } else {
+            semesters = semesterService.getSemestersWithFilters(bySchoolYear, bySemesterNumber);
+        }
         if (semesters.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }

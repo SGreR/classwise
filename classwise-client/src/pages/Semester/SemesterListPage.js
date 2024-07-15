@@ -2,19 +2,23 @@ import ItemList from "../../components/List/ItemList";
 import React, {useEffect, useState} from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import {Alert, Card, Col} from "reactstrap";
-import axios from "axios";
 import {getAllSemesters, postSemester} from "../../components/APIService";
+import QueryMenu from "../../components/Query/QueryMenu";
 
 const SemesterListPage = () => {
     const [semesters, setSemesters] = useState(null)
     const [alert, setAlert] = useState(null)
+    const [filter, setFilter] = useState({
+        "bySchoolYear": null,
+        "bySemesterNumber": null
+    })
 
     useEffect(() => {
         fetchSemesters()
-    }, []);
+    }, [filter]);
 
     const fetchSemesters = () => {
-        getAllSemesters()
+        getAllSemesters(filter)
             .then(response => setSemesters(response.data))
     }
 
@@ -30,9 +34,25 @@ const SemesterListPage = () => {
         return () => clearTimeout(timeoutId);
     }
 
+    const updateFilter = (newFilter) => {
+        setFilter(prevFilter => ({
+            ...prevFilter,
+            ...newFilter,
+        }));
+    };
+
+    const handleUpdateQueryFields = (queryFields) => {
+        const newFilter = {};
+        queryFields.forEach(field => {
+            newFilter[field.name] = field.value;
+        });
+        updateFilter(newFilter);
+    };
+
     return (
         <>
             <div className="content">
+
                 {alert &&
                     <Alert color="info">{alert}</Alert>
                 }
@@ -45,7 +65,7 @@ const SemesterListPage = () => {
                                 </Card>
                             </Col>
                         ) : (
-                            <ItemList mode="add" onSave={handleSave} itemType={"semesters"} itemList={semesters}/>
+                            <ItemList mode="add" queryMenu={<QueryMenu itemType={"semesters"} filter={filter} onUpdateQueryFields={handleUpdateQueryFields} />} onSave={handleSave} itemType={"semesters"} itemList={semesters} onUpdateQueryFields={updateFilter}/>
                         )}
             </div>
         </>

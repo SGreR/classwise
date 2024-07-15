@@ -24,6 +24,10 @@ public class SemesterService {
         return semesterRepository.findAll();
     }
 
+    public List<Semester> getSemestersWithFilters(Integer bySchoolYear, Integer bySemesterNumber) {
+        return semesterRepository.findSemestersWithFilters(bySchoolYear, bySemesterNumber);
+    }
+
     public Semester getSemesterById(Long id) {
         return semesterRepository.findById(id).orElseThrow();
     }

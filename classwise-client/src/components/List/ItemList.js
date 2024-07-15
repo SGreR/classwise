@@ -1,11 +1,19 @@
-import {Button, Card, CardBody, CardHeader, CardTitle, Col, Row, Table} from "reactstrap";
+import {
+    Card,
+    CardBody,
+    CardHeader,
+    CardTitle,
+    Col,
+    Row,
+    Table
+} from "reactstrap";
 import ListHeaders from "./ListHeaders";
 import ListBody from "./ListBody";
 import {capitalize} from "../../utils/utils";
 import CircularProgress from "@mui/material/CircularProgress";
 import ModalCard from "../Modal/ModalCard";
 
-const ItemList = ({mode, itemType, itemList, tempItems, onItemAdded, onSave,}) => {
+const ItemList = ({mode, itemType, itemList, tempItems, queryMenu, onItemAdded, onSave, onUpdateQueryFields}) => {
 
     return (
         itemList === null ?
@@ -41,6 +49,7 @@ const ItemList = ({mode, itemType, itemList, tempItems, onItemAdded, onSave,}) =
                             <Col>
                                 <CardTitle tag="h4">{capitalize(itemType)} Table</CardTitle>
                             </Col>
+                            {queryMenu && queryMenu}
                             <Col className="text-right">
                                 <ModalCard onItemAdded={onItemAdded} onSave={onSave} mode={mode} type={itemType}/>
                             </Col>

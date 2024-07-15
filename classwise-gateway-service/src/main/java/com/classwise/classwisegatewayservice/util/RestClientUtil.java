@@ -5,8 +5,11 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class RestClientUtil {
@@ -15,6 +18,23 @@ public class RestClientUtil {
 
     public RestClientUtil(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
+    }
+
+    public String buildUrlWithFilters(String baseUrl, Object filter) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl);
+
+        for (Field field : filter.getClass().getDeclaredFields()) {
+            field.setAccessible(true);
+            try {
+                Object value = field.get(filter);
+                if (value instanceof Optional) {
+                    ((Optional<?>) value).ifPresent(v -> builder.queryParam(field.getName(), v));
+                }
+            } catch (IllegalAccessException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return builder.toUriString();
     }
 
     private HttpHeaders createHeaders() {

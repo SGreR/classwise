@@ -71,7 +71,7 @@ const ListBody = ({itemType, itemList, tempItems}) => {
 
     const buildSemesterList = () => {
         setListBody(
-            itemList.map(item => {
+            itemList && itemList.map(item => {
                 return (
                     <tr key={item.semesterId} onClick={() => handleRowClick('/semesters', item.semesterId)}>
                         <td>{item.semesterId}</td>

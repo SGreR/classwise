@@ -194,11 +194,22 @@ export const deleteGradeById = (id) => {
     });
 };
 
-export const getAllSemesters = () => {
+export const getAllSemesters = (filters) => {
+    const { bySchoolYear, bySemesterNumber } = filters;
+    const params = {};
+    if (bySchoolYear !== undefined) {
+        params.bySchoolYear = bySchoolYear;
+    }
+    if (bySemesterNumber !== undefined) {
+        params.bySemesterNumber = bySemesterNumber;
+    }
     return axios.get(`${API_BASE_URL}/semesters`, {
         auth: {
             username: 'admin',
             password: 'admin'
+        },
+        params: {
+            ...params
         }
     });
 };

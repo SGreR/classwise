@@ -23,8 +23,8 @@ public class SemesterGatewayController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SemesterDTO>> getAllSemesters(){
-        List<SemesterDTO> semesters = semesterGatewayService.getAll();
+    public ResponseEntity<List<SemesterDTO>> getAllSemesters(@ModelAttribute SemesterDTOFilter filters){
+        List<SemesterDTO> semesters = semesterGatewayService.getAllWithFilters(filters);
         if (semesters == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
         }
