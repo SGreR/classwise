@@ -44,7 +44,7 @@ const TeacherListPage = () => {
                             </Card>
                         </Col>
                     ) : (
-                <ItemList mode="update" onSave={handleSave} itemType={"teachers"} itemList={teachers}/>
+                <ItemList mode="add" onSave={handleSave} itemType={"teachers"} itemList={teachers}/>
                 )}
             </div>
         </>

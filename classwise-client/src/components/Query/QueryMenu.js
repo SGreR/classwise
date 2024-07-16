@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import {Button, Col, Input, InputGroup, InputGroupText, Label, Row} from "reactstrap";
-import { Switch } from "@mui/material";
+import {Button, Col, Input, InputGroup, InputGroupText, Row} from "reactstrap";
 
 const QueryMenu = ({itemType, filter, onUpdateQueryFields }) => {
     const [fieldLabels, setFieldLabels] = useState([])
@@ -39,7 +38,12 @@ const QueryMenu = ({itemType, filter, onUpdateQueryFields }) => {
     };
 
     const handleClear = () => {
-
+        const clearedFields = queryFields.map(field => ({
+            ...field,
+            value: ""
+        }));
+        setQueryFields(clearedFields);
+        onUpdateQueryFields(clearedFields);
     }
 
     return (
