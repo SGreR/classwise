@@ -24,8 +24,8 @@ public class StudentGatewayController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StudentDTO>> getAllStudents(){
-        List<StudentDTO> students = studentGatewayService.getAll();
+    public ResponseEntity<List<StudentDTO>> getAllStudents(@ModelAttribute StudentDTOFilter filters){
+        List<StudentDTO> students = studentGatewayService.getStudentsWithFilters(filters);
         if (students == null) {
             return ResponseEntity.ok(new ArrayList<>());
         }

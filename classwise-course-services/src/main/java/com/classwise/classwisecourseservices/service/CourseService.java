@@ -31,6 +31,10 @@ public class CourseService {
         return courseRepository.findAll();
     }
 
+    public List<Course> getCoursesWithFilters(String byName){
+        return courseRepository.findCoursesWithFilters(byName);
+    }
+
     public Course getCourseById(Long id) {
         return courseRepository.findById(id).orElseThrow();
     }

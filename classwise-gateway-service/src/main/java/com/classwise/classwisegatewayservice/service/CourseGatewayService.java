@@ -34,6 +34,27 @@ public class CourseGatewayService implements ServiceInterface<CourseDTO> {
         return response.getBody();
     }
 
+    public List<CourseDTO> getAllWithFilters(CourseDTOFilter filters){
+        String url = restClientUtil.buildUrlWithFilters(serviceURLs.getCourseUrl(), filters);
+        ResponseEntity<List<CourseDTO>> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), new ParameterizedTypeReference<>() {});
+        List<CourseDTO> courses = response.getBody();
+        if(courses != null){
+            if(filters.isIncludeSemester()){
+                includeSemester(courses);
+            }
+            if(filters.isIncludeTeacher()){
+                includeTeacher(courses);
+            }
+            if(filters.isIncludeStudents()){
+                includeStudents(courses);
+            }
+            if(filters.isIncludeGrades()){
+                includeGrades(courses);
+            }
+        }
+        return filterCourses(courses, filters);
+    }
+
     public CourseDTO getById(Long id) {
         String url = serviceURLs.getCourseUrl() + "/" + id;
         ResponseEntity<CourseDTO> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), CourseDTO.class);
@@ -43,43 +64,16 @@ public class CourseGatewayService implements ServiceInterface<CourseDTO> {
     public CourseDTO getCourseWithDetails(Long id, CourseDTOFilter filter){
         CourseDTO course = getById(id);
         if(filter.isIncludeStudents()){
-            String studentsUrl = serviceURLs.getStudentsUrl() + "/multiple";
-            ResponseEntity<Set<StudentDTO>> response = restClientUtil.exchange(studentsUrl, HttpMethod.POST, restClientUtil.createHttpEntity(course.getStudentIds()), new ParameterizedTypeReference<>(){});
-            if(response.getBody() == null){
-                course.setStudents(new HashSet<>());
-            } else {
-                course.setStudents(response.getBody());
-            }
+            includeStudents(Collections.singletonList(course));
         }
-        if(filter.isIncludeTeacher() && course.getTeacherId() != null){
-            String teachersURL = serviceURLs.getTeachersUrl() + "/" + course.getTeacherId();
-            ResponseEntity<TeacherDTO> response = restClientUtil.exchange(teachersURL, HttpMethod.GET, restClientUtil.createHttpEntity(null), TeacherDTO.class);
-            course.setTeacher(response.getBody());
+        if(filter.isIncludeTeacher()){
+            includeTeacher(Collections.singletonList(course));
         }
-        if(filter.isIncludeSemester() && course.getSemesterId() != null){
-            String semestersURL = serviceURLs.getSemesterUrl() + "/" + course.getSemesterId();
-            ResponseEntity<SemesterDTO> response = restClientUtil.exchange(semestersURL, HttpMethod.GET, restClientUtil.createHttpEntity(null), SemesterDTO.class);
-            course.setSemester(response.getBody());
+        if(filter.isIncludeSemester()){
+            includeSemester(Collections.singletonList(course));
         }
         if(filter.isIncludeGrades()){
-            String gradesURL = serviceURLs.getGradesUrl() + "/course/" + course.getCourseId();
-            ResponseEntity<Set<GradesDTO>> response = restClientUtil.exchange(gradesURL, HttpMethod.POST, restClientUtil.createHttpEntity(null), new ParameterizedTypeReference<>(){});
-            Set<GradesDTO> grades = response.getBody();
-            if(response.getBody() != null){
-                for(GradesDTO grade : grades){
-                    CourseDTO courseDTO = new CourseDTO();
-                    courseDTO.setCourseName(course.getCourseName());
-                    courseDTO.setSemester(course.getSemester());
-
-                    Optional<StudentDTO> optStudent = course.getStudents().stream()
-                            .filter(studentDTO -> Objects.equals(studentDTO.getStudentId(), grade.getStudentId()))
-                            .findFirst();
-
-                    optStudent.ifPresent(grade::setStudent);
-                    grade.setCourse(courseDTO);
-                }
-                course.setGrades(new HashSet<>(response.getBody()));
-            }
+            includeGrades(Collections.singletonList(course));
         }
         return course;
     }
@@ -103,5 +97,79 @@ public class CourseGatewayService implements ServiceInterface<CourseDTO> {
         Message message = MessageBuilderUtil.buildMessage("course-events", "delete-course", id);
         kafkaTemplate.send(message);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    private void includeSemester(List<CourseDTO> courses) {
+        for (CourseDTO course : courses) {
+            if(course.getSemesterId() != null){
+                String semestersUrl = serviceURLs.getSemesterUrl() + "/" + course.getSemesterId();
+                ResponseEntity<SemesterDTO> semesterResponse = restClientUtil.exchange(semestersUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), new ParameterizedTypeReference<>() {});
+                SemesterDTO semester = semesterResponse.getBody();
+                course.setSemester(semester);
+            }
+        }
+    }
+    private void includeTeacher(List<CourseDTO> courses) {
+        for (CourseDTO course : courses) {
+            if(course.getTeacherId() != null){
+                String teachersUrl = serviceURLs.getTeachersUrl() + "/" + course.getTeacherId();
+                ResponseEntity<TeacherDTO> semesterResponse = restClientUtil.exchange(teachersUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), new ParameterizedTypeReference<>() {});
+                TeacherDTO teacher = semesterResponse.getBody();
+                course.setTeacher(teacher);
+            }
+        }
+    }
+    private void includeStudents(List<CourseDTO> courses) {
+        for (CourseDTO course : courses) {
+            String studentsUrl = serviceURLs.getStudentsUrl() + "/multiple";
+            ResponseEntity<Set<StudentDTO>> response = restClientUtil.exchange(studentsUrl, HttpMethod.POST, restClientUtil.createHttpEntity(course.getStudentIds()), new ParameterizedTypeReference<>(){});
+            Set<StudentDTO> students = response.getBody();
+            if(students == null){
+                course.setStudents(new HashSet<>());
+            } else {
+                course.setStudents(response.getBody());
+            }
+        }
+    }
+    private void includeGrades(List<CourseDTO> courses) {
+        for (CourseDTO course : courses) {
+            String gradesURL = serviceURLs.getGradesUrl() + "/course/" + course.getCourseId();
+            ResponseEntity<Set<GradesDTO>> response = restClientUtil.exchange(gradesURL, HttpMethod.POST, restClientUtil.createHttpEntity(null), new ParameterizedTypeReference<>(){});
+            Set<GradesDTO> grades = response.getBody();
+            if(grades == null) {
+                course.setGrades(new HashSet<>());
+            } else {
+                for (GradesDTO grade : grades) {
+                    CourseDTO courseDTO = new CourseDTO();
+                    courseDTO.setCourseName(course.getCourseName());
+                    if(course.getSemester() != null){
+                        courseDTO.setSemester(course.getSemester());
+                    }
+                    Optional<StudentDTO> optStudent = course.getStudents().stream()
+                            .filter(studentDTO -> Objects.equals(studentDTO.getStudentId(), grade.getStudentId()))
+                            .findFirst();
+
+                    optStudent.ifPresent(grade::setStudent);
+                    grade.setCourse(courseDTO);
+                }
+                course.setGrades(grades);
+            }
+        }
+    }
+
+    private List<CourseDTO> filterCourses(List<CourseDTO> courses, CourseDTOFilter filters) {
+        if(filters.getBySemester().isPresent()){
+            Integer semesterNumber = filters.getBySemester().get();
+            courses = courses.stream().filter(course -> course.getSemester() != null && course.getSemester().getSemesterNumber() == semesterNumber).toList();
+        }
+        if(filters.getByTeacher().isPresent()){
+            String teacherName = filters.getByTeacher().get();
+            courses = courses.stream().filter(course -> course.getTeacher() != null && course.getTeacher().getTeacherName().contains(teacherName)).toList();
+        }
+        if(filters.getByYear().isPresent()){
+            Integer year = filters.getByYear().get();
+            courses = courses.stream().filter(course -> course.getSemester() != null && course.getSemester().getSchoolYear() == year).toList();
+        }
+        return courses;
     }
 }

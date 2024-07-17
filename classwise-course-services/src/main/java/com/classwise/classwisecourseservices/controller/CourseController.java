@@ -83,8 +83,15 @@ public class CourseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Course>> getAllCourses() {
-        List<Course> courses = courseService.getAllCourses();
+    public ResponseEntity<List<Course>> getAllCourses(
+            @RequestParam(required = false) String byName
+    ) {
+        List<Course> courses;
+        if(byName != null){
+            courses = courseService.getCoursesWithFilters(byName);
+        } else {
+            courses = courseService.getAllCourses();
+        }
         if (courses.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }

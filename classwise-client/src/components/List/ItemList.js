@@ -13,7 +13,7 @@ import {capitalize} from "../../utils/utils";
 import CircularProgress from "@mui/material/CircularProgress";
 import ModalCard from "../Modal/ModalCard";
 
-const ItemList = ({mode, itemType, itemList, tempItems, queryMenu, onItemAdded, onSave, onUpdateQueryFields}) => {
+const ItemList = ({mode, itemType, itemList, tempItems, queryMenu, onItemAdded, onSave}) => {
 
     return (
         itemList === null ?
@@ -45,12 +45,14 @@ const ItemList = ({mode, itemType, itemList, tempItems, queryMenu, onItemAdded, 
             <>
                 <Card>
                     <CardHeader>
-                        <Row>
-                            <Col>
+                        <Row md="12" className="d-flex align-items-center justify-content-between">
+                            <Col md="2">
                                 <CardTitle tag="h4">{capitalize(itemType)} Table</CardTitle>
                             </Col>
-                            {queryMenu && queryMenu}
-                            <Col className="text-right">
+                            <Col md="8">
+                                {queryMenu && queryMenu}
+                            </Col>
+                            <Col className="text-right" md="2">
                                 <ModalCard onItemAdded={onItemAdded} onSave={onSave} mode={mode} type={itemType}/>
                             </Col>
                         </Row>

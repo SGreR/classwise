@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {Button, Col, Input, InputGroup, InputGroupText, Row} from "reactstrap";
+import {Button, Col, Input, Label, Row} from "reactstrap";
 
 const QueryMenu = ({itemType, filter, onUpdateQueryFields }) => {
     const [fieldLabels, setFieldLabels] = useState([])
@@ -16,7 +16,6 @@ const QueryMenu = ({itemType, filter, onUpdateQueryFields }) => {
             if (filter.hasOwnProperty(key)) {
                 newQueryFields.push({
                     name: key,
-                    checked: true,
                     value: filter[key]
                 });
             }
@@ -27,6 +26,12 @@ const QueryMenu = ({itemType, filter, onUpdateQueryFields }) => {
     const updateFieldLabels = () => {
         if(itemType === "semesters"){
             setFieldLabels(["Year", "Semester"])
+        }
+        if(itemType === "courses"){
+            setFieldLabels(["Course Name", "Course Year", "Semester Number", "Teacher Name"])
+        }
+        if(itemType === "students"){
+            setFieldLabels(["Student Name"])
         }
     }
 
@@ -47,21 +52,18 @@ const QueryMenu = ({itemType, filter, onUpdateQueryFields }) => {
     }
 
     return (
-        <Row className="align-items-baseline">
+        <Row className="align-items-end">
             {queryFields.map((field, index) => (
-                <Col key={index}>
-                    <InputGroup>
-                        <InputGroupText>
+                <Col key={index} >
+                        <Label>
                             {fieldLabels[index]}
-                        </InputGroupText>
+                        </Label>
                         <Input
                             type="text"
                             value={field.value}
-                            disabled={!field.checked}
                             onChange={(e) => handleInputChange(index, e.target.value)}
                             placeholder={`Enter ${fieldLabels[index]}`}
                         />
-                    </InputGroup>
                 </Col>
                 ))}
                 <Col>

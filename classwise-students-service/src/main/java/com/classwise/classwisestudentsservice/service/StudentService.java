@@ -32,6 +32,10 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
+    public List<Student> getStudentsWithFilters(String byName){
+        return studentRepository.findStudentsWithFilters(byName);
+    }
+
     public Student getStudentById(Long id) {
         return studentRepository.findById(id).orElseThrow();
     }

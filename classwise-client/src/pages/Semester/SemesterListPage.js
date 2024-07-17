@@ -9,8 +9,13 @@ const SemesterListPage = () => {
     const [semesters, setSemesters] = useState(null)
     const [alert, setAlert] = useState(null)
     const [filter, setFilter] = useState({
-        "bySchoolYear": null,
-        "bySemesterNumber": null
+        "filters": {
+            "bySchoolYear": null,
+            "bySemesterNumber": null
+        },
+        "inclusions": {
+            "includeCourses": false
+        }
     })
 
     useEffect(() => {
@@ -18,7 +23,7 @@ const SemesterListPage = () => {
     }, [filter]);
 
     const fetchSemesters = () => {
-        getAllSemesters(filter)
+        getAllSemesters(filter.filters, filter.inclusions)
             .then(response => setSemesters(response.data))
     }
 
@@ -34,10 +39,13 @@ const SemesterListPage = () => {
         return () => clearTimeout(timeoutId);
     }
 
-    const updateFilter = (newFilter) => {
+    const updateFilter = (newFilters) => {
         setFilter(prevFilter => ({
             ...prevFilter,
-            ...newFilter,
+            filters: {
+                ...prevFilter.filters,
+                ...newFilters
+            },
         }));
     };
 
@@ -65,7 +73,7 @@ const SemesterListPage = () => {
                                 </Card>
                             </Col>
                         ) : (
-                            <ItemList mode="add" queryMenu={<QueryMenu itemType={"semesters"} filter={filter} onUpdateQueryFields={handleUpdateQueryFields} />} onSave={handleSave} itemType={"semesters"} itemList={semesters} onUpdateQueryFields={updateFilter}/>
+                            <ItemList mode="add" queryMenu={<QueryMenu itemType={"semesters"} filter={filter.filters} onUpdateQueryFields={handleUpdateQueryFields} />} onSave={handleSave} itemType={"semesters"} itemList={semesters} onUpdateQueryFields={updateFilter}/>
                         )}
             </div>
         </>

@@ -2,12 +2,15 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:8080/classwise'; // Adjust as needed
 
-export const getAllStudents = () => {
+export const getAllStudents = (filters, inclusions) => {
     return axios.get(`${API_BASE_URL}/students`, {
         auth: {
             username: "admin",
             password: "admin"
         },
+        params: {
+            ...filters,...inclusions
+        }
     })
 }
 
@@ -51,15 +54,14 @@ export const deleteStudentById = (id) => {
     })
 }
 
-export const getAllCourses = () => {
+export const getAllCourses = (filters, inclusions) => {
     return axios.get(`${API_BASE_URL}/courses`, {
         auth: {
             username: 'admin',
             password: 'admin'
         },
-        headers: {
-            'Include-Semester': 'true',
-            'Include-Teacher': 'true'
+        params: {
+            ...filters,...inclusions
         }
     });
 };
@@ -194,22 +196,14 @@ export const deleteGradeById = (id) => {
     });
 };
 
-export const getAllSemesters = (filters) => {
-    const { bySchoolYear, bySemesterNumber } = filters;
-    const params = {};
-    if (bySchoolYear !== undefined) {
-        params.bySchoolYear = bySchoolYear;
-    }
-    if (bySemesterNumber !== undefined) {
-        params.bySemesterNumber = bySemesterNumber;
-    }
+export const getAllSemesters = (filters, inclusions) => {
     return axios.get(`${API_BASE_URL}/semesters`, {
         auth: {
             username: 'admin',
             password: 'admin'
         },
         params: {
-            ...params
+            ...filters,...inclusions
         }
     });
 };

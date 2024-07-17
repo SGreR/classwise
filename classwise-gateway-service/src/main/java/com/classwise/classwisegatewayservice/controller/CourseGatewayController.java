@@ -25,28 +25,11 @@ public class CourseGatewayController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CourseDTO>> getAllCourses(
-            @RequestHeader(value = "Include-Students", defaultValue = "false") boolean includeStudents,
-            @RequestHeader(value = "Include-Teacher", defaultValue = "false") boolean includeTeacher,
-            @RequestHeader(value = "Include-Semester", defaultValue = "false") boolean includeSemester,
-            @RequestHeader(value = "Include-Grades", defaultValue = "false") boolean includeGrades){
-        CourseDTOFilter filter = new CourseDTOFilter();
-        filter.setIncludeStudents(includeStudents);
-        filter.setIncludeTeacher(includeTeacher);
-        filter.setIncludeSemester(includeSemester);
-        filter.setIncludeGrades(includeGrades);
-
-        List<CourseDTO> courses = courseGatewayService.getAll();
+    public ResponseEntity<List<CourseDTO>> getAllCourses(@ModelAttribute CourseDTOFilter filters){
+        List<CourseDTO> courses = courseGatewayService.getAllWithFilters(filters);
         if (courses == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
         }
-        if (filter.isIncludeStudents() || filter.isIncludeTeacher() || filter.isIncludeSemester() || filter.isIncludeGrades()) {
-            List<CourseDTO> detailedCourses = new ArrayList<>();
-            for (CourseDTO course : courses) {
-                detailedCourses.add(courseGatewayService.getCourseWithDetails(course.getCourseId(), filter));
-            }
-            courses = detailedCourses;
-            }
         return ResponseEntity.ok(courses);
     }
 

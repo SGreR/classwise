@@ -61,8 +61,15 @@ public class StudentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Student>> getAllStudents() {
-        List<Student> students = studentService.getAllStudents();
+    public ResponseEntity<List<Student>> getAllStudents(
+            @RequestParam(required = false) String byName
+    ) {
+        List<Student> students;
+        if(byName == null){
+            students = studentService.getAllStudents();
+        } else {
+            students = studentService.getStudentsWithFilters(byName);
+        }
         if (students.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }

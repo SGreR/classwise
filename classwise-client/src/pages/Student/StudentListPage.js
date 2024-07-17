@@ -3,17 +3,27 @@ import React, {useEffect, useState} from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import {Alert, Card, Col} from "reactstrap";
 import {getAllStudents, postStudent} from "../../components/APIService";
+import QueryMenu from "../../components/Query/QueryMenu";
 
 const StudentListPage = () => {
     const [students, setStudents] = useState(null)
     const [alert, setAlert] = useState(null)
+    const [filter, setFilter] = useState({
+        "filters":{
+            "byName":null
+        },
+        "inclusions":{
+            "includeCourses": false,
+            "includeGrades":false
+        }
+    })
 
     useEffect(() => {
         fetchStudents()
-    }, []);
+    }, [filter]);
 
     const fetchStudents = () => {
-        getAllStudents()
+        getAllStudents(filter.filters, filter.inclusions)
             .then(response => setStudents(response.data))
     }
 
@@ -28,6 +38,24 @@ const StudentListPage = () => {
         }, 1500);
         return () => clearTimeout(timeoutId);
     }
+
+    const updateFilter = (newFilters) => {
+        setFilter(prevFilter => ({
+            ...prevFilter,
+            filters: {
+                ...prevFilter.filters,
+                ...newFilters
+            },
+        }));
+    };
+
+    const handleUpdateQueryFields = (queryFields) => {
+        const newFilter = {};
+        queryFields.forEach(field => {
+            newFilter[field.name] = field.value;
+        });
+        updateFilter(newFilter);
+    };
 
     return (
         <>
@@ -44,7 +72,7 @@ const StudentListPage = () => {
                             </Card>
                         </Col>
                     ) : (
-                <ItemList mode="add" onSave={handleSave} itemType={"students"} itemList={students}/>
+                <ItemList mode="add" queryMenu={<QueryMenu filter={filter.filters} itemType="students" onUpdateQueryFields={handleUpdateQueryFields}/> } onSave={handleSave} itemType={"students"} itemList={students}/>
                 )}
             </div>
         </>
