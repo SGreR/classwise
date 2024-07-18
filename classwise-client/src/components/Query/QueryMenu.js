@@ -16,7 +16,7 @@ const QueryMenu = ({itemType, filter, onUpdateQueryFields }) => {
             if (filter.hasOwnProperty(key)) {
                 newQueryFields.push({
                     name: key,
-                    value: filter[key]
+                    value: filter[key] === null ? "" : filter[key]
                 });
             }
         }
@@ -33,6 +33,9 @@ const QueryMenu = ({itemType, filter, onUpdateQueryFields }) => {
         if(itemType === "students"){
             setFieldLabels(["Student Name"])
         }
+        if(itemType === "grades"){
+            setFieldLabels(["Student Name", "Course Name", "Semester Number", "Year", "Teacher Name"])
+        }
     }
 
     const handleInputChange = (index, value) => {
@@ -45,7 +48,7 @@ const QueryMenu = ({itemType, filter, onUpdateQueryFields }) => {
     const handleClear = () => {
         const clearedFields = queryFields.map(field => ({
             ...field,
-            value: ""
+            value: null
         }));
         setQueryFields(clearedFields);
         onUpdateQueryFields(clearedFields);

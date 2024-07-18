@@ -156,20 +156,19 @@ export const deleteTeacherById = (id) => {
     });
 };
 
-export const getAllGrades = () => {
+export const getAllGrades = (filters, inclusions) => {
     return axios.get(`${API_BASE_URL}/grades`, {
         auth: {
             username: 'admin',
             password: 'admin'
         },
-        headers: {
-            'Include-Course': 'true',
-            'Include-Student': 'true'
+        params:{
+            ...filters,...inclusions
         }
     });
 };
 
-export const getGradeById = (id) => {
+export const getGradesById = (id) => {
     return axios.get(`${API_BASE_URL}/grades/${id}`, {
         auth: {
             username: 'admin',
@@ -178,7 +177,16 @@ export const getGradeById = (id) => {
     });
 };
 
-export const putGrade = (id, grade) => {
+export const postGrades = (grades) => {
+    return axios.post(`${API_BASE_URL}/grades`, grades, {
+        auth: {
+            username: "admin",
+            password: "admin"
+        }
+    })
+}
+
+export const putGrades = (id, grade) => {
     return axios.put(`${API_BASE_URL}/grades/${id}`, grade, {
         auth: {
             username: 'admin',
@@ -187,7 +195,7 @@ export const putGrade = (id, grade) => {
     });
 };
 
-export const deleteGradeById = (id) => {
+export const deleteGradesById = (id) => {
     return axios.delete(`${API_BASE_URL}/grades/${id}`, {
         auth: {
             username: 'admin',

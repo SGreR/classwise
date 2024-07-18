@@ -18,7 +18,7 @@ const AddNewStudentModalContent = ({onItemChange}) => {
     return(
         <>
             <InputGroup>
-                <Input onChange={(event) => handleTextChange(event, "studentName")} placeholder="Nome do aluno"/>
+                <Input onChange={(event) => handleTextChange(event, "studentName")} placeholder="Student Name"/>
             </InputGroup>
         </>
     )

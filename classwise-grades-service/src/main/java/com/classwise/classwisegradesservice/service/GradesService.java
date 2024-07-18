@@ -4,6 +4,7 @@ import com.classwise.classwisegradesservice.model.Grades;
 import com.classwise.classwisegradesservice.repository.GradesRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -38,10 +39,19 @@ public class GradesService {
         gradesRepository.save(grades);
     }
 
+    @Transactional
     public void updateGrades(Long id, Grades newGrades) {
         Grades oldGrades = gradesRepository.findById(id).orElseThrow();
-        newGrades.setGradesId(oldGrades.getGradesId());
-        gradesRepository.save(newGrades);
+        oldGrades.setStudentId(newGrades.getStudentId());
+        oldGrades.setCourseId(newGrades.getCourseId());
+        oldGrades.setTestNumber(newGrades.getTestNumber());
+
+        if (newGrades.getAbilities() != null) {
+            oldGrades.getAbilities().setSkills(newGrades.getAbilities().getSkills());
+            oldGrades.getAbilities().setSpeaking(newGrades.getAbilities().getSpeaking());
+            oldGrades.getAbilities().setClassPerformance(newGrades.getAbilities().getClassPerformance());
+        }
+        gradesRepository.save(oldGrades);
     }
 
     public void deleteGrades(Long id) {

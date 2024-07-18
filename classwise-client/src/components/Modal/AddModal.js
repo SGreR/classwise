@@ -2,6 +2,9 @@ import {useEffect, useState} from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import AddNewStudentModalContent from "./AddNewStudentModalContent";
 import AddNewCourseModalContent from "./AddNewCourseModalContent";
+import AddNewSemesterModalContent from "./AddNewSemesterModalContent";
+import AddNewTeacherModalContent from "./AddNewTeacherModalContent";
+import AddNewGradesModalContent from "./AddNewGradesModalContent";
 
 const AddModal = ({type, onItemChange}) => {
     const [content, setContent] = useState(null)
@@ -15,13 +18,13 @@ const AddModal = ({type, onItemChange}) => {
                 setContent(<AddNewCourseModalContent onItemChange={onItemChange}/>)
                 break;
             case "grades":
-                setContent(<></>)
+                setContent(<AddNewGradesModalContent onItemChange={onItemChange}/>)
                 break
             case "teachers":
-                setContent(<></>)
+                setContent(<AddNewTeacherModalContent onItemChange={onItemChange}/>)
                 break
             case "semesters":
-                setContent(<></>)
+                setContent(<AddNewSemesterModalContent onItemChange={onItemChange}/>)
                 break
             default:
                 break;

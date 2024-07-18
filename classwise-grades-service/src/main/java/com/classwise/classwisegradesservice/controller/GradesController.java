@@ -3,7 +3,9 @@ package com.classwise.classwisegradesservice.controller;
 import com.classwise.classwisegradesservice.model.Grades;
 import com.classwise.classwisegradesservice.service.GradesService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -19,9 +21,11 @@ import java.util.Map;
 public class GradesController {
 
     private final GradesService gradesService;
+    private final ObjectMapper objectMapper;
 
-    public GradesController(GradesService gradesService) {
+    public GradesController(GradesService gradesService, ObjectMapper objectMapper) {
         this.gradesService = gradesService;
+        this.objectMapper = objectMapper;
     }
 
     @KafkaListener(topics = "grades-events",
@@ -107,21 +111,43 @@ public class GradesController {
 
     public void addGrades(String string) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            Grades grades = mapper.readValue(string, Grades.class);
-            gradesService.addGrades(grades);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            JsonNode jsonNode = objectMapper.readTree(string);
+            if (jsonNode.isObject()) {
+                ObjectNode objectNode = (ObjectNode) jsonNode;
+                objectNode.remove("student");
+                objectNode.remove("course");
+
+                Grades emptyGrades = new Grades();
+                Grades grades = objectMapper.treeToValue(objectNode, Grades.class);
+
+                emptyGrades.setTestNumber(grades.getTestNumber());
+                emptyGrades.setStudentId(grades.getStudentId());
+                emptyGrades.setCourseId(grades.getCourseId());
+
+                gradesService.addGrades(emptyGrades);
+            } else {
+                throw new IllegalArgumentException("Invalid JSON format");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to add grades: " + e.getMessage(), e);
         }
     }
 
     public void updateGrades(String string) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            Grades grades = mapper.readValue(string, Grades.class);
-            gradesService.updateGrades(grades.getGradesId(), grades);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            JsonNode jsonNode = objectMapper.readTree(string);
+            if (jsonNode.isObject()) {
+                ObjectNode objectNode = (ObjectNode) jsonNode;
+                objectNode.remove("student");
+                objectNode.remove("course");
+
+                Grades grades = objectMapper.treeToValue(objectNode, Grades.class);
+                gradesService.updateGrades(grades.getGradesId(), grades);
+            } else {
+                throw new IllegalArgumentException("Invalid JSON format");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to add grades: " + e.getMessage(), e);
         }
     }
 

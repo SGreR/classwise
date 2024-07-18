@@ -6,7 +6,7 @@ const ListHeaders = ({itemType}) => {
     useEffect(() => {
         switch (itemType){
             case "grades":
-                setTableHeaders(["Id", "Student", "Course", "Semester", "Parecer", "Reading", "Writing", "Listening", "Use of English", "Speaking", "Class Performance", "Final Grade"])
+                setTableHeaders(["Id", "Student", "Course", "Semester", "Teacher", "Parecer", "Reading", "Writing", "Listening", "Use of English", "Speaking", "Class Performance", "Final Grade"])
                 break;
             case "students":
                 setTableHeaders(["Id", "Name"]);

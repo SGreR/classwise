@@ -14,11 +14,11 @@ public class ClassPerformance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="classperformance_id")
-    private Long classPerformanceId;
-    private int presenceGrade;
-    private int homeworkGrade;
-    private int participationGrade;
-    private int behaviorGrade;
+    private Long classPerformanceId = null;
+    private int presenceGrade = 0;
+    private int homeworkGrade = 0;
+    private int participationGrade = 0;
+    private int behaviorGrade = 0;
     public double averageGrade;
 
     public double getAverageGrade() {

@@ -7,42 +7,44 @@ import SemesterCard from "./SemesterCard";
 import ModalCard from "../Modal/ModalCard";
 import AbilitiesCard from "./AbilitiesCard";
 import GradesCard from "./GradesCard";
+import SpeakingCard from "./SpeakingCard";
+import ClassPerformanceCard from "./ClassPerformanceCard";
 
-const InfoCard = ({itemType, item: initialItem, onItemChange, onDelete}) => {
-    const[item, setItem] = useState(initialItem)
+const InfoCard = ({itemType, item, onItemChange, onDelete}) => {
     const[cardContent, setCardContent] = useState(null)
     const[editing, setEditing] = useState(false)
 
     useEffect(() => {
         switch (itemType){
             case "students":
-                setCardContent(<StudentCard item={item} editing={editing} onItemChange={handleItemChange} />);
+                setCardContent(<StudentCard item={item} editing={editing} onItemChange={onItemChange} />);
                 break;
             case "teachers":
-                setCardContent(<TeacherCard item={item} editing={editing} onItemChange={handleItemChange} />);
+                setCardContent(<TeacherCard item={item} editing={editing} onItemChange={onItemChange} />);
                 break;
             case "courses":
-                setCardContent(<CourseCard item={item} editing={editing} onItemChange={handleItemChange} />);
+                setCardContent(<CourseCard item={item} editing={editing} onItemChange={onItemChange} />);
                 break;
             case "semesters":
-                setCardContent(<SemesterCard item={item} editing={editing} onItemChange={handleItemChange}/>)
+                setCardContent(<SemesterCard item={item} editing={editing} onItemChange={onItemChange}/>)
                 break;
             case "abilities":
-                setCardContent(<AbilitiesCard item={item} editing={editing} onItemChange={handleItemChange}/>)
+                setCardContent(<AbilitiesCard item={item} editing={editing} onItemChange={onItemChange}/>)
                 break;
             case "grades":
-                setCardContent(<GradesCard item={item} editing={editing} onItemChange={handleItemChange}/>)
+                setCardContent(<GradesCard item={item} editing={editing} onItemChange={onItemChange}/>)
+                break;
+            case "speaking":
+                setCardContent(<SpeakingCard item={item} editing={editing} onItemChange={onItemChange}/>)
+                break;
+            case "class performance":
+                setCardContent(<ClassPerformanceCard item={item} editing={editing} onItemChange={onItemChange}/>)
+                break;
             default:
                 break;
 
         }
     }, [itemType, item, editing]);
-
-
-    const handleItemChange = (item) => {
-        setItem(item)
-        onItemChange(item)
-    }
 
     return (
         <Card className="text-center">
@@ -50,7 +52,7 @@ const InfoCard = ({itemType, item: initialItem, onItemChange, onDelete}) => {
                 <Row>
                     <Col className="text-right">
                         <Button color="primary" size={"sm"} onClick={() => setEditing(!editing)}>Edit</Button>
-                        {itemType !== "abilities" && <ModalCard mode="delete" type={itemType} onDeleteConfirmed={onDelete}/>}
+                        {itemType !== "abilities" && itemType !== "speaking" && itemType !== "class performance" && <ModalCard mode="delete" type={itemType} onDeleteConfirmed={onDelete}/>}
                     </Col>
                 </Row>
                 {cardContent}

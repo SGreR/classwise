@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 public class Grades {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long gradesId;
-    private Long studentId;
-    private Long courseId;
+    public Long gradesId = null;
+    private Long studentId = null;
+    private Long courseId = null;
     @Enumerated(EnumType.STRING)
-    private TestNumber testNumber;
+    private TestNumber testNumber = TestNumber.FIRST;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="abilities_id")
-    private Abilities abilities;
+    private Abilities abilities = new Abilities();
 }

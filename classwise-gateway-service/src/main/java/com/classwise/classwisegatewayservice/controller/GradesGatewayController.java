@@ -24,27 +24,11 @@ public class GradesGatewayController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GradesDTO>> getAllGradess(
-            @RequestHeader(value = "Include-Student", defaultValue = "false") boolean includeStudent,
-            @RequestHeader(value = "Include-Course", defaultValue = "false") boolean includeCourse
-    ){
-        GradesDTOFilter filter = new GradesDTOFilter();
-        filter.setIncludeStudent(includeStudent);
-        filter.setIncludeCourse(includeCourse);
-
-        List<GradesDTO> grades = gradesGatewayService.getAll();
+    public ResponseEntity<List<GradesDTO>> getAllGrades(@ModelAttribute GradesDTOFilter filters){
+        List<GradesDTO> grades = gradesGatewayService.getAllWithFilters(filters);
         if (grades == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
         }
-        if(filter.isIncludeCourse() || filter.isIncludeStudent()){
-            List<GradesDTO> detailedGrades = new ArrayList<>();
-            for(GradesDTO grade : grades){
-                GradesDTO detailedGrade = gradesGatewayService.getGradesWithDetails(grade.getGradesId(), filter);
-                detailedGrades.add(detailedGrade);
-            }
-            grades = detailedGrades;
-        }
-
         return ResponseEntity.ok(grades);
     }
 

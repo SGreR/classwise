@@ -73,7 +73,7 @@ const SemesterListPage = () => {
                                 </Card>
                             </Col>
                         ) : (
-                            <ItemList mode="add" queryMenu={<QueryMenu itemType={"semesters"} filter={filter.filters} onUpdateQueryFields={handleUpdateQueryFields} />} onSave={handleSave} itemType={"semesters"} itemList={semesters} onUpdateQueryFields={updateFilter}/>
+                            <ItemList mode="add" onItemAdded={handleSave} queryMenu={<QueryMenu itemType={"semesters"} filter={filter.filters} onUpdateQueryFields={handleUpdateQueryFields} />} onSave={handleSave} itemType={"semesters"} itemList={semesters} onUpdateQueryFields={updateFilter}/>
                         )}
             </div>
         </>

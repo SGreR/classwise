@@ -16,11 +16,11 @@ public class Speaking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="speaking_id")
     private Long speakingId;
-    private int productionAndFluencyGrade;
-    private int spokenInteractionGrade;
-    private int languageRangeGrade;
-    private int accuracyGrade;
-    private int languageUse;
+    private int productionAndFluencyGrade = 0;
+    private int spokenInteractionGrade = 0;
+    private int languageRangeGrade = 0;
+    private int accuracyGrade = 0;
+    private int languageUse = 0;
     private double averageGrade;
 
     public double getAverageGrade() {
