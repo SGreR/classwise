@@ -34,14 +34,20 @@ public class StudentGatewayService implements ServiceInterface<StudentDTO> {
     }
 
     public List<StudentDTO> getStudentsWithFilters(StudentDTOFilter filters){
-        String url = restClientUtil.buildUrlWithFilters(serviceURLs.getStudentsUrl(), filters);
-        ResponseEntity<List<StudentDTO>> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), new ParameterizedTypeReference<>() {});
-        List<StudentDTO> students = response.getBody();
-        if(filters.isIncludeCourses()){
-            includeCourses(students);
-        }
-        if(filters.isIncludeGrades()){
-            includeGrades(students);
+        List<StudentDTO> students = new ArrayList<>();
+        try{
+            String url = restClientUtil.buildUrlWithFilters(serviceURLs.getStudentsUrl(), filters);
+            ResponseEntity<List<StudentDTO>> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), new ParameterizedTypeReference<>() {});
+            students = response.getBody();
+            if(filters.isIncludeCourses()){
+                includeCourses(students);
+            }
+            if(filters.isIncludeGrades()){
+                includeGrades(students);
+            }
+            return students;
+        } catch (Exception e){
+            System.out.println(e.getMessage());
         }
         return students;
     }

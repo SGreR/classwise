@@ -36,7 +36,6 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorize) ->
                         authorize
-                                .requestMatchers(toH2Console()).permitAll()
                                 .requestMatchers(HttpMethod.POST, "/internal/**").authenticated()
                                 .requestMatchers(HttpMethod.PUT, "/internal/**").authenticated()
                                 .requestMatchers(HttpMethod.DELETE, "/internal/**").authenticated()

@@ -15,12 +15,14 @@
         <option value="$PROJECT_DIR$/classwise-gateway-service/pom.xml" />
         <option value="$PROJECT_DIR$/classwise-course-services/pom.xml" />
         <option value="$PROJECT_DIR$/classwise-semester-services/pom.xml" />
+        <option value="$PROJECT_DIR$/classwise/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/classwise-classes-service/pom.xml" />
         <option value="$PROJECT_DIR$/classwise-grades-service/classwise-classroom-services/pom.xml" />
+        <option value="$PROJECT_DIR$/classwise/pom.xml" />
       </set>
     </option>
   </component>

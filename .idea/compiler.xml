@@ -7,8 +7,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="classwise-grades-service" />
         <module name="classwise-teachers-service" />
+        <module name="classwise-grades-service" />
         <module name="classwise-gateway-service" />
         <module name="classwise-students-service" />
         <module name="classwise-course-services" />
@@ -16,11 +16,13 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="classwise" target="21" />
       <module name="classwise-classes-service" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="classwise" options="-parameters" />
       <module name="classwise-classes-service" options="-parameters" />
       <module name="classwise-course-services" options="-parameters" />
       <module name="classwise-gateway-service" options="-parameters" />
