@@ -10,7 +10,7 @@ import GradesCard from "./GradesCard";
 import SpeakingCard from "./SpeakingCard";
 import ClassPerformanceCard from "./ClassPerformanceCard";
 
-const InfoCard = ({itemType, item, onItemChange, onDelete}) => {
+const InfoCard = ({itemType, item, onItemChange, onDelete, onInvalidGrade}) => {
     const[cardContent, setCardContent] = useState(null)
     const[editing, setEditing] = useState(false)
 
@@ -29,16 +29,16 @@ const InfoCard = ({itemType, item, onItemChange, onDelete}) => {
                 setCardContent(<SemesterCard item={item} editing={editing} onItemChange={onItemChange}/>)
                 break;
             case "abilities":
-                setCardContent(<AbilitiesCard item={item} editing={editing} onItemChange={onItemChange}/>)
+                setCardContent(<AbilitiesCard item={item} editing={editing} onItemChange={onItemChange} onInvalidGrade={onInvalidGrade}/>)
                 break;
             case "grades":
                 setCardContent(<GradesCard item={item} editing={editing} onItemChange={onItemChange}/>)
                 break;
             case "speaking":
-                setCardContent(<SpeakingCard item={item} editing={editing} onItemChange={onItemChange}/>)
+                setCardContent(<SpeakingCard item={item} editing={editing} onItemChange={onItemChange} onInvalidGrade={onInvalidGrade}/>)
                 break;
             case "class performance":
-                setCardContent(<ClassPerformanceCard item={item} editing={editing} onItemChange={onItemChange}/>)
+                setCardContent(<ClassPerformanceCard item={item} editing={editing} onItemChange={onItemChange} onInvalidGrade={onInvalidGrade}/>)
                 break;
             default:
                 break;

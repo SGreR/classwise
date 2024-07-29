@@ -12,9 +12,9 @@ import {
 import {capitalize} from "../../utils/utils";
 
 const AddNewGradesModalContent = ({onItemChange}) =>{
-    const[students, setStudents] = useState(null)
-    const[courses, setCourses] = useState(null)
-    const[courseFilter, setCourseFilter] = useState({
+    const[students, setStudents] = useState([])
+    const[courses, setCourses] = useState([])
+    const[courseFilter] = useState({
         "filters": {
             "byName": null,
             "byYear": null,
@@ -50,13 +50,13 @@ const AddNewGradesModalContent = ({onItemChange}) =>{
     };
 
     const getSelectedStudentText = () => {
-        const selectedStudent = students?.find(student => student.studentId === grades.studentId);
-        return selectedStudent ? `${selectedStudent.studentName}` : "Select Student";
+        const selectedStudent = students ? students?.find(student => student.studentId === grades.studentId) : null;
+        return selectedStudent ? `${selectedStudent.studentName}` : "None";
     }
 
     const getSelectedCourseText = () => {
-        const selectedCourse = courses?.find(course => course.courseId === grades.courseId);
-        return selectedCourse ? `${selectedCourse.courseName} ${selectedCourse.semester.schoolYear}-${selectedCourse.semester.semesterNumber}` : "Select Course";
+        const selectedCourse = courses ? courses?.find(course => course.courseId === grades.courseId) : null;
+        return selectedCourse ? buildCourseName(selectedCourse) : "None";
     }
 
     const buildCourseName = (course) => {
@@ -76,8 +76,9 @@ const AddNewGradesModalContent = ({onItemChange}) =>{
                             {getSelectedStudentText()}
                         </DropdownToggle>
                         <DropdownMenu>
-                            <DropdownItem header>Semesters</DropdownItem>
-                            {students?.map(student => (
+                            <DropdownItem header>Students</DropdownItem>
+                            <DropdownItem onClick={() => handleSelectChange(null, "studentId")}>None</DropdownItem>
+                            {students && students?.map(student => (
                                 <DropdownItem
                                     key={student.studentId}
                                     onClick={() => handleSelectChange(student.studentId, "studentId")}
@@ -97,7 +98,8 @@ const AddNewGradesModalContent = ({onItemChange}) =>{
                         </DropdownToggle>
                         <DropdownMenu>
                             <DropdownItem header>Semesters</DropdownItem>
-                            {courses?.map(course => (
+                            <DropdownItem onClick={() => handleSelectChange(null, "courseId")}>None</DropdownItem>
+                            {courses && courses?.map(course => (
                                 <DropdownItem
                                     key={course.courseId}
                                     onClick={() => handleSelectChange(course.courseId, "courseId")}

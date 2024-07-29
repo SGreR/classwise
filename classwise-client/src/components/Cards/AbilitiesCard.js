@@ -1,13 +1,19 @@
 import {useEffect, useState} from "react";
-import {Col, Row} from "reactstrap";
+import {Col, Input, Row} from "reactstrap";
 import {capitalize} from "../../utils/utils";
 
-const AbilitiesCard = ({item:initialItem, editing, onItemChange}) => {
+const AbilitiesCard = ({item:initialItem, editing, onItemChange, onInvalidGrade}) => {
     const [item, setItem] = useState(null)
 
     useEffect(() => {
         setItem(initialItem)
     }, [initialItem]);
+
+    useEffect(() => {
+        if(item){
+            onInvalidGrade(isGradeInvalid(item?.teacherGrade) || isGradeInvalid(item?.testGrade), item?.skillName?.toLowerCase())
+        }
+    }, [item?.teacherGrade, item?.testGrade]);
 
     const handleTextChange = (event, fieldName) => {
         const value = event.target.value;
@@ -26,6 +32,11 @@ const AbilitiesCard = ({item:initialItem, editing, onItemChange}) => {
         if (isNaN(parsedTeacherGrade) || isNaN(parsedTestGrade)) return "";
         return ((parsedTeacherGrade + parsedTestGrade) / 2).toFixed(1).toString();
     };
+
+    const isGradeInvalid = (grade) => {
+        const parsedGrade = parseFloat(grade);
+        return isNaN(parsedGrade) || parsedGrade < 0.0 || parsedGrade > 100.0;
+    }
 
     return(
         item &&
@@ -63,10 +74,12 @@ const AbilitiesCard = ({item:initialItem, editing, onItemChange}) => {
                         <h5>
                             <small>Teacher Grade</small><br/>
                             {editing ? (
-                                <input
+                                <Input
                                     type={"text"}
                                     value={item.teacherGrade}
-                                    onChange={(event) => handleTextChange(event, "teacherGrade")}/>
+                                    onChange={(event) => handleTextChange(event, "teacherGrade")}
+                                    invalid={isGradeInvalid(item.teacherGrade)}
+                                />
                             ) : (
                                 <>
                                     {item.teacherGrade}%
@@ -78,10 +91,12 @@ const AbilitiesCard = ({item:initialItem, editing, onItemChange}) => {
                         <h5>
                             <small>Test Grade</small><br/>
                             {editing ? (
-                                <input
+                                <Input
                                     type={"text"}
                                     value={item.testGrade}
-                                    onChange={(event) => handleTextChange(event, "testGrade")}/>
+                                    onChange={(event) => handleTextChange(event, "testGrade")}
+                                    invalid={isGradeInvalid(item.testGrade)}
+                                />
                             ) : (
                                 <>
                                     {item.testGrade}%

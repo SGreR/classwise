@@ -4,7 +4,6 @@ import InfoCard from "../../components/Cards/InfoCard";
 import ItemList from "../../components/List/ItemList";
 import React, {useEffect, useState} from "react";
 import CircularProgress from "@mui/material/CircularProgress";
-import axios from "axios";
 import {deleteCourseById, getCourseById, putCourse} from "../../components/APIService";
 import ChartsCard from "../../components/Cards/ChartsCard";
 
@@ -36,8 +35,8 @@ const CourseDetailsPage = () => {
         putCourse(id, course)
             .then(response => {
                 setAlert(response.data.message)
-                fetchCourse()
                 setTempStudents([])
+                fetchCourse()
             })
             .catch(error => console.error('Error saving student:', error));
     }

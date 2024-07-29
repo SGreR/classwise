@@ -26,9 +26,17 @@ const AddExistingCourseModalContent = ({onItemSelected}) => {
     }
 
     const getSelectedCourseText = () => {
-        const selectedCourse = courses ? courses.find(course => course.courseId === newCourse.courseId) : null;
-        return selectedCourse ? `${selectedCourse.courseName} ${selectedCourse.semester.schoolYear}-${selectedCourse.semester.semesterNumber}` : "Select Course";
-    };
+        const selectedCourse = courses && newCourse.courseId ? courses?.find(course => course.courseId === newCourse.courseId) : null;
+        return selectedCourse ? buildCourseName(selectedCourse) : "None";
+    }
+
+    const buildCourseName = (course) => {
+        if(!course.semester){
+            return course.courseName
+        } else {
+            return `${course.courseName} ${course.semester.schoolYear}-${course.semester.semesterNumber}`
+        }
+    }
 
     const handleSelectChange = (selectedItem) => {
         setNewCourse(selectedItem)
@@ -48,12 +56,12 @@ const AddExistingCourseModalContent = ({onItemSelected}) => {
                         </DropdownToggle>
                         <DropdownMenu>
                             <DropdownItem header>Courses</DropdownItem>
-                            {courses !== null && courses.map(course => (
+                            {courses && courses?.map(course => (
                                 <DropdownItem
                                     key={course.courseId}
                                     onClick={() => handleSelectChange(course)}
                                 >
-                                    {course.courseName} {course.semester.schoolYear}-{course.semester.semesterNumber}
+                                    {buildCourseName(course)}
                                 </DropdownItem>
                             ))}
                         </DropdownMenu>

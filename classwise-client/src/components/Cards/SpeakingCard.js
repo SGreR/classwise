@@ -1,12 +1,24 @@
 import {useEffect, useState} from "react";
-import {Col, Row} from "reactstrap";
+import {Col, Input, Row} from "reactstrap";
 
-const SpeakingCard = ({item:initialItem, editing, onItemChange}) => {
+const SpeakingCard = ({item:initialItem, editing, onItemChange, onInvalidGrade}) => {
     const [item, setItem] = useState(null)
 
     useEffect(() => {
         setItem(initialItem)
     }, [initialItem]);
+
+    useEffect(() => {
+        if(item) {
+            onInvalidGrade(
+                isGradeInvalid(item?.productionAndFluencyGrade) ||
+                isGradeInvalid(item?.spokenInteractionGrade) ||
+                isGradeInvalid(item?.languageRangeGrade) ||
+                isGradeInvalid(item?.accuracyGrade) ||
+                isGradeInvalid(item?.languageUse),
+                "speaking")
+        }
+    }, [item, item?.speaking]);
 
     const handleTextChange = (event, fieldName) => {
         const value = event.target.value;
@@ -33,6 +45,11 @@ const SpeakingCard = ({item:initialItem, editing, onItemChange}) => {
         return average - (average * (5 - parsedLanguageUse) * 0.1);
     };
 
+    const isGradeInvalid = (grade) => {
+        const parsedGrade = parseInt(grade);
+        return isNaN(parsedGrade) || parsedGrade < 0 || parsedGrade > 5;
+    }
+
     return(
         item &&
         <>
@@ -52,10 +69,12 @@ const SpeakingCard = ({item:initialItem, editing, onItemChange}) => {
                         <h5>
                             <small>Production and Fluency</small><br/>
                             {editing ? (
-                                <input
+                                <Input
                                     type={"text"}
                                     value={item.productionAndFluencyGrade}
-                                    onChange={(event) => handleTextChange(event, "productionAndFluencyGrade")}/>
+                                    onChange={(event) => handleTextChange(event, "productionAndFluencyGrade")}
+                                    invalid={isGradeInvalid(item.productionAndFluencyGrade)}
+                                />
                             ) : (
                                 <>
                                     {item.productionAndFluencyGrade}/5
@@ -67,10 +86,12 @@ const SpeakingCard = ({item:initialItem, editing, onItemChange}) => {
                         <h5>
                             <small>Spoken Interaction</small><br/>
                             {editing ? (
-                                <input
+                                <Input
                                     type={"text"}
                                     value={item.spokenInteractionGrade}
-                                    onChange={(event) => handleTextChange(event, "spokenInteractionGrade")}/>
+                                    onChange={(event) => handleTextChange(event, "spokenInteractionGrade")}
+                                    invalid={isGradeInvalid(item.spokenInteractionGrade)}
+                                />
                             ) : (
                                 <>
                                     {item.spokenInteractionGrade}/5
@@ -84,10 +105,13 @@ const SpeakingCard = ({item:initialItem, editing, onItemChange}) => {
                         <h5>
                             <small>Language Range</small><br/>
                             {editing ? (
-                                <input
+                                <Input
                                     type={"text"}
                                     value={item.languageRangeGrade}
-                                    onChange={(event) => handleTextChange(event, "languageRangeGrade")}/>
+                                    onChange={(event) => handleTextChange(event, "languageRangeGrade")}
+                                    invalid={isGradeInvalid(item.languageRangeGrade)}
+
+                                />
                             ) : (
                                 <>
                                     {item.languageRangeGrade}/5
@@ -99,10 +123,12 @@ const SpeakingCard = ({item:initialItem, editing, onItemChange}) => {
                         <h5>
                             <small>Accuracy</small><br/>
                             {editing ? (
-                                <input
+                                <Input
                                     type={"text"}
                                     value={item.accuracyGrade}
-                                    onChange={(event) => handleTextChange(event, "accuracyGrade")}/>
+                                    onChange={(event) => handleTextChange(event, "accuracyGrade")}
+                                    invalid={isGradeInvalid(item.accuracyGrade)}
+                                />
                             ) : (
                                 <>
                                     {item.accuracyGrade}/5
@@ -114,12 +140,14 @@ const SpeakingCard = ({item:initialItem, editing, onItemChange}) => {
                         <h5>
                             <small>Language Use</small><br/>
                             {editing ? (
-                                <input
+                                <Input
                                     type={"text"}
                                     value={item.languageUse}
-                                    onChange={(event) => handleTextChange(event, "languageUse")}/>
+                                    onChange={(event) => handleTextChange(event, "languageUse")}
+                                    invalid={isGradeInvalid(item.languageUse)}
+                                />
                             ) : (
-                                <>{item.productionAndFluencyGrade}/5</>
+                                <>{item.languageUse}/5</>
                             )}
                         </h5>
                     </Col>

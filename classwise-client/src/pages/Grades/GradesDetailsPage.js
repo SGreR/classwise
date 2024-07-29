@@ -3,14 +3,23 @@ import {Alert, Button, Col, Row} from "reactstrap";
 import React, {useEffect, useState} from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import InfoCard from "../../components/Cards/InfoCard";
-import {deleteCourseById, deleteGradesById, getGradesById, putGrades} from "../../components/APIService";
+import {deleteGradesById, getGradesById, putGrades} from "../../components/APIService";
 
 const GradesDetailsPage = () => {
     const {id} = useParams()
     const [grades, setGrades] = useState(null)
     const [alert, setAlert] = useState(null)
+    const [errorAlert, setErrorAlert] = useState(null)
     const [modified, setModified] = useState(false)
     const [saved, setSaved] = useState(true)
+    const [invalidInputs, setInvalidInputs] = useState({
+        reading: false,
+        listening: false,
+        speaking: false,
+        writing: false,
+        useofenglish: false,
+        classPerformance: false,
+    });
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -103,14 +112,29 @@ const GradesDetailsPage = () => {
         return () => clearTimeout(timeoutId);
     }
 
+    const handleInvalidInput = (isInputInvalid, inputType) => {
+        setInvalidInputs(prevState => ({
+            ...prevState,
+            [inputType]: isInputInvalid
+        }));
+        if(isInputInvalid) {
+            setErrorAlert(`Invalid input!`)
+        }
+    }
+
+    const isFormInvalid = Object.values(invalidInputs).some(isInvalid => isInvalid);
+
     return (
         <>
             <div className="content">
                 {alert &&
                     <Alert color="info">{alert}</Alert>
                 }
+                {isFormInvalid &&
+                    <Alert color="danger">{errorAlert}</Alert>
+                }
                 {
-                    (modified && !saved) && <Button color="success" size={"sm"} onClick={handleUpdate} >Save</Button>
+                    (modified && !saved) && <Button color="success" size={"sm"} onClick={handleUpdate} disabled={isFormInvalid} >Save</Button>
                 }
                 {
                     grades === null ?
@@ -125,15 +149,15 @@ const GradesDetailsPage = () => {
                                 </Row>
                                 <Row>
                                     <Col md="6">
-                                        <InfoCard item={grades.abilities.skills.find(skill => skill.skillName === "READING")} itemType="abilities" onItemChange={handleSkillChange}/>
-                                        <InfoCard item={grades.abilities.skills.find(skill => skill.skillName === "LISTENING")} itemType="abilities" onItemChange={handleSkillChange}/>
-                                        <InfoCard item={grades.abilities.speaking} itemType="speaking" onItemChange={handleSpeakingChange}/>
+                                        <InfoCard item={grades.abilities.skills.find(skill => skill.skillName === "READING")} itemType="abilities" onItemChange={handleSkillChange} onInvalidGrade={handleInvalidInput}/>
+                                        <InfoCard item={grades.abilities.skills.find(skill => skill.skillName === "LISTENING")} itemType="abilities" onItemChange={handleSkillChange} onInvalidGrade={handleInvalidInput}/>
+                                        <InfoCard item={grades.abilities.speaking} itemType="speaking" onItemChange={handleSpeakingChange} onInvalidGrade={handleInvalidInput}/>
 
                                     </Col>
                                     <Col md="6">
-                                        <InfoCard item={grades.abilities.skills.find(skill => skill.skillName === "WRITING")} itemType="abilities" onItemChange={handleSkillChange}/>
-                                        <InfoCard item={grades.abilities.skills.find(skill => skill.skillName === "USEOFENGLISH")} itemType="abilities" onItemChange={handleSkillChange}/>
-                                        <InfoCard item={grades.abilities.classPerformance} itemType="class performance" onItemChange={handleClassPerformanceChange}/>
+                                        <InfoCard item={grades.abilities.skills.find(skill => skill.skillName === "WRITING")} itemType="abilities" onItemChange={handleSkillChange} onInvalidGrade={handleInvalidInput}/>
+                                        <InfoCard item={grades.abilities.skills.find(skill => skill.skillName === "USEOFENGLISH")} itemType="abilities" onItemChange={handleSkillChange} onInvalidGrade={handleInvalidInput}/>
+                                        <InfoCard item={grades.abilities.classPerformance} itemType="class performance" onItemChange={handleClassPerformanceChange} onInvalidGrade={handleInvalidInput}/>
                                     </Col>
                                 </Row>
                             </>

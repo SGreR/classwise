@@ -89,8 +89,8 @@ const StudentDetailsPage = () => {
         putStudent(id, student)
             .then(response => {
                 setAlert(response.data.message)
-                fetchStudent()
                 setTempCourses([])
+                fetchStudent()
             })
             .catch(error => console.error('Error saving student:', error));
         }

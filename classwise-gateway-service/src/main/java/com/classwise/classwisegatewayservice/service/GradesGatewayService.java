@@ -11,6 +11,8 @@ import org.springframework.http.*;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -49,29 +51,11 @@ public class GradesGatewayService implements ServiceInterface<GradesDTO> {
 
     public GradesDTO getById(Long id) {
         String url = serviceURLs.getGradesUrl() + "/" + id;
-        ResponseEntity<GradesDTO> response = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), GradesDTO.class);
-        return response.getBody();
-    }
+        ResponseEntity<GradesDTO> gradesResponse = restClientUtil.exchange(url, HttpMethod.GET, restClientUtil.createHttpEntity(null), GradesDTO.class);
+        GradesDTO grades = gradesResponse.getBody();
+        includeStudents(Collections.singletonList(grades));
+        includeCourses(Collections.singletonList(grades));
 
-    public GradesDTO getGradesWithDetails(Long id, GradesDTOFilter filter){
-        GradesDTO grades = getById(id);
-        if(filter.isIncludeStudent()){
-            String studentsUrl = serviceURLs.getStudentsUrl() + "/" + grades.getStudentId();
-            StudentDTO response = restClientUtil.exchange(studentsUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), StudentDTO.class).getBody();
-            grades.setStudent(response);
-        }
-        if(filter.isIncludeCourse() && grades.getCourseId() != null){
-            String coursesUrl = serviceURLs.getCourseUrl() + "/" + grades.getCourseId();
-            ResponseEntity<CourseDTO> response = restClientUtil.exchange(coursesUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), CourseDTO.class);
-            CourseDTO course = response.getBody();
-            if(course.getSemesterId() != null){
-                String semestersUrl = serviceURLs.getSemesterUrl() + "/" + course.getSemesterId();
-                ResponseEntity<SemesterDTO> semesterResponse = restClientUtil.exchange(semestersUrl, HttpMethod.GET, restClientUtil.createHttpEntity(null), SemesterDTO.class);
-                SemesterDTO semester = semesterResponse.getBody();
-                course.setSemester(semester);
-            }
-            grades.setCourse(course);
-        }
         return grades;
     }
 

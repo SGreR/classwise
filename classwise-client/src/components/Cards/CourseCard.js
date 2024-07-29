@@ -96,7 +96,8 @@ const CourseCard = ({item:initialItem, editing, onItemChange}) => {
                                             </DropdownToggle>
                                             <DropdownMenu>
                                                 <DropdownItem header>Semesters</DropdownItem>
-                                                {semesters.map(semester => (
+                                                <DropdownItem onClick={() => handleSelectChange({}, "semester")}>None</DropdownItem>
+                                                {semesters && semesters?.map(semester => (
                                                     <DropdownItem
                                                         key={semester.semesterId}
                                                         disabled={item.semester && semester.semesterId === item.semester.semesterId}
@@ -108,11 +109,11 @@ const CourseCard = ({item:initialItem, editing, onItemChange}) => {
                                                 ))}
                                             </DropdownMenu>
                                         </UncontrolledDropdown>
-                                        {item.semester ? `${item.semester.schoolYear}-${item.semester.semesterNumber}` : "Unassigned"}
+                                        {item.semester?.schoolYear !== undefined && item.semester?.semesterNumber !== undefined ? `${item.semester.schoolYear}-${item.semester.semesterNumber}` : "Unassigned"}
                                     </>
                                 ) : (
                                     <>
-                                        {item.semester ? `${item.semester.schoolYear}-${item.semester.semesterNumber}` : "Unassigned"}
+                                        {item.semester?.schoolYear !== undefined && item.semester?.semesterNumber !== undefined ? `${item.semester.schoolYear}-${item.semester.semesterNumber}` : "Unassigned"}
                                     </>
                                 )}
                             </h6>
@@ -129,7 +130,8 @@ const CourseCard = ({item:initialItem, editing, onItemChange}) => {
                                             </DropdownToggle>
                                             <DropdownMenu>
                                                 <DropdownItem header>Teachers</DropdownItem>
-                                                {teachers.map(teacher => (
+                                                <DropdownItem onClick={() => handleSelectChange({}, "teacher")}>None</DropdownItem>
+                                                {teachers && teachers?.map(teacher => (
                                                     <DropdownItem
                                                         key={teacher.teacherId}
                                                         disabled={item.teacher && teacher.teacherId === item.teacher.teacherId}
@@ -141,11 +143,11 @@ const CourseCard = ({item:initialItem, editing, onItemChange}) => {
                                                 ))}
                                             </DropdownMenu>
                                         </UncontrolledDropdown>
-                                        {item.teacher ? item.teacher.teacherName : "Unassigned"}
+                                        {item.teacher?.teacherName !== undefined ? item.teacher.teacherName : "Unassigned"}
                                     </>
                                 ) : (
                                     <>
-                                        {item.teacher ? item.teacher.teacherName : "Unassigned"}
+                                        {item.teacher?.teacherName !== undefined ? item.teacher.teacherName : "Unassigned"}
                                     </>
                                 )}
                             </h6>

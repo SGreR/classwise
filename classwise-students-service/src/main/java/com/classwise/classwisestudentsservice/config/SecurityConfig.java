@@ -1,5 +1,6 @@
 package com.classwise.classwisestudentsservice.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,17 +16,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
-
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Value("${spring.security.user.password}")
+    private String securityPassword;
+
+    @Value("${spring.security.user.name}")
+    private String securityUsername;
+
     @Bean
     public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.withUsername("admin")
-                .password(passwordEncoder.encode("admin"))
+        UserDetails user = User.withUsername(securityUsername)
+                .password(passwordEncoder.encode(securityPassword))
                 .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(user);

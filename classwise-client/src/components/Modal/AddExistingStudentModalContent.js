@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {getAllCourses, getAllStudents} from "../APIService";
+import {getAllStudents} from "../APIService";
 import {
     ButtonDropdown,
     Col,
@@ -47,8 +47,8 @@ const AddExistingStudentModalContent = ({onItemSelected}) => {
                             {getSelectedStudentText()}
                         </DropdownToggle>
                         <DropdownMenu>
-                            <DropdownItem header>Courses</DropdownItem>
-                            {students !== null && students.map(student => (
+                            <DropdownItem header>Students</DropdownItem>
+                            {students && students?.map(student => (
                                 <DropdownItem
                                     key={student.studentId}
                                     onClick={() => handleSelectChange(student)}

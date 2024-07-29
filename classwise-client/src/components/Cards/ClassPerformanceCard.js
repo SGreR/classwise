@@ -1,12 +1,23 @@
 import {useEffect, useState} from "react";
-import {Col, Row} from "reactstrap";
+import {Col, Input, Row} from "reactstrap";
 
-const ClassPerformanceCard = ({item:initialItem, editing, onItemChange}) => {
+const ClassPerformanceCard = ({item:initialItem, editing, onItemChange, onInvalidGrade}) => {
     const [item, setItem] = useState(null)
 
     useEffect(() => {
         setItem(initialItem)
     }, [initialItem]);
+
+    useEffect(() => {
+        if(item) {
+            onInvalidGrade(
+                isGradeInvalid(item?.presenceGrade) ||
+                isGradeInvalid(item?.homeworkGrade) ||
+                isGradeInvalid(item?.participationGrade) ||
+                isGradeInvalid(item?.behaviorGrade),
+                "classPerformance")
+        }
+    }, [item, item?.classPerformance]);
 
     const handleTextChange = (event, fieldName) => {
         const value = event.target.value;
@@ -31,6 +42,11 @@ const ClassPerformanceCard = ({item:initialItem, editing, onItemChange}) => {
         return ((sum / 4) * 20)
     };
 
+    const isGradeInvalid = (grade) => {
+        const parsedGrade = parseInt(grade);
+        return isNaN(parsedGrade) || parsedGrade < 0 || parsedGrade > 5;
+    }
+
     return(
         item &&
         <>
@@ -50,10 +66,12 @@ const ClassPerformanceCard = ({item:initialItem, editing, onItemChange}) => {
                         <h5>
                             <small>Presence</small><br/>
                             {editing ? (
-                                <input
+                                <Input
                                     type={"text"}
                                     value={item.presenceGrade}
-                                    onChange={(event) => handleTextChange(event, "presenceGrade")}/>
+                                    onChange={(event) => handleTextChange(event, "presenceGrade")}
+                                    invalid={isGradeInvalid(item.presenceGrade)}
+                                />
                             ) : (
                                 <>
                                     {item.presenceGrade}/5
@@ -65,10 +83,12 @@ const ClassPerformanceCard = ({item:initialItem, editing, onItemChange}) => {
                         <h5>
                             <small>Homework</small><br/>
                             {editing ? (
-                                <input
+                                <Input
                                     type={"text"}
                                     value={item.homeworkGrade}
-                                    onChange={(event) => handleTextChange(event, "homeworkGrade")}/>
+                                    onChange={(event) => handleTextChange(event, "homeworkGrade")}
+                                    invalid={isGradeInvalid(item.homeworkGrade)}
+                                />
                             ) : (
                                 <>
                                     {item.homeworkGrade}/5
@@ -82,10 +102,12 @@ const ClassPerformanceCard = ({item:initialItem, editing, onItemChange}) => {
                         <h5>
                             <small>Participation</small><br/>
                             {editing ? (
-                                <input
+                                <Input
                                     type={"text"}
                                     value={item.participationGrade}
-                                    onChange={(event) => handleTextChange(event, "participationGrade")}/>
+                                    onChange={(event) => handleTextChange(event, "participationGrade")}
+                                    invalid={isGradeInvalid(item.participationGrade)}
+                                />
                             ) : (
                                 <>
                                     {item.participationGrade}/5
@@ -97,10 +119,12 @@ const ClassPerformanceCard = ({item:initialItem, editing, onItemChange}) => {
                         <h5>
                             <small>Behavior</small><br/>
                             {editing ? (
-                                <input
+                                <Input
                                     type={"text"}
                                     value={item.behaviorGrade}
-                                    onChange={(event) => handleTextChange(event, "behaviorGrade")}/>
+                                    onChange={(event) => handleTextChange(event, "behaviorGrade")}
+                                    invalid={isGradeInvalid(item.behaviorGrade)}
+                                />
                             ) : (
                                 <>
                                     {item.behaviorGrade}/5

@@ -1,0 +1,214 @@
+version: '3.8'
+services:
+  zookeeper:
+    image: zookeeper:3.7.1
+    ports:
+      - "2181:2181"
+    networks:
+      - backend
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.1
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+    networks:
+      - backend
+
+  mysql-courses:
+    image: mysql:8.0
+    container_name: mysql-courses
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: courses
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./db-init/courses:/docker-entrypoint-initdb.d
+      - ./mysql-courses-data:/var/lib/mysql
+    networks:
+      - backend
+
+  mysql-grades:
+    image: mysql:8.0
+    container_name: mysql-grades
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: grades
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./db-init/grades:/docker-entrypoint-initdb.d
+      - ./mysql-grades-data:/var/lib/mysql
+    networks:
+      - backend
+
+  mysql-semesters:
+    image: mysql:8.0
+    container_name: mysql-semesters
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: semesters
+    ports:
+      - "3309:3306"
+    volumes:
+      - ./db-init/semesters:/docker-entrypoint-initdb.d
+      - ./mysql-semesters-data:/var/lib/mysql
+    networks:
+      - backend
+
+  mysql-students:
+    image: mysql:8.0
+    container_name: mysql-students
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: students
+    ports:
+      - "3310:3306"
+    volumes:
+      - ./db-init/students:/docker-entrypoint-initdb.d
+      - ./mysql-students-data:/var/lib/mysql
+    networks:
+      - backend
+
+  mysql-teachers:
+    image: mysql:8.0
+    container_name: mysql-teachers
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: teachers
+    ports:
+      - "3311:3306"
+    volumes:
+      - ./db-init/teachers:/docker-entrypoint-initdb.d
+      - ./mysql-teachers-data:/var/lib/mysql
+    networks:
+      - backend
+
+  classwise-course-service:
+    build:
+      context: ./classwise-course-services
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-courses:3306/courses?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+      SPRING_KAFKA_CONSUMER_GROUP_ID: courses-group
+      SPRING_KAFKA_CONSUMER_AUTO_OFFSET_RESET: earliest
+      SPRING_SECURITY_USERNAME: ${SPRING_SECURITY_USERNAME}
+      SPRING_SECURITY_PASSWORD: ${SPRING_SECURITY_PASSWORD}
+    depends_on:
+      - kafka
+      - mysql-courses
+    networks:
+      - backend
+
+  classwise-gateway-service:
+    build:
+      context: ./classwise-gateway-service
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+      SERVICE_COURSE_URL: ${SERVICE_COURSE_URL}
+      SERVICE_GRADES_URL: ${SERVICE_GRADES_URL}
+      SERVICE_SEMESTER_URL: ${SERVICE_SEMESTER_URL}
+      SERVICE_STUDENTS_URL: ${SERVICE_STUDENTS_URL}
+      SERVICE_TEACHERS_URL: ${SERVICE_TEACHERS_URL}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - kafka
+    networks:
+      - backend
+
+  classwise-grades-service:
+    build:
+      context: ./classwise-grades-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-grades:3306/grades?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+      SPRING_KAFKA_CONSUMER_GROUP_ID: grades-group
+      SPRING_KAFKA_CONSUMER_AUTO_OFFSET_RESET: earliest
+      SPRING_SECURITY_USERNAME: ${SPRING_SECURITY_USERNAME}
+      SPRING_SECURITY_PASSWORD: ${SPRING_SECURITY_PASSWORD}
+    depends_on:
+      - kafka
+      - mysql-grades
+    networks:
+      - backend
+
+  classwise-semester-service:
+    build:
+      context: ./classwise-semester-services
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-semesters:3306/semesters?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+      SPRING_KAFKA_CONSUMER_GROUP_ID: semesters-group
+      SPRING_KAFKA_CONSUMER_AUTO_OFFSET_RESET: earliest
+      SPRING_SECURITY_USERNAME: ${SPRING_SECURITY_USERNAME}
+      SPRING_SECURITY_PASSWORD: ${SPRING_SECURITY_PASSWORD}
+    depends_on:
+      - kafka
+      - mysql-semesters
+    networks:
+      - backend
+
+  classwise-students-service:
+    build:
+      context: ./classwise-students-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-students:3306/students?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+      SPRING_KAFKA_CONSUMER_GROUP_ID: students-group
+      SPRING_KAFKA_CONSUMER_AUTO_OFFSET_RESET: earliest
+      SPRING_SECURITY_USERNAME: ${SPRING_SECURITY_USERNAME}
+      SPRING_SECURITY_PASSWORD: ${SPRING_SECURITY_PASSWORD}
+    depends_on:
+      - kafka
+      - mysql-students
+    networks:
+      - backend
+
+  classwise-teachers-service:
+    build:
+      context: ./classwise-teachers-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-teachers:3306/teachers?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+      SPRING_KAFKA_CONSUMER_GROUP_ID: teachers-group
+      SPRING_KAFKA_CONSUMER_AUTO_OFFSET_RESET: earliest
+      SPRING_SECURITY_USERNAME: ${SPRING_SECURITY_USERNAME}
+      SPRING_SECURITY_PASSWORD: ${SPRING_SECURITY_PASSWORD}
+    depends_on:
+      - kafka
+      - mysql-teachers
+    networks:
+      - backend
+
+  classwise-client:
+    build:
+      context: ./classwise-client
+    ports:
+      - "3000:80"
+    depends_on:
+      - classwise-gateway-service
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

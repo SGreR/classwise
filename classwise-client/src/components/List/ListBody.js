@@ -35,7 +35,7 @@ const ListBody = ({itemType, itemList, tempItems}) => {
     const buildStudentList = () => {
         setListBody(
             <>
-                {itemList?.map(item => {
+                {itemList && itemList?.map(item => {
                     return (
                         <tr key={item.studentId} onClick={() => handleRowClick('/students', item.studentId)}>
                             <td>{item.studentId}</td>
@@ -43,7 +43,7 @@ const ListBody = ({itemType, itemList, tempItems}) => {
                         </tr>
                     )
                 })}
-                {tempItems?.map(item => {
+                {tempItems && tempItems?.map(item => {
                     return (
                         <tr style={{backgroundColor:"yellow"}} key={item.studentId} onClick={() => handleRowClick('/students', item.studentId)}>
                             <td>{item.studentId}</td>
@@ -58,7 +58,7 @@ const ListBody = ({itemType, itemList, tempItems}) => {
 
     const buildTeacherList = () => {
         setListBody(
-            itemList?.map(item => {
+            itemList && itemList?.map(item => {
                 return (
                     <tr key={item.teacherId} onClick={() => handleRowClick('/teachers', item.teacherId)}>
                         <td>{item.teacherId}</td>
@@ -71,7 +71,7 @@ const ListBody = ({itemType, itemList, tempItems}) => {
 
     const buildSemesterList = () => {
         setListBody(
-            itemList && itemList.map(item => {
+            itemList && itemList?.map(item => {
                 return (
                     <tr key={item.semesterId} onClick={() => handleRowClick('/semesters', item.semesterId)}>
                         <td>{item.semesterId}</td>
@@ -85,7 +85,7 @@ const ListBody = ({itemType, itemList, tempItems}) => {
     const buildCourseList = () => {
         setListBody(
             <>
-                {itemList && itemList.map(item => {
+                {itemList && itemList?.map(item => {
                     return (
                         <tr key={item.courseId} onClick={() => handleRowClick('/courses', item.courseId)}>
                             <td>{item.courseId}</td>
@@ -96,7 +96,7 @@ const ListBody = ({itemType, itemList, tempItems}) => {
                         </tr>
                     )
                 })}
-                {tempItems?.map(item => {
+                {tempItems && tempItems?.map(item => {
                     return (
                         <tr style={{backgroundColor:"yellow"}} key={item.courseId} onClick={() => handleRowClick('/courses', item.courseId)}>
                             <td>{item.courseId}</td>
@@ -112,25 +112,25 @@ const ListBody = ({itemType, itemList, tempItems}) => {
     }
 
     const buildGradesList = () => {
-        setListBody(itemList?.map((item) => {
-            return (
-                <tr key={item.gradesId} onClick={() => handleRowClick('/grades', item.gradesId)}>
-                    <td>{item.gradesId}</td>
-                    <td>{item.student ? item.student.studentName : "Unassigned"}</td>
-                    <td>{item.course ? item.course.courseName : "Unassigned"}</td>
-                    <td>{item.course && item.course.semester ? `${item.course.semester.schoolYear}-${item.course.semester.semesterNumber}` : "Unassigned"}</td>
-                    <td>{item.course && item.course.teacher ? item.course.teacher.teacherName : "Unassigned"}</td>
-                    <td>{item.testNumber}</td>
-                    <td>{Math.round(item.abilities.skills.find(skill => skill.skillName === 'READING')?.averageGrade) || 0}%</td>
-                    <td>{Math.round(item.abilities.skills.find(skill => skill.skillName === 'WRITING')?.averageGrade) || 0}%</td>
-                    <td>{Math.round(item.abilities.skills.find(skill => skill.skillName === 'LISTENING')?.averageGrade) || 0}%</td>
-                    <td>{Math.round(item.abilities.skills.find(skill => skill.skillName === 'USEOFENGLISH')?.averageGrade) || 0}%</td>
-                    <td>{Math.round(item.abilities.speaking.averageGrade)}%</td>
-                    <td>{Math.round(item.abilities.classPerformance.averageGrade)}%</td>
-                    <td>{Math.round(item.abilities.finalGrade)}%</td>
-                </tr>
-            )
-
+        setListBody(
+            itemList && itemList?.map((item) => {
+                return (
+                    <tr key={item.gradesId} onClick={() => handleRowClick('/grades', item.gradesId)}>
+                        <td>{item.gradesId}</td>
+                        <td>{item.student ? item.student.studentName : "Unassigned"}</td>
+                        <td>{item.course ? item.course.courseName : "Unassigned"}</td>
+                        <td>{item.course && item.course.semester ? `${item.course.semester.schoolYear}-${item.course.semester.semesterNumber}` : "Unassigned"}</td>
+                        <td>{item.course && item.course.teacher ? item.course.teacher.teacherName : "Unassigned"}</td>
+                        <td>{item.testNumber}</td>
+                        <td>{Math.round(item.abilities.skills.find(skill => skill.skillName === 'READING')?.averageGrade) || 0}%</td>
+                        <td>{Math.round(item.abilities.skills.find(skill => skill.skillName === 'WRITING')?.averageGrade) || 0}%</td>
+                        <td>{Math.round(item.abilities.skills.find(skill => skill.skillName === 'LISTENING')?.averageGrade) || 0}%</td>
+                        <td>{Math.round(item.abilities.skills.find(skill => skill.skillName === 'USEOFENGLISH')?.averageGrade) || 0}%</td>
+                        <td>{Math.round(item.abilities.speaking.averageGrade)}%</td>
+                        <td>{Math.round(item.abilities.classPerformance.averageGrade)}%</td>
+                        <td>{Math.round(item.abilities.finalGrade)}%</td>
+                    </tr>
+                )
         }))
     }
 

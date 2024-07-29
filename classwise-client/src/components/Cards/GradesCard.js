@@ -7,7 +7,7 @@ const GradesCard = ({item:initialItem, editing, onItemChange}) => {
     const [item, setItem] = useState(null)
     const [courses, setCourses] = useState(null)
     const [students, setStudents] = useState(null)
-    const [courseFilter, setCourseFilter] = useState({
+    const [courseFilter] = useState({
         "filters": {
         },
         "inclusions": {
@@ -38,24 +38,24 @@ const GradesCard = ({item:initialItem, editing, onItemChange}) => {
 
     const getSelectedCourseText = () => {
         const selectedCourse = courses ? courses.find(course => course.courseId === item.courseId) : null;
-        return selectedCourse ? `${selectedCourse.courseName} ${selectedCourse.semester.schoolYear}-${selectedCourse.semester.semesterNumber}` : "Select Course";
+        return selectedCourse ? `${selectedCourse.courseName} ${selectedCourse.semester.schoolYear}-${selectedCourse.semester.semesterNumber}` : "None";
     };
 
     const getSelectedStudentText = () => {
         const selectedStudent = students ? students.find(student => student.studentId === item.studentId) : null;
-        return selectedStudent ? `${selectedStudent.studentName}` : "Select Student";
+        return selectedStudent ? `${selectedStudent.studentName}` : "None";
     };
 
     const handleSelectChange = (selectedItem, field) => {
-        if(field === "studentId"){
-            setItem({...item,[field]: selectedItem.courseId});
-            onItemChange({...item, [field]: selectedItem.courseId})
+        if(field === "courseId"){
+            setItem({...item,[field]: selectedItem.courseId === undefined ? null : selectedItem.courseId});
+            onItemChange({...item, [field]: selectedItem.courseId === undefined ? null : selectedItem.courseId})
         } else if(field === "testNumber"){
             setItem({...item, [field]: selectedItem})
             onItemChange({...item, [field]: selectedItem})
         } else if(field === "studentId"){
-            setItem({...item, [field]: selectedItem.studentId})
-            onItemChange({...item, [field]: selectedItem.studentId})
+            setItem({...item, [field]: selectedItem.studentId === undefined ? null : selectedItem.studentId})
+            onItemChange({...item, [field]: selectedItem.studentId === undefined ? null : selectedItem.studentId})
         }
     };
 
@@ -86,7 +86,8 @@ const GradesCard = ({item:initialItem, editing, onItemChange}) => {
                                             </DropdownToggle>
                                             <DropdownMenu>
                                                 <DropdownItem header>Students</DropdownItem>
-                                                {students !== null && students.map(student => (
+                                                <DropdownItem onClick={() => handleSelectChange({}, "studentId")}>None</DropdownItem>
+                                                {students && students?.map(student => (
                                                     <DropdownItem
                                                         key={student.studentId}
                                                         onClick={() => handleSelectChange(student, "studentId")}
@@ -98,7 +99,7 @@ const GradesCard = ({item:initialItem, editing, onItemChange}) => {
                                         </UncontrolledDropdown>
                                     </ButtonDropdown>
                                 ) : (
-                                    <h5 className="title">{item.studentId + "'s grades"}</h5>
+                                    <h5 className="title">{item?.student?.studentName + "'s grades"}</h5>
                                 )}
                             </Col>
                         </Row>
@@ -119,7 +120,7 @@ const GradesCard = ({item:initialItem, editing, onItemChange}) => {
                                         }}>
                                             <UncontrolledDropdown>
                                                 <DropdownToggle caret size="sm">
-                                                    Select Test Number
+                                                    {item.testNumber} Test
                                                 </DropdownToggle>
                                                 <DropdownMenu>
                                                     <DropdownItem header>Test Number</DropdownItem>
@@ -158,7 +159,8 @@ const GradesCard = ({item:initialItem, editing, onItemChange}) => {
                                                     </DropdownToggle>
                                                     <DropdownMenu>
                                                         <DropdownItem header>Courses</DropdownItem>
-                                                        {courses !== null && courses.map(course => (
+                                                        <DropdownItem onClick={() => handleSelectChange({}, "courseId")}>None</DropdownItem>
+                                                        {courses && courses?.map(course => (
                                                             <DropdownItem
                                                                 key={course.courseId}
                                                                 onClick={() => handleSelectChange(course, "courseId")}
@@ -170,7 +172,7 @@ const GradesCard = ({item:initialItem, editing, onItemChange}) => {
                                                 </UncontrolledDropdown>
                                             </ButtonDropdown>
                                         ) : (
-                                            <h5>Course</h5>
+                                            <h5>{item.course ? item.course?.courseName : "No Current Course"}</h5>
                                         )}
                             </Col>
                         </Row>

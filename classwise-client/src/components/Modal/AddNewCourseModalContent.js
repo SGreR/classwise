@@ -40,32 +40,32 @@ const AddNewCourseModalContent = ({onItemChange}) => {
         if (type === "semester") {
             setCourse(prevItem => ({
                 ...prevItem,
-                semesterId: selectedItem.semesterId,
+                semesterId: selectedItem.semesterId === undefined ? null : selectedItem.semesterId
             }));
             onItemChange({
                 ...course,
-                semesterId: selectedItem.semesterId,
+                semesterId: selectedItem.semesterId === undefined ? null : selectedItem.semesterId
             });
         } else if (type === "teacher") {
             setCourse(prevItem => ({
                 ...prevItem,
-                teacherId: selectedItem.teacherId,
+                teacherId: selectedItem.teacherId === undefined ? null : selectedItem.teacherId
             }));
             onItemChange({
                 ...course,
-                teacherId: selectedItem.teacherId,
+                teacherId: selectedItem.teacherId === undefined ? null : selectedItem.teacherId
             });
         }
     };
 
     const getSelectedSemesterText = () => {
-        const selectedSemester = semesters.find(semester => semester.semesterId === course.semesterId);
-        return selectedSemester ? `${selectedSemester.schoolYear}-${selectedSemester.semesterNumber}` : "Select Semester";
+        const selectedSemester = semesters ? semesters?.find(semester => semester.semesterId === course.semesterId) : null;
+        return selectedSemester ? `${selectedSemester.schoolYear}-${selectedSemester.semesterNumber}` : "None";
     };
 
     const getSelectedTeacherText = () => {
-        const selectedTeacher = teachers.find(teacher => teacher.teacherId === course.teacherId);
-        return selectedTeacher ? selectedTeacher.teacherName : "Select Teacher";
+        const selectedTeacher = teachers ? teachers.find(teacher => teacher.teacherId === course.teacherId) : null;
+        return selectedTeacher ? selectedTeacher.teacherName : "None";
     };
 
     return(
@@ -85,12 +85,13 @@ const AddNewCourseModalContent = ({onItemChange}) => {
                             </DropdownToggle>
                             <DropdownMenu>
                                 <DropdownItem header>Semesters</DropdownItem>
-                                {semesters.map(semester => (
+                                <DropdownItem onClick={() => handleSelectChange({}, "semester")}>None</DropdownItem>
+                                {semesters && semesters?.map(semester => (
                                     <DropdownItem
                                         key={semester.semesterId}
                                         onClick={() => handleSelectChange(semester, "semester")}
                                     >
-                                        {semester.schoolYear}-{semester.semesterNumber}
+                                        {semester.semesterId ? `${semester.schoolYear}-${semester.semesterNumber}` : "None"}
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
@@ -110,7 +111,8 @@ const AddNewCourseModalContent = ({onItemChange}) => {
                             </DropdownToggle>
                             <DropdownMenu>
                                 <DropdownItem header>Teachers</DropdownItem>
-                                {teachers.map(teacher => (
+                                <DropdownItem onClick={() => handleSelectChange({}, "teacher")}>None</DropdownItem>
+                                {teachers && teachers?.map(teacher => (
                                     <DropdownItem
                                         key={teacher.teacherId}
                                         onClick={() => handleSelectChange(teacher, "teacher")}

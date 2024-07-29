@@ -16,6 +16,7 @@
 
     <properties>
         <java.version>21</java.version>
+        <start-class>com.classwise.classwisegatewayservice.ClasswiseGatewayServiceApplication</start-class>
     </properties>
 
     <dependencies>
@@ -91,6 +92,13 @@
                         </exclude>
                     </excludes>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
