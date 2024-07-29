@@ -8,6 +8,3 @@
 /dataSources.local.xml
 .idea/
 *.iml
-#Environment Variables
-../application-env.properties
-
