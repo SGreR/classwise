@@ -6,7 +6,7 @@ import AddNewSemesterModalContent from "./AddNewSemesterModalContent";
 import AddNewTeacherModalContent from "./AddNewTeacherModalContent";
 import AddNewGradesModalContent from "./AddNewGradesModalContent";
 
-const AddModal = ({type, onItemChange}) => {
+const AddModal = ({type, onItemChange, onInputInvalid}) => {
     const [content, setContent] = useState(null)
 
     useEffect(() => {
@@ -18,7 +18,7 @@ const AddModal = ({type, onItemChange}) => {
                 setContent(<AddNewCourseModalContent onItemChange={onItemChange}/>)
                 break;
             case "grades":
-                setContent(<AddNewGradesModalContent onItemChange={onItemChange}/>)
+                setContent(<AddNewGradesModalContent onItemChange={onItemChange} onInputInvalid={onInputInvalid}/>)
                 break
             case "teachers":
                 setContent(<AddNewTeacherModalContent onItemChange={onItemChange}/>)

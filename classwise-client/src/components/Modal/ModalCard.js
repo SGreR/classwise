@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Alert} from 'reactstrap';
 import DeleteModal from "./DeleteModal";
 import AddModal from "./AddModal";
 import {capitalize} from "../../utils/utils";
@@ -8,6 +8,7 @@ import UpdateModal from "./UpdateModal";
 const ModalCard = ({mode, type, id, onDeleteConfirmed, onItemAdded, onSave}) => {
     const [modal, setModal] = useState(false);
     const [item, setItem] = useState(null)
+    const [isDisabled, setIsDisabled] = useState(false);
 
 
     const toggle = () => setModal(!modal);
@@ -31,6 +32,17 @@ const ModalCard = ({mode, type, id, onDeleteConfirmed, onItemAdded, onSave}) => 
         setItem(item)
     }
 
+    const handleInvalidInput = (isInputInvalid) => {
+        setIsDisabled(isInputInvalid)
+    }
+
+    const getModalSize = () => {
+        if(mode === "add" && type === "grades"){
+            return "lg"
+        }
+        return "sm"
+    }
+
     return (
         <>
             {mode === "add" ? (
@@ -40,11 +52,11 @@ const ModalCard = ({mode, type, id, onDeleteConfirmed, onItemAdded, onSave}) => 
             ) : (
                 <Button color="danger" size="sm" onClick={toggle}>Delete</Button>
             )}
-            <Modal isOpen={modal} toggle={toggle}>
+            <Modal isOpen={modal} toggle={toggle} size={getModalSize()}>
                 <ModalHeader toggle={toggle}>{capitalize(mode) + " " + capitalize(type)}</ModalHeader>
                 <ModalBody>
                     {mode === "add" ? (
-                        <AddModal onItemChange={handleItemChange} type={type} />
+                        <AddModal onItemChange={handleItemChange} type={type} onInputInvalid={handleInvalidInput}/>
                     ) : mode === "update" ? (
                         <UpdateModal onItemSelected={handleItemChange} type={type} />
                     ) : (
@@ -53,7 +65,7 @@ const ModalCard = ({mode, type, id, onDeleteConfirmed, onItemAdded, onSave}) => 
                 </ModalBody>
                 <ModalFooter>
                     {mode === "add" ? (
-                        <Button color="primary" onClick={handleSave}>Save</Button>
+                        <Button color="primary" onClick={handleSave} disabled={isDisabled}>Save</Button>
                     ) : mode === "update" ? (
                         <Button color="secondary" onClick={handleAdd}>Add</Button>
                     ) : (

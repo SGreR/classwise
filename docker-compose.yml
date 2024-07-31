@@ -95,6 +95,7 @@ services:
   classwise-course-service:
     build:
       context: ./classwise-course-services
+    image: sgrer/classwise:course-service-0.1
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-courses:3306/courses?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
@@ -113,6 +114,7 @@ services:
   classwise-gateway-service:
     build:
       context: ./classwise-gateway-service
+    image: sgrer/classwise:gateway-service-0.1
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       SERVICE_COURSE_URL: ${SERVICE_COURSE_URL}
@@ -130,6 +132,7 @@ services:
   classwise-grades-service:
     build:
       context: ./classwise-grades-service
+    image: sgrer/classwise:grades-service-0.1
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-grades:3306/grades?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
@@ -148,6 +151,7 @@ services:
   classwise-semester-service:
     build:
       context: ./classwise-semester-services
+    image: sgrer/classwise:semester-service-0.1
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-semesters:3306/semesters?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
@@ -166,6 +170,7 @@ services:
   classwise-students-service:
     build:
       context: ./classwise-students-service
+    image: sgrer/classwise:students-service-0.1
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-students:3306/students?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
@@ -184,6 +189,7 @@ services:
   classwise-teachers-service:
     build:
       context: ./classwise-teachers-service
+    image: sgrer/classwise:teachers-service-0.1
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-teachers:3306/teachers?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
@@ -202,6 +208,7 @@ services:
   classwise-client:
     build:
       context: ./classwise-client
+    image: sgrer/classwise:client-0.1
     ports:
       - "3000:80"
     depends_on:

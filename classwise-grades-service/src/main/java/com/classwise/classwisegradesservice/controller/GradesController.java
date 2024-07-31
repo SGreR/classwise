@@ -123,6 +123,7 @@ public class GradesController {
                 emptyGrades.setTestNumber(grades.getTestNumber());
                 emptyGrades.setStudentId(grades.getStudentId());
                 emptyGrades.setCourseId(grades.getCourseId());
+                emptyGrades.setAbilities(grades.getAbilities());
 
                 gradesService.addGrades(emptyGrades);
             } else {
